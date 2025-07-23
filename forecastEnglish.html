@@ -106,8 +106,8 @@
         async function getWeatherData(postalCode) {
             try {
                 const { lat, lon } = await getCoordinates(postalCode);
-                const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=YOUR_API_KEY&units=metric`;
-                const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=YOUR_API_KEY&units=metric`;
+                const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=0d29cda32c62a77dc63c47f21f8dcbdf&units=metric`;
+                const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=0d29cda32c62a77dc63c47f21f8dcbdf&units=metric`;
 
                 const currentResponse = await fetch(currentWeatherUrl);
                 const currentData = await currentResponse.json();
