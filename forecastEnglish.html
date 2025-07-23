@@ -25,11 +25,26 @@
             margin-top: 20px;
             font-size: 20px;
         }
+        #accountButton {
+            margin-top: auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #accountButton:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h1 id="header">Weather Data</h1>
     <div id="weatherData">Loading weather data...</div>
+    <button id="accountButton" onclick="goToAccount()">My Account</button>
 
     <script>
         // Firebase configuration
@@ -144,6 +159,11 @@
                 console.error('Error fetching weather data:', error);
                 document.getElementById('weatherData').innerText = 'Failed to load weather data.';
             }
+        }
+
+        // Function to navigate to account page
+        function goToAccount() {
+            window.location.href = 'accountEnglish.html';
         }
     </script>
 </body>
