@@ -103,7 +103,6 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Only display the postal code input field; removed static display
                     document.getElementById('postalCode').value = userData.postalCode;
                     document.getElementById('country').value = userData.country;
                     document.getElementById('fruit').value = userData.fruit;
@@ -129,6 +128,7 @@
             } else {
                 errorMessage.innerText = ''; // Clear error if valid
                 updateField('country', newCountry); // Update country in the database
+                updateField('postalCode', postalCode); // Update postal code if valid
             }
         }
 
@@ -195,7 +195,6 @@
         // Function to log out the user
         function logout() {
             firebase.auth().signOut().then(() => {
-                // Redirect to the login page
                 window.location.href = 'index.html';
             }).catch((error) => {
                 console.error('Error logging out:', error);
@@ -212,7 +211,6 @@
             if (user) {
                 displayAccountInfo(user.uid);
             } else {
-                // Redirect to sign-in page if no user is signed in
                 window.location.href = 'index.html';
             }
         });
