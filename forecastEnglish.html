@@ -25,6 +25,10 @@
             margin-top: 20px;
             font-size: 20px;
         }
+        #riskLevels {
+            margin-top: 20px;
+            font-size: 20px;
+        }
         #accountButton {
             margin-top: auto;
             padding: 10px 20px;
@@ -44,6 +48,7 @@
 <body>
     <h1 id="header">Weather Data</h1>
     <div id="weatherData">Loading weather data...</div>
+    <div id="riskLevels"></div>
     <button id="accountButton" onclick="goToAccount()">My Account</button>
 
     <script>
@@ -155,10 +160,64 @@
                     Max Temperature: ${maxTemp} °C<br>
                     Min Temperature: ${minTemp} °C
                 `;
+
+                // Calculate and display risk levels
+                displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp);
             } catch (error) {
                 console.error('Error fetching weather data:', error);
                 document.getElementById('weatherData').innerText = 'Failed to load weather data.';
             }
+        }
+
+        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp) {
+            const riskLevels = {
+                acariens: 'low',
+                carpocapse: 'low',
+                puceron: 'low',
+                zeuzère: 'low',
+                cochenilles: 'high'
+            };
+
+            // Acariens
+            if (totalRain < 10 && averageTemp > 20) {
+                riskLevels.acariens = 'high';
+            } else if (totalRain < 10 || averageTemp > 20) {
+                riskLevels.acariens = 'medium';
+            }
+
+            // Carpocapse
+            if (minTemp > 16) {
+                riskLevels.carpocapse = 'high';
+            } else if (minTemp <= 16 && averageTemp > 20) {
+                riskLevels.carpocapse = 'medium';
+            }
+
+            // Puceron (same as acariens)
+            riskLevels.puceron = riskLevels.acariens;
+
+            // Zeuzère
+            if (averageTemp > 22 && minTemp > 18) {
+                riskLevels.zeuzère = 'high';
+            } else if (averageTemp > 22 || minTemp > 18) {
+                riskLevels.zeuzère = 'medium';
+            }
+
+            // Cochenilles
+            if (minTemp > 21 && maxTemp < 29) {
+                riskLevels.cochenilles = 'low';
+            } else if (minTemp > 21 || maxTemp < 29) {
+                riskLevels.cochenilles = 'medium';
+            }
+
+            // Display risk levels
+            document.getElementById('riskLevels').innerHTML = `
+                <strong>Risk Levels:</strong><br>
+                Acariens: ${riskLevels.acariens}<br>
+                Carpocapse: ${riskLevels.carpocapse}<br>
+                Puceron: ${riskLevels.puceron}<br>
+                Zeuzère: ${riskLevels.zeuzère}<br>
+                Cochenilles: ${riskLevels.cochenilles}
+            `;
         }
 
         // Function to navigate to account page
