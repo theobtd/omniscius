@@ -25,10 +25,6 @@
             margin-top: 20px;
             font-size: 20px;
         }
-        #riskLevels {
-            margin-top: 20px;
-            font-size: 20px;
-        }
         #accountButton {
             margin-top: auto;
             padding: 10px 20px;
@@ -42,6 +38,10 @@
         }
         #accountButton:hover {
             background-color: #0056b3;
+        }
+        #riskLevels {
+            margin-top: 20px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -112,7 +112,7 @@
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your actual OpenWeatherMap API key
 
             try {
-                const { lat, lon } = await getCoordinates(postalCode, country); // Pass country here
+                const { lat, lon } = await getCoordinates(postalCode, country);
                 const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
                 const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
@@ -171,53 +171,64 @@
 
         function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp) {
             const riskLevels = {
-                acariens: 'low',
-                carpocapse: 'low',
-                puceron: 'low',
-                zeuzère: 'low',
-                cochenilles: 'high'
+                acariens: calculateAcariensRisk(totalRain, averageTemp),
+                carpocapse: calculateCarpocapseRisk(minTemp, averageTemp),
+                puceron: calculatePuceronRisk(minTemp, maxTemp, totalRain),
+                zeuzère: calculateZeuzereRisk(averageTemp, minTemp),
+                cochenilles: calculateCochenillesRisk(minTemp, maxTemp),
             };
 
-            // Acariens
-            if (totalRain < 10 && averageTemp > 20) {
-                riskLevels.acariens = 'high';
-            } else if (totalRain < 10 || averageTemp > 20) {
-                riskLevels.acariens = 'medium';
+            let riskHtml = '<strong>Risk Levels:</strong><br>';
+            for (const category in riskLevels) {
+                riskHtml += `${category.charAt(0).toUpperCase() + category.slice(1)}: ${riskLevels[category]}<br>`;
             }
+            document.getElementById('riskLevels').innerHTML = riskHtml;
+        }
 
-            // Carpocapse
-            if (minTemp > 16) {
-                riskLevels.carpocapse = 'high';
-            } else if (minTemp <= 16 && averageTemp > 20) {
-                riskLevels.carpocapse = 'medium';
-            }
+        function calculateAcariensRisk(totalRain, averageTemp) {
+            if (totalRain < 10 && averageTemp > 20) return 'High';
+            if (totalRain < 10 || averageTemp > 20) return 'Medium';
+            return 'Low';
+        }
 
-            // Puceron (same as acariens)
-            riskLevels.puceron = riskLevels.acariens;
+        function calculateCarpocapseRisk(minTemp, averageTemp) {
+            if (minTemp > 16) return 'High';
+            if (minTemp <= 16 && averageTemp > 20) return 'Medium';
+            return 'Low';
+        }
 
-            // Zeuzère
-            if (averageTemp > 22 && minTemp > 18) {
-                riskLevels.zeuzère = 'high';
-            } else if (averageTemp > 22 || minTemp > 18) {
-                riskLevels.zeuzère = 'medium';
-            }
+        function calculatePuceronRisk(minTemp, maxTemp, totalRain) {
+            const conditionsMet = [
+                minTemp > 20,
+                maxTemp < 25,
+                totalRain > 50,
+            ].filter(Boolean).length;
 
-            // Cochenilles
-            if (minTemp > 21 && maxTemp < 29) {
-                riskLevels.cochenilles = 'low';
-            } else if (minTemp > 21 || maxTemp < 29) {
-                riskLevels.cochenilles = 'medium';
-            }
+            if (conditionsMet === 3) return 'High';
+            if (conditionsMet === 2) return 'Medium';
+            return 'Low';
+        }
 
-            // Display risk levels
-            document.getElementById('riskLevels').innerHTML = `
-                <strong>Risk Levels:</strong><br>
-                Acariens: ${riskLevels.acariens}<br>
-                Carpocapse: ${riskLevels.carpocapse}<br>
-                Puceron: ${riskLevels.puceron}<br>
-                Zeuzère: ${riskLevels.zeuzère}<br>
-                Cochenilles: ${riskLevels.cochenilles}
-            `;
+        function calculateZeuzereRisk(averageTemp, minTemp) {
+            const conditionsMet = [
+                averageTemp > 22,
+                minTemp > 18,
+            ].filter(Boolean).length;
+
+            if (conditionsMet === 2) return 'High';
+            if (conditionsMet === 1) return 'Medium';
+            return 'Low';
+        }
+
+        function calculateCochenillesRisk(minTemp, maxTemp) {
+            const conditionsMet = [
+                minTemp > 21,
+                maxTemp < 29,
+            ].filter(Boolean).length;
+
+            if (conditionsMet === 2) return 'Low';
+            if (conditionsMet === 1) return 'Medium';
+            return 'High';
         }
 
         // Function to navigate to account page
