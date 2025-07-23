@@ -25,7 +25,7 @@
     </style>
 </head>
 <body>
-    <h1>Current Weather Data for Le Thor, France</h1>
+    <h1>Current Weather and Forecast for Le Thor, France</h1>
     <div id="weatherData">Loading weather data...</div>
 
     <script>
@@ -34,26 +34,47 @@
         const lon = 5.056; // Longitude for Le Thor
 
         async function fetchWeatherData() {
-            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+            const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
             try {
-                const response = await fetch(url);
-                const data = await response.json();
+                const currentResponse = await fetch(currentWeatherUrl);
+                const currentData = await currentResponse.json();
+                
+                const temperature = currentData.main.temp;
+                const humidity = currentData.main.humidity;
+                const rain = currentData.rain ? currentData.rain['1h'] : 0;
 
-                const temperature = data.main.temp;
-                const humidity = data.main.humidity;
-                const tempMin = data.main.temp_min;
-                const tempMax = data.main.temp_max;
-                const groundLevel = data.main.grnd_level || 'N/A';
-                const rain = data.rain ? data.rain['1h'] : 0;
+                const forecastResponse = await fetch(forecastUrl);
+                const forecastData = await forecastResponse.json();
+
+                let totalRain = 0;
+                let totalTemp = 0;
+                let maxTemp = -Infinity;
+                let minTemp = Infinity;
+                let count = 0;
+
+                forecastData.list.forEach(item => {
+                    const temp = item.main.temp;
+                    totalTemp += temp;
+                    count++;
+
+                    if (item.main.temp_max > maxTemp) maxTemp = item.main.temp_max;
+                    if (item.main.temp_min < minTemp) minTemp = item.main.temp_min;
+                    if (item.rain) totalRain += item.rain['3h'] || 0;
+                });
+
+                const averageTemp = totalTemp / count;
 
                 document.getElementById('weatherData').innerHTML = `
-                    Temperature: ${temperature} °C<br>
+                    Current Temperature: ${temperature} °C<br>
                     Humidity: ${humidity} %<br>
-                    Min Temperature: ${tempMin} °C<br>
-                    Max Temperature: ${tempMax} °C<br>
-                    Ground Level: ${groundLevel} m<br>
-                    Rain (last 1h): ${rain} mm
+                    Rain (last 1h): ${rain} mm<br><br>
+                    <strong>5-Day Forecast:</strong><br>
+                    Total Forecasted Rain: ${totalRain} mm<br>
+                    Average Temperature: ${averageTemp.toFixed(2)} °C<br>
+                    Max Temperature: ${maxTemp} °C<br>
+                    Min Temperature: ${minTemp} °C
                 `;
             } catch (error) {
                 console.error('Error fetching weather data:', error);
