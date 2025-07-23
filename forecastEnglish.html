@@ -76,13 +76,24 @@
             color: #721c24;
             border-color: #f5c6cb;
         }
+
+        #topLeftContainer {
+            position: absolute; /* Position it absolutely */
+            top: 20px; /* Distance from the top */
+            left: 20px; /* Distance from the left */
+            display: flex; /* Use flexbox for horizontal alignment */
+            align-items: center; /* Align items vertically */
+            gap: 10px; /* Space between header and button */
+        }
     </style>
 </head>
 <body>
-    <h1 id="header">Weather Data</h1>
     <div id="weatherData" style="display: none;">Loading weather data...</div>
     <div id="riskLevels"></div>
-    <button id="accountButton" onclick="goToAccount()">My Account</button>
+    <div id="topLeftContainer">
+        <h1 id="header">Weather Data</h1>
+        <button id="accountButton" onclick="goToAccount()">My Account</button>
+    </div>
 
     <script>
         // Firebase configuration
