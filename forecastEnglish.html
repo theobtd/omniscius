@@ -77,7 +77,7 @@
 </head>
 <body>
     <button id="accountButton" onclick="goToAccount()">My Account</button>
-    <h1 id="header">Weather Data</h1>
+    <h1 id="header"></h1>
     <div id="weatherData" style="display: none;">Loading weather data...</div>
     <div id="riskLevels"></div>
 
@@ -112,8 +112,8 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Update header with postal code, country, and fruit category
-                    document.getElementById('header').innerText = `${userData.postalCode}, ${userData.country} - ${userData.fruit}`;
+                    // Update header with fruit on one line and postal code, country on another
+                    document.getElementById('header').innerHTML = `${userData.fruit}<br>${userData.postalCode}, ${userData.country}`;
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
                 }
             }).catch((error) => {
