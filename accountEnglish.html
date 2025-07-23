@@ -57,11 +57,12 @@
             projectId: "omniscius-7bf29",
             storageBucket: "omniscius-7bf29.appspot.com",
             messagingSenderId: "24281922885",
-            appId: "1:24281922885:web:5d417050ef79e22e6b522c"
+            appId: "1:24281922885:web:5d417050ef79e22e6b522c" // Replace with your actual app ID
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const database = firebase.database(); // Initialize the database reference
 
         // Function to display account information
         function displayAccountInfo(userId) {
