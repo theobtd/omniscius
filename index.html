@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello Page</title>
+    <title>Weather Data</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
@@ -17,9 +18,39 @@
         h1 {
             color: #333;
         }
+        #precipitation {
+            margin-top: 20px;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Hello!</h1>
+    <h1>Weather Data for Le Thor, France</h1>
+    <div id="precipitation">Loading precipitation data...</div>
+
+    <script>
+        const apiKey = '0d29cda32c62a77dc63c47f21f8dcbdf';
+        const lat = 43.925; // Latitude for Le Thor
+        const lon = 5.056; // Longitude for Le Thor
+
+        async function fetchWeatherData() {
+            const url = `https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=${lat}&lon=${lon}&dt=${Math.floor(Date.now() / 1000) - 604800}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const totalPrecipitation = data.hourly.reduce((sum, hour) => {
+                    return sum + (hour.precipitation ? hour.precipitation : 0);
+                }, 0);
+
+                document.getElementById('precipitation').innerText = `Total Precipitation in the past 7 days: ${totalPrecipitation} mm`;
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('precipitation').innerText = 'Failed to load data.';
+            }
+        }
+
+        fetchWeatherData();
+    </script>
 </body>
 </html>
