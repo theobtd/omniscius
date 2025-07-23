@@ -100,10 +100,7 @@
                 const userData = snapshot.val();
                 if (userData) {
                     const accountInfo = `
-                        <strong>Email:</strong> ${userData.email}<br>
-                        <strong>Country:</strong> ${userData.country}<br>
-                        <strong>Postal Code:</strong> ${userData.postalCode}<br>
-                        <strong>Fruit Category:</strong> ${userData.fruit}
+                        <strong>Postal Code:</strong> ${userData.postalCode}
                     `;
                     document.getElementById('accountInfo').innerHTML = accountInfo;
 
