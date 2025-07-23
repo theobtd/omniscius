@@ -183,6 +183,7 @@
                 cochenilles: calculateCochenillesRisk(minTemp, maxTemp),
             };
 
+            let riskHtml = '<strong></strong><br>';
             for (const category in riskLevels) {
                 const riskLevel = riskLevels[category].toLowerCase();
                 riskHtml += `
