@@ -40,10 +40,10 @@
             font-size: 18px;
             color: #333;
         }
-        input {
+        select {
             margin: 5px 0;
             padding: 10px;
-            width: 200px;
+            width: 220px;
             font-size: 16px;
         }
     </style>
@@ -54,12 +54,26 @@
     <div id="editForm" style="display: none;">
         <h2>Edit Account Information</h2>
         <label for="country">Country:</label>
-        <input type="text" id="country" /><br>
-        <label for="postalCode">Postal Code:</label>
-        <input type="text" id="postalCode" /><br>
+        <select id="country" onchange="updateField('country', this.value)">
+            <option value="Australia">Australia</option>
+            <option value="Canada">Canada</option>
+            <option value="France">France</option>
+            <option value="Italy">Italy</option>
+            <option value="New Zealand">New Zealand</option>
+            <option value="UK">UK</option>
+            <option value="USA">USA</option>
+        </select><br>
+        
         <label for="fruit">Fruit Category:</label>
-        <input type="text" id="fruit" /><br>
-        <button id="saveButton" onclick="saveChanges()">Save Changes</button>
+        <select id="fruit" onchange="updateField('fruit', this.value)">
+            <option value="Apple">Apple</option>
+            <option value="Pear">Pear</option>
+            <option value="Grapes">Grapes</option>
+            <option value="Strawberries">Strawberries</option>
+        </select><br>
+
+        <label for="postalCode">Postal Code:</label>
+        <input type="text" id="postalCode" oninput="updateField('postalCode', this.value)" /><br>
     </div>
     <button id="logoutButton" onclick="logout()">Log out</button>
     <button id="dataButton" onclick="goToData()">Back to data</button>
@@ -93,7 +107,7 @@
                     `;
                     document.getElementById('accountInfo').innerHTML = accountInfo;
 
-                    // Populate input fields with existing data
+                    // Populate select fields with existing data
                     document.getElementById('country').value = userData.country;
                     document.getElementById('postalCode').value = userData.postalCode;
                     document.getElementById('fruit').value = userData.fruit;
@@ -107,23 +121,18 @@
             });
         }
 
-        // Function to save changes to the database
-        function saveChanges() {
+        // Function to update fields in the database
+        function updateField(field, value) {
             const userId = firebase.auth().currentUser.uid; // Get current user ID
-            const updatedData = {
-                country: document.getElementById('country').value,
-                postalCode: document.getElementById('postalCode').value,
-                fruit: document.getElementById('fruit').value
-            };
+            const updatedData = {};
+            updatedData[field] = value;
 
             database.ref('users/' + userId).update(updatedData)
                 .then(() => {
-                    alert('Account information updated successfully!');
-                    displayAccountInfo(userId); // Refresh the displayed info
+                    console.log(`${field} updated to ${value}`);
                 })
                 .catch((error) => {
-                    console.error('Error updating user data:', error);
-                    alert('Failed to update account information.');
+                    console.error(`Error updating ${field}:`, error);
                 });
         }
 
