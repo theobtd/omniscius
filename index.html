@@ -22,18 +22,51 @@
             margin-top: 20px;
             font-size: 20px;
         }
+        #searchForm {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+        input[type="submit"] {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <h1>Current Weather and Forecast for Le Thor, France</h1>
+    <h1>Weather Data</h1>
+    <form id="searchForm" onsubmit="return false;">
+        <input type="text" id="postalCode" placeholder="Enter postal code (e.g., 84250)" required>
+        <input type="submit" value="Get Weather" onclick="getWeatherData()">
+    </form>
     <div id="weatherData">Loading weather data...</div>
 
     <script>
         const apiKey = '0d29cda32c62a77dc63c47f21f8dcbdf';
-        const lat = 43.925; // Latitude for Le Thor
-        const lon = 5.056; // Longitude for Le Thor
 
-        async function fetchWeatherData() {
+        // Mapping of French postal codes to latitude and longitude
+        const postalCodeMap = {
+            '84250': { lat: 43.925, lon: 5.056 },
+            '75001': { lat: 48.8669, lon: 2.3331 },
+            '69001': { lat: 45.764, lon: 4.8357 },
+            '33000': { lat: 44.8378, lon: -0.5792 },
+            // Add more postal codes as needed
+        };
+
+        async function getWeatherData() {
+            const postalCode = document.getElementById('postalCode').value;
+            const location = postalCodeMap[postalCode];
+
+            if (!location) {
+                document.getElementById('weatherData').innerText = 'Postal code not found.';
+                return;
+            }
+
+            const { lat, lon } = location;
             const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
             const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
@@ -81,8 +114,6 @@
                 document.getElementById('weatherData').innerText = 'Failed to load data.';
             }
         }
-
-        fetchWeatherData();
     </script>
 </body>
 </html>
