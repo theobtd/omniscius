@@ -10,16 +10,17 @@
     <style>
         body {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start; /* Change to flex-start for top alignment */
-            flex-direction: column;
-            height: 100vh;
+            justify-content: space-between; /* Space between elements */
+            align-items: center; /* Center items vertically */
+            flex-direction: column; /* Column layout */
+            height: 100vh; /* Full viewport height */
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
         h1 {
             color: #333;
+            text-align: center; /* Center the title */
         }
         button {
             padding: 10px 20px;
@@ -45,26 +46,33 @@
             margin: 20px 0;
             font-size: 18px;
             color: #333;
+            text-align: center; /* Center the account info */
         }
         select, input {
             margin: 5px 0;
             padding: 10px;
             width: 220px;
             font-size: 16px;
+            display: block; /* Ensure elements are block-level for centering */
+            margin-left: auto;
+            margin-right: auto; /* Center input and select elements */
         }
         .error {
             color: red;
             font-size: 14px;
             margin-top: 5px;
+            text-align: center; /* Center error messages */
         }
         #loading {
             display: none;
             margin-top: 20px;
             font-size: 18px;
             color: #007BFF;
+            text-align: center; /* Center loading indicator */
         }
         #logoutButton {
             margin-top: auto; /* Push the button to the bottom */
+            align-self: center; /* Center logout button */
         }
     </style>
 </head>
@@ -170,7 +178,7 @@
                 case 'France':
                 case 'Italy':
                 case 'New Zealand':
-                    isValid = /^\d{4}$/.test(postalCodeValue);
+                    isValid = /^\d{5}$/.test(postalCodeValue);
                     break;
                 case 'USA':
                     isValid = /^\d{5}$/.test(postalCodeValue);
