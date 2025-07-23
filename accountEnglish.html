@@ -57,7 +57,7 @@
     <h1>My Account</h1>
     <div id="editForm" style="display: none;">
         <label for="country">Country:</label>
-        <select id="country" onchange="updateField('country', this.value)">
+        <select id="country" onchange="handleCountryChange()">
             <option value="Australia">Australia</option>
             <option value="Canada">Canada</option>
             <option value="France">France</option>
@@ -117,30 +117,39 @@
             });
         }
 
-        // Function to validate postal code based on country
-        function validatePostalCode() {
-            const country = document.getElementById('country').value;
+        // Function to handle country change
+        function handleCountryChange() {
+            const newCountry = document.getElementById('country').value;
             const postalCode = document.getElementById('postalCode').value;
             const errorMessage = document.getElementById('postalCodeError');
-            let isValid = true;
 
-            // Clear previous error message
-            errorMessage.innerText = '';
+            // Validate postal code based on the new country format
+            if (!validatePostalCode(newCountry, postalCode)) {
+                errorMessage.innerText = "Wrong format! Data isn't saved.";
+            } else {
+                errorMessage.innerText = ''; // Clear error if valid
+                updateField('country', newCountry); // Update country in the database
+            }
+        }
+
+        // Function to validate postal code based on country
+        function validatePostalCode(country, postalCodeValue) {
+            let isValid = true;
 
             switch (country) {
                 case 'Australia':
-                    isValid = /^\d{4}$/.test(postalCode);
+                    isValid = /^\d{4}$/.test(postalCodeValue);
                     break;
                 case 'Canada':
-                    isValid = /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(postalCode);
+                    isValid = /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(postalCodeValue);
                     break;
                 case 'France':
                 case 'Italy':
                 case 'New Zealand':
-                    isValid = /^\d{5}$/.test(postalCode);
+                    isValid = /^\d{5}$/.test(postalCodeValue);
                     break;
                 case 'USA':
-                    isValid = /^\d{5}$/.test(postalCode);
+                    isValid = /^\d{5}$/.test(postalCodeValue);
                     break;
                 case 'UK':
                     // No specific format; always valid
@@ -150,11 +159,21 @@
                     isValid = false;
             }
 
-            if (!isValid) {
-                errorMessage.innerText = "Wrong format! Data isn't saved.";
-            } else {
-                updateField('postalCode', postalCode); // Update only if valid
+            if (isValid) {
+                updateField('postalCode', postalCodeValue); // Update only if valid
             }
+
+            return isValid;
+        }
+
+        // Function to validate postal code on input
+        function validatePostalCodeInput() {
+            const country = document.getElementById('country').value;
+            const postalCode = document.getElementById('postalCode').value;
+            const errorMessage = document.getElementById('postalCodeError');
+            let isValid = validatePostalCode(country, postalCode);
+
+            errorMessage.innerText = isValid ? '' : "Wrong format! Data isn't saved.";
         }
 
         // Function to update fields in the database
