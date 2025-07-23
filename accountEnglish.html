@@ -122,12 +122,14 @@
             const postalCode = document.getElementById('postalCode').value;
             const errorMessage = document.getElementById('postalCodeError');
 
+            // Update the country in the database regardless of postal code validity
+            updateField('country', newCountry);
+
             // Validate postal code based on the new country format
             if (!validatePostalCode(newCountry, postalCode)) {
                 errorMessage.innerText = "Wrong format! Data isn't saved.";
             } else {
                 errorMessage.innerText = ''; // Clear error if valid
-                updateField('country', newCountry); // Update country in the database
                 updateField('postalCode', postalCode); // Update postal code if valid
             }
         }
