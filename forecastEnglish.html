@@ -182,8 +182,8 @@
                 zeuzère: calculateZeuzereRisk(averageTemp, minTemp),
                 cochenilles: calculateCochenillesRisk(minTemp, maxTemp),
             };
-
-            let riskHtml = '<strong></strong><br>';
+        
+            let riskHtml = '';  // Initialize an empty string for the risk cards
             for (const category in riskLevels) {
                 const riskLevel = riskLevels[category].toLowerCase();
                 riskHtml += `
