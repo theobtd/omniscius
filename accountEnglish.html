@@ -105,14 +105,9 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    const accountInfo = `
-                        <strong>Postal Code:</strong> ${userData.postalCode}
-                    `;
-                    document.getElementById('accountInfo').innerHTML = accountInfo;
-
-                    // Populate select fields with existing data
-                    document.getElementById('country').value = userData.country;
+                    // Only display the postal code input field; removed static display
                     document.getElementById('postalCode').value = userData.postalCode;
+                    document.getElementById('country').value = userData.country;
                     document.getElementById('fruit').value = userData.fruit;
 
                     // Show the edit form
