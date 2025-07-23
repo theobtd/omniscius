@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
     <style>
         body {
             display: flex;
@@ -40,6 +43,20 @@
     <button id="dataButton" onclick="goToData()">Back to data</button>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
+            authDomain: "omniscius-7bf29.firebaseapp.com",
+            databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
+            projectId: "omniscius-7bf29",
+            storageBucket: "omniscius-7bf29.appspot.com",
+            messagingSenderId: "24281922885",
+            appId: "1:24281922885:web:example" // Replace with your actual app ID
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
         // Function to log out the user
         function logout() {
             firebase.auth().signOut().then(() => {
