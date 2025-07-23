@@ -48,32 +48,35 @@
     <script>
         const apiKey = '0d29cda32c62a77dc63c47f21f8dcbdf';
 
-        // Mapping of French postal codes to latitude and longitude
-        const postalCodeMap = {
-            '84250': { lat: 43.925, lon: 5.056 },
-            '75001': { lat: 48.8669, lon: 2.3331 },
-            '69001': { lat: 45.764, lon: 4.8357 },
-            '33000': { lat: 44.8378, lon: -0.5792 },
-            // Add more postal codes as needed
-        };
+        async function getCoordinates(postalCode) {
+            const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=France&format=json`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.length > 0) {
+                    return { lat: data[0].lat, lon: data[0].lon };
+                } else {
+                    throw new Error('Postal code not found.');
+                }
+            } catch (error) {
+                console.error('Error fetching coordinates:', error);
+                document.getElementById('weatherData').innerText = 'Failed to retrieve coordinates.';
+                throw error;
+            }
+        }
 
         async function getWeatherData() {
             const postalCode = document.getElementById('postalCode').value;
-            const location = postalCodeMap[postalCode];
-
-            if (!location) {
-                document.getElementById('weatherData').innerText = 'Postal code not found.';
-                return;
-            }
-
-            const { lat, lon } = location;
-            const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
             try {
+                const { lat, lon } = await getCoordinates(postalCode);
+                const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+                const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
                 const currentResponse = await fetch(currentWeatherUrl);
                 const currentData = await currentResponse.json();
-                
+
                 const temperature = currentData.main.temp;
                 const humidity = currentData.main.humidity;
                 const rain = currentData.rain ? currentData.rain['1h'] : 0;
@@ -111,7 +114,6 @@
                 `;
             } catch (error) {
                 console.error('Error fetching weather data:', error);
-                document.getElementById('weatherData').innerText = 'Failed to load data.';
             }
         }
     </script>
