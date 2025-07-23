@@ -32,28 +32,11 @@
             margin-top: 20px;
             font-size: 20px;
         }
-        #searchForm {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 200px;
-        }
-        input[type="submit"] {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
     <div id="userInfo">Loading user info...</div>
-    <h1>Weather Data</h1>
-    <form id="searchForm" onsubmit="return false;">
-        <input type="text" id="postalCode" placeholder="Enter postal code (e.g., 84250)" required>
-        <input type="submit" value="Get Weather" onclick="getWeatherData()">
-    </form>
+    <h1 id="header">Weather Data</h1>
     <div id="weatherData">Loading weather data...</div>
 
     <script>
@@ -83,6 +66,8 @@
                         Country: ${userData.country}<br>
                         Postal Code: ${userData.postalCode}
                     `;
+                    document.getElementById('header').innerText = `Weather Data for: ${userData.postalCode}`;
+                    getWeatherData(userData.postalCode); // Automatically fetch weather data
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
@@ -118,9 +103,7 @@
             }
         }
 
-        async function getWeatherData() {
-            const postalCode = document.getElementById('postalCode').value;
-
+        async function getWeatherData(postalCode) {
             try {
                 const { lat, lon } = await getCoordinates(postalCode);
                 const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=YOUR_API_KEY&units=metric`;
