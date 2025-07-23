@@ -41,7 +41,37 @@
         }
         #riskLevels {
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .riskCard {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            width: 150px;
+            text-align: center;
             font-size: 18px;
+            transition: transform 0.2s;
+        }
+        .riskCard:hover {
+            transform: scale(1.05);
+        }
+        .riskCard.low {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .riskCard.medium {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+        }
+        .riskCard.high {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
         }
     </style>
 </head>
@@ -58,7 +88,7 @@
             authDomain: "omniscius-7bf29.firebaseapp.com",
             databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
             projectId: "omniscius-7bf29",
-            storageBucket: "omniscius-7bf29.appspot.com",
+            storageBucket: "omniscius-7bf29",
             messagingSenderId: "24281922885",
             appId: "1:24281922885:web:example" // Replace with your actual app ID
         };
@@ -155,7 +185,13 @@
 
             let riskHtml = '<strong>Risk Levels:</strong><br>';
             for (const category in riskLevels) {
-                riskHtml += `${category.charAt(0).toUpperCase() + category.slice(1)}: ${riskLevels[category]}<br>`;
+                const riskLevel = riskLevels[category].toLowerCase();
+                riskHtml += `
+                    <div class="riskCard ${riskLevel}">
+                        <strong>${category.charAt(0).toUpperCase() + category.slice(1)}</strong><br>
+                        Risk Level: ${riskLevels[category]}
+                    </div>
+                `;
             }
             document.getElementById('riskLevels').innerHTML = riskHtml;
         }
