@@ -35,10 +35,16 @@
         button:hover {
             background-color: #0056b3;
         }
+        #accountInfo {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <h1>My Account</h1>
+    <div id="accountInfo">Loading account information...</div>
     <button id="logoutButton" onclick="logout()">Log out</button>
     <button id="dataButton" onclick="goToData()">Back to data</button>
 
@@ -57,6 +63,25 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
+        // Function to display account information
+        function displayAccountInfo(userId) {
+            database.ref('users/' + userId).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                if (userData) {
+                    const accountInfo = `
+                        <strong>Email:</strong> ${userData.email}<br>
+                        <strong>Country:</strong> ${userData.country}<br>
+                        <strong>Postal Code:</strong> ${userData.postalCode}<br>
+                        <strong>Fruit Category:</strong> ${userData.fruit}
+                    `;
+                    document.getElementById('accountInfo').innerHTML = accountInfo;
+                }
+            }).catch((error) => {
+                console.error('Error fetching user data:', error);
+                document.getElementById('accountInfo').innerText = 'Failed to load account information.';
+            });
+        }
+
         // Function to log out the user
         function logout() {
             firebase.auth().signOut().then(() => {
@@ -71,6 +96,16 @@
         function goToData() {
             window.location.href = 'forecastEnglish.html';
         }
+
+        // Check for current user and display their account information
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                displayAccountInfo(user.uid);
+            } else {
+                // Redirect to sign-in page if no user is signed in
+                window.location.href = 'index.html';
+            }
+        });
     </script>
 </body>
 </html>
