@@ -112,7 +112,7 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    document.getElementById('header').innerText = `Weather Data for: ${userData.postalCode}`;
+                    document.getElementById('header').innerText = userData.postalCode; // Keep only the postal code
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
                 }
             }).catch((error) => {
