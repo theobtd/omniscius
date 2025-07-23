@@ -40,11 +40,16 @@
             font-size: 18px;
             color: #333;
         }
-        select {
+        select, input {
             margin: 5px 0;
             padding: 10px;
             width: 220px;
             font-size: 16px;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -73,7 +78,8 @@
         </select><br>
 
         <label for="postalCode">Postal Code:</label>
-        <input type="text" id="postalCode" oninput="updateField('postalCode', this.value)" /><br>
+        <input type="text" id="postalCode" oninput="validatePostalCode()" /><br>
+        <span id="postalCodeError" class="error"></span>
     </div>
     <button id="logoutButton" onclick="logout()">Log out</button>
     <button id="dataButton" onclick="goToData()">Back to data</button>
@@ -116,6 +122,46 @@
                 console.error('Error fetching user data:', error);
                 document.getElementById('accountInfo').innerText = 'Failed to load account information.';
             });
+        }
+
+        // Function to validate postal code based on country
+        function validatePostalCode() {
+            const country = document.getElementById('country').value;
+            const postalCode = document.getElementById('postalCode').value;
+            const errorMessage = document.getElementById('postalCodeError');
+            let isValid = true;
+
+            // Clear previous error message
+            errorMessage.innerText = '';
+
+            switch (country) {
+                case 'Australia':
+                    isValid = /^\d{4}$/.test(postalCode);
+                    break;
+                case 'Canada':
+                    isValid = /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(postalCode);
+                    break;
+                case 'France':
+                case 'Italy':
+                case 'New Zealand':
+                    isValid = /^\d{5}$/.test(postalCode);
+                    break;
+                case 'USA':
+                    isValid = /^\d{5}$/.test(postalCode);
+                    break;
+                case 'UK':
+                    // No specific format; always valid
+                    isValid = true;
+                    break;
+                default:
+                    isValid = false;
+            }
+
+            if (!isValid) {
+                errorMessage.innerText = "Wrong format! Data isn't saved.";
+            } else {
+                updateField('postalCode', postalCode); // Update only if valid
+            }
         }
 
         // Function to update fields in the database
