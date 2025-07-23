@@ -51,10 +51,17 @@
             font-size: 14px;
             margin-top: 5px;
         }
+        #loading {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #007BFF;
+        }
     </style>
 </head>
 <body>
     <h1>My Account</h1>
+    <div id="loading">Loading account details...</div>
     <div id="editForm" style="display: none;">
         <label for="country">Country:</label>
         <select id="country" onchange="handleCountryChange()">
@@ -100,8 +107,12 @@
 
         // Function to display account information
         function displayAccountInfo(userId) {
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'block';
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
                 if (userData) {
                     document.getElementById('postalCode').value = userData.postalCode;
                     document.getElementById('country').value = userData.country;
@@ -111,6 +122,8 @@
                     document.getElementById('editForm').style.display = 'block';
                 }
             }).catch((error) => {
+                // Hide loading indicator on error
+                document.getElementById('loading').style.display = 'none';
                 console.error('Error fetching user data:', error);
                 document.getElementById('accountInfo').innerText = 'Failed to load account information.';
             });
