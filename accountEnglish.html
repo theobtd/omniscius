@@ -76,7 +76,7 @@
         </select><br>
 
         <label for="postalCode">Postal Code:</label>
-        <input type="text" id="postalCode" oninput="validatePostalCode()" /><br>
+        <input type="text" id="postalCode" oninput="validatePostalCodeInput()" /><br>
         <span id="postalCodeError" class="error"></span>
     </div>
     <button id="logoutButton" onclick="logout()">Log out</button>
@@ -159,10 +159,6 @@
                     isValid = false;
             }
 
-            if (isValid) {
-                updateField('postalCode', postalCodeValue); // Update only if valid
-            }
-
             return isValid;
         }
 
@@ -171,9 +167,14 @@
             const country = document.getElementById('country').value;
             const postalCode = document.getElementById('postalCode').value;
             const errorMessage = document.getElementById('postalCodeError');
-            let isValid = validatePostalCode(country, postalCode);
 
-            errorMessage.innerText = isValid ? '' : "Wrong format! Data isn't saved.";
+            // Validate postal code based on the current country
+            if (validatePostalCode(country, postalCode)) {
+                errorMessage.innerText = ''; // Clear error if valid
+                updateField('postalCode', postalCode); // Update only if valid
+            } else {
+                errorMessage.innerText = "Wrong format! Data isn't saved.";
+            }
         }
 
         // Function to update fields in the database
