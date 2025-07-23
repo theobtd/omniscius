@@ -11,7 +11,7 @@
         body {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Change to flex-start for top alignment */
             flex-direction: column;
             height: 100vh;
             margin: 0;
@@ -35,6 +35,12 @@
         button:hover {
             background-color: #0056b3;
         }
+        .red-button {
+            background-color: #dc3545; /* Red color */
+        }
+        .red-button:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
         #accountInfo {
             margin: 20px 0;
             font-size: 18px;
@@ -56,6 +62,9 @@
             margin-top: 20px;
             font-size: 18px;
             color: #007BFF;
+        }
+        #logoutButton {
+            margin-top: auto; /* Push the button to the bottom */
         }
     </style>
 </head>
@@ -86,8 +95,8 @@
         <input type="text" id="postalCode" oninput="validatePostalCodeInput()" /><br>
         <span id="postalCodeError" class="error"></span>
     </div>
-    <button id="logoutButton" onclick="logout()">Log out</button>
     <button id="dataButton" onclick="goToData()">Back to data</button>
+    <button id="logoutButton" class="red-button" onclick="logout()">Log out</button> <!-- Red button at the bottom -->
 
     <script>
         // Firebase configuration
