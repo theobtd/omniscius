@@ -112,7 +112,8 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    document.getElementById('header').innerText = userData.postalCode; // Keep only the postal code
+                    // Update header with postal code, country, and fruit category
+                    document.getElementById('header').innerText = `${userData.postalCode}, ${userData.country} - ${userData.fruit}`;
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
                 }
             }).catch((error) => {
