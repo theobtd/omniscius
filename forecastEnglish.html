@@ -208,30 +208,30 @@
             if (totalRain < 10 || averageTemp > 20) return 'Medium';
             return 'Low';
         }
-
-        function calculateCarpocapseRisk(tempMin5Days, humidity5Days, precip5Days, tempMax5Days, temp5Days) {
-            if (tempMin5Days <= 7.41) {
+        
+        function calculateCarpocapseRisk(minTemp, averageHumidity, totalRain, maxTemp, averageTemp) {
+            if (minTemp <= 7.41) {
                 return 'Normal'; // equivalent to 'medium'
-            } else if (tempMin5Days > 7.41) {
-                if (humidity5Days <= 41.92) {
+            } else if (minTemp > 7.41) {
+                if (averageHumidity <= 41.92) {
                     return 'Normal'; // equivalent to 'medium'
                 } else {
-                    if (humidity5Days <= 68.17) {
-                        if (precip5Days <= 14.09) {
-                            if (tempMax5Days <= 33.34) {
+                    if (averageHumidity <= 68.17) {
+                        if (totalRain <= 14.09) {
+                            if (maxTemp <= 33.34) {
                                 return 'High';
                             } else {
-                                if (temp5Days <= 25.36) {
-                                    if (humidity5Days <= 62.63) {
+                                if (averageTemp <= 25.36) {
+                                    if (averageHumidity <= 62.63) {
                                         return 'Normal'; // equivalent to 'medium'
                                     } else {
                                         return 'High';
                                     }
                                 } else {
-                                    if (tempMin5Days <= 19.68) {
+                                    if (minTemp <= 19.68) {
                                         return 'High';
                                     } else {
-                                        if (precip5Days <= 0.37) {
+                                        if (totalRain <= 0.37) {
                                             return 'Normal'; // equivalent to 'medium'
                                         } else {
                                             return 'High';
@@ -243,10 +243,10 @@
                             return 'Normal'; // equivalent to 'medium'
                         }
                     } else {
-                        if (humidity5Days <= 69.99) {
+                        if (averageHumidity <= 69.99) {
                             return 'Normal'; // equivalent to 'medium'
                         } else {
-                            if (precip5Days <= 38.83) {
+                            if (totalRain <= 38.83) {
                                 return 'High';
                             } else {
                                 return 'Normal'; // equivalent to 'medium'
