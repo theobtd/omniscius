@@ -183,11 +183,11 @@
 
         function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
             const riskLevels = {
-                tordeuseorientale: calculateTordeuseorientaleRisk(totalRain, averageTemp),
-                carpocapse: calculateCarpocapseRisk(minTemp, averageTemp),
-                acarienrouge: calculateAcarienrougeRisk(minTemp, maxTemp, totalRain),
-                tavelure: calculateTavelureRisk(averageTemp, minTemp),
-                feubacterien: calculateFeubacterienRisk(minTemp, maxTemp),
+                'Tordeuse Orientale': calculateTordeuseorientaleRisk(totalRain, averageTemp),
+                'Carpocapse': calculateCarpocapseRisk(minTemp, averageTemp),
+                'Acarien Rouge': calculateAcarienrougeRisk(minTemp, maxTemp, totalRain),
+                'Tavelure': calculateTavelureRisk(averageTemp, minTemp),
+                'Feu Bacterien': calculateFeubacterienRisk(minTemp, maxTemp),
             };
         
             let riskHtml = '';  // Initialize an empty string for the risk cards
