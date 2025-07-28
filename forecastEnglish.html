@@ -146,41 +146,36 @@
 
         async function getWeatherData(postalCode, country) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your actual OpenWeatherMap API key
-
+        
             try {
                 const { lat, lon } = await getCoordinates(postalCode, country);
-                const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-                const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-
-                // Fetch current weather data
-                const currentResponse = await fetch(currentWeatherUrl);
-                if (!currentResponse.ok) {
-                    throw new Error('Failed to fetch weather data');
-                }
-                const currentData = await currentResponse.json();
-
+                const forecastUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+        
                 // Fetch forecast data
                 const forecastResponse = await fetch(forecastUrl);
                 if (!forecastResponse.ok) {
                     throw new Error('Failed to fetch forecast data');
                 }
                 const forecastData = await forecastResponse.json();
-
+        
                 // Extract necessary data for risk calculations
-                const totalRain = forecastData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0);
-                const averageTemp = forecastData.list.reduce((acc, item) => acc + item.main.temp, 0) / forecastData.list.length;
-                const minTemp = Math.min(...forecastData.list.map(item => item.main.temp_min));
-                const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
-
-                // Calculate and display risk levels
-                displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp);
+                const totalRain = forecastData.daily.reduce((acc, item) => acc + (item.rain || 0), 0);
+                const averageTemp = forecastData.daily.reduce((acc, item) => acc + item.temp.day, 0) / forecastData.daily.length;
+                const minTemp = Math.min(...forecastData.daily.map(item => item.temp.min));
+                const maxTemp = Math.max(...forecastData.daily.map(item => item.temp.max));
+                
+                // Calculate average humidity
+                const averageHumidity = forecastData.daily.reduce((acc, item) => acc + item.humidity, 0) / forecastData.daily.length;
+        
+                // Call function to display risk levels with new parameters
+                displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity);
             } catch (error) {
                 console.error('Error fetching weather data:', error);
                 document.getElementById('weatherData').innerText = 'Failed to load weather data.';
             }
         }
 
-        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp) {
+        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
             const riskLevels = {
                 acariens: calculateAcariensRisk(totalRain, averageTemp),
                 carpocapse: calculateCarpocapseRisk(minTemp, averageTemp),
