@@ -183,11 +183,11 @@
 
         function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
             const riskLevels = {
-                acariens: calculateAcariensRisk(totalRain, averageTemp),
+                tordeuseorientale: calculateTordeuseorientaleRisk(totalRain, averageTemp),
                 carpocapse: calculateCarpocapseRisk(minTemp, averageTemp),
-                puceron: calculatePuceronRisk(minTemp, maxTemp, totalRain),
-                zeuzère: calculateZeuzereRisk(averageTemp, minTemp),
-                cochenilles: calculateCochenillesRisk(minTemp, maxTemp),
+                acarienrouge: calculateAcarienrougeRisk(minTemp, maxTemp, totalRain),
+                tavelure: calculateTavelureRisk(averageTemp, minTemp),
+                feubacterien: calculateFeubacterienRisk(minTemp, maxTemp),
             };
         
             let riskHtml = '';  // Initialize an empty string for the risk cards
@@ -203,7 +203,7 @@
             document.getElementById('riskLevels').innerHTML = riskHtml;
         }
 
-        function calculateAcariensRisk(totalRain, averageTemp) {
+        function calculateTordeuseorientaleRisk(totalRain, averageTemp) {
             if (totalRain < 10 && averageTemp > 20) return 'High';
             if (totalRain < 10 || averageTemp > 20) return 'Medium';
             return 'Low';
@@ -257,7 +257,7 @@
             }
         }
 
-        function calculatePuceronRisk(minTemp, maxTemp, totalRain) {
+        function calculateAcarienrougeRisk(minTemp, maxTemp, totalRain) {
             const conditionsMet = [
                 minTemp > 20,
                 maxTemp < 25,
@@ -269,7 +269,7 @@
             return 'Low';
         }
 
-        function calculateZeuzereRisk(averageTemp, minTemp) {
+        function calculateTavelureRisk(averageTemp, minTemp) {
             const conditionsMet = [
                 averageTemp > 22,
                 minTemp > 18,
@@ -280,7 +280,7 @@
             return 'Low';
         }
 
-        function calculateCochenillesRisk(minTemp, maxTemp) {
+        function calculateFeubacterienRisk(minTemp, maxTemp) {
             const conditionsMet = [
                 minTemp > 21,
                 maxTemp < 29,
