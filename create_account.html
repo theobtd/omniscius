@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #333;
+        }
+        input, select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            width: 200px;
+        }
+        #passwordToggle {
+            cursor: pointer;
+        }
+        #message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Account</h1>
+    <div id="message"></div>
+    
+    <form id="signupForm" onsubmit="return false;">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="email" id="confirmEmail" placeholder="Confirm Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <span id="passwordToggle">👁️</span>
+        <select id="fruit" required>
+            <option value="">Select a fruit</option>
+            <option value="apple">Apple</option>
+            <option value="pear">Pear</option>
+            <option value="grapes">Grapes</option>
+            <option value="strawberries">Strawberries</option>
+        </select>
+        <select id="country" required>
+            <option value="">Select a country</option>
+            <option value="Australia">Australia</option>
+            <option value="Canada">Canada</option>
+            <option value="France">France</option>
+            <option value="Italy">Italy</option>
+            <option value="New Zealand">New Zealand</option>
+            <option value="UK">UK</option>
+            <option value="USA">USA</option>
+        </select>
+        <input type="text" id="postalCode" placeholder="Postal Code" required>
+        <input type="submit" value="Create Account" onclick="createAccount()">
+    </form>
+
+    <p>Already have an account? <a href="index.html">Sign in here</a>.</p>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
+            authDomain: "omniscius-7bf29.firebaseapp.com",
+            databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
+            projectId: "omniscius-7bf29",
+            storageBucket: "omniscius-7bf29.appspot.com",
+            messagingSenderId: "24281922885",
+            appId: "1:24281922885:web:example" // Replace with your actual app ID
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Function to create account
+        async function createAccount() {
+            const email = document.getElementById('email').value;
+            const confirmEmail = document.getElementById('confirmEmail').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const fruit = document.getElementById('fruit').value;
+            const country = document.getElementById('country').value;
+            const postalCode = document.getElementById('postalCode').value;
+
+            if (email !== confirmEmail) {
+                document.getElementById('message').innerText = "Emails do not match.";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('message').innerText = "Passwords do not match.";
+                return;
+            }
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const userId = userCredential.user.uid;
+
+                // Store user data in the Realtime Database
+                await database.ref('users/' + userId).set({
+                    email: email,
+                    fruit: fruit,
+                    country: country,
+                    postalCode: postalCode
+                });
+
+                document.getElementById('message').innerText = "Account created successfully!";
+            } catch (error) {
+                document.getElementById('message').innerText = error.message;
+            }
+        }
+
+        // Toggle password visibility
+        document.getElementById('passwordToggle').onclick = function () {
+            const passwordFields = [document.getElementById('password'), document.getElementById('confirmPassword')];
+            passwordFields.forEach(field => {
+                field.type = (field.type === 'password') ? 'text' : 'password';
+            });
+        };
+    </script>
+</body>
+</html>
