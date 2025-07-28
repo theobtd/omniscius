@@ -209,10 +209,52 @@
             return 'Low';
         }
 
-        function calculateCarpocapseRisk(minTemp, averageTemp) {
-            if (minTemp > 16) return 'High';
-            if (minTemp <= 16 && averageTemp > 20) return 'Medium';
-            return 'Low';
+        function calculateCarpocapseRisk(tempMin5Days, humidity5Days, precip5Days, tempMax5Days, temp5Days) {
+            if (tempMin5Days <= 7.41) {
+                return 'Normal'; // equivalent to 'medium'
+            } else if (tempMin5Days > 7.41) {
+                if (humidity5Days <= 41.92) {
+                    return 'Normal'; // equivalent to 'medium'
+                } else {
+                    if (humidity5Days <= 68.17) {
+                        if (precip5Days <= 14.09) {
+                            if (tempMax5Days <= 33.34) {
+                                return 'High';
+                            } else {
+                                if (temp5Days <= 25.36) {
+                                    if (humidity5Days <= 62.63) {
+                                        return 'Normal'; // equivalent to 'medium'
+                                    } else {
+                                        return 'High';
+                                    }
+                                } else {
+                                    if (tempMin5Days <= 19.68) {
+                                        return 'High';
+                                    } else {
+                                        if (precip5Days <= 0.37) {
+                                            return 'Normal'; // equivalent to 'medium'
+                                        } else {
+                                            return 'High';
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            return 'Normal'; // equivalent to 'medium'
+                        }
+                    } else {
+                        if (humidity5Days <= 69.99) {
+                            return 'Normal'; // equivalent to 'medium'
+                        } else {
+                            if (precip5Days <= 38.83) {
+                                return 'High';
+                            } else {
+                                return 'Normal'; // equivalent to 'medium'
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         function calculatePuceronRisk(minTemp, maxTemp, totalRain) {
