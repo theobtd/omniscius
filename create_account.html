@@ -93,21 +93,21 @@
             const fruit = document.getElementById('fruit').value;
             const country = document.getElementById('country').value;
             const postalCode = document.getElementById('postalCode').value;
-
+        
             if (email !== confirmEmail) {
                 document.getElementById('message').innerText = "Emails do not match.";
                 return;
             }
-
+        
             if (password !== confirmPassword) {
                 document.getElementById('message').innerText = "Passwords do not match.";
                 return;
             }
-
+        
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const userId = userCredential.user.uid;
-
+        
                 // Store user data in the Realtime Database
                 await database.ref('users/' + userId).set({
                     email: email,
@@ -115,8 +115,11 @@
                     country: country,
                     postalCode: postalCode
                 });
-
+        
                 document.getElementById('message').innerText = "Account created successfully!";
+                
+                // Redirect to forecastEnglish.html
+                window.location.href = 'forecastEnglish.html';
             } catch (error) {
                 document.getElementById('message').innerText = error.message;
             }
