@@ -10,16 +10,23 @@
     <script src="https://js.stripe.com/v3/"></script>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh; /* Changed to 100vh */
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
-            padding: 20px; /* Added padding */
-            box-sizing: border-box; /* Include padding in height calculation */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+        .container {
+            width: 100%;
+            max-width: 400px; /* Optional: limit max width */
+            height: 80vh; /* Set height for the scrollable area */
+            overflow-y: auto; /* Enable vertical scrolling */
+            background-color: white; /* Background color for content area */
+            padding: 20px; /* Padding around content */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
         }
         h1 {
             color: #333;
@@ -28,8 +35,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%; /* Ensure form takes full width */
-            max-width: 400px; /* Optional: limit max width */
         }
         input, select {
             padding: 10px;
@@ -76,68 +81,68 @@
         .subscription-info {
             margin-bottom: 20px;
             text-align: center;
-            max-width: 400px; /* Optional: limit max width */
         }
     </style>
 </head>
 <body>
-    <h1>Créer un compte</h1>
-    
-    <div class="subscription-info">
-        <p>Abonnement : 8 euros par mois, payé annuellement (96 euros par an).</p>
-        <p>Ce service vous permet de recevoir des prévisions de nuisibles pour les pommes, les poires, les tomates et la laitue.</p>
-        <p>Vous bénéficiez de 7 jours gratuits, après quoi votre compte sera verrouillé si vous n'avez pas payé.</p>
-    </div>
-    
-    <div id="message"></div>
-    
-    <form id="signupForm" onsubmit="return false;">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="email" id="confirmEmail" placeholder="Confirmer l'email" required>
-        <input type="password" id="password" placeholder="Mot de passe" required>
-        <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
-        <span id="passwordToggle">👁️</span>
-        <select id="fruit" required>
-            <option value="">Sélectionnez un fruit</option>
-            <option value="apple">Pommes</option>
-            <option value="tomato">Poires</option>
-            <option value="lettuce">Tomates</option>
-            <option value="lettuce">Laitue</option>
-        </select>
-        <select id="country" required>
-            <option value="">Sélectionnez un pays</option>
-            <option value="Australia">Australie</option>
-            <option value="Canada">Canada</option>
-            <option value="France">France</option>
-            <option value="Italy">Italie</option>
-            <option value="New Zealand">Nouvelle-Zélande</option>
-            <option value="UK">Royaume-Uni</option>
-            <option value="USA">États-Unis</option>
-        </select>
-        <input type="text" id="postalCode" placeholder="Code postal" required>
-        <input type="email" id="emailFacturation" placeholder="Email de facturation (si différent)">
-        <input type="text" id="discountCode" placeholder="Code de réduction">
-        <input type="submit" value="Créer un compte" onclick="createAccount()">
-    </form>
-
-    <p>Vous avez déjà un compte ? <a href="index.html">Connectez-vous ici</a>.</p>
-
-    <div id="loadingModal" class="modal">
-        <div class="modal-content">
-            <div class="loader"></div>
-            <p>Traitement de votre demande...</p>
+    <div class="container">
+        <h1>Créer un compte</h1>
+        
+        <div class="subscription-info">
+            <p>Abonnement : 8 euros par mois, payé annuellement (96 euros par an).</p>
+            <p>Ce service vous permet de recevoir des prévisions de nuisibles pour les pommes, les poires, les tomates et la laitue.</p>
+            <p>Vous bénéficiez de 7 jours gratuits, après quoi votre compte sera verrouillé si vous n'avez pas payé.</p>
         </div>
-    </div>
+        
+        <div id="message"></div>
+        
+        <form id="signupForm" onsubmit="return false;">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="email" id="confirmEmail" placeholder="Confirmer l'email" required>
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
+            <span id="passwordToggle">👁️</span>
+            <select id="fruit" required>
+                <option value="">Sélectionnez un fruit</option>
+                <option value="apple">Pommes</option>
+                <option value="tomato">Poires</option>
+                <option value="lettuce">Tomates</option>
+                <option value="lettuce">Laitue</option>
+            </select>
+            <select id="country" required>
+                <option value="">Sélectionnez un pays</option>
+                <option value="Australia">Australie</option>
+                <option value="Canada">Canada</option>
+                <option value="France">France</option>
+                <option value="Italy">Italie</option>
+                <option value="New Zealand">Nouvelle-Zélande</option>
+                <option value="UK">Royaume-Uni</option>
+                <option value="USA">États-Unis</option>
+            </select>
+            <input type="text" id="postalCode" placeholder="Code postal" required>
+            <input type="email" id="emailFacturation" placeholder="Email de facturation (si différent)">
+            <input type="text" id="discountCode" placeholder="Code de réduction">
+            <input type="submit" value="Créer un compte" onclick="createAccount()">
+        </form>
 
-    <div id="summaryModal" class="modal">
-        <div class="modal-content">
-            <h2>Résumé de votre Abonnement</h2>
-            <p>Vous êtes sur le point de souscrire à l'abonnement Omniscius.</p>
-            <p><strong>Coût : 8 euros par mois (96 euros par an)</strong></p>
-            <p>Vous recevrez une facture à payer dans les 7 jours pour conserver l'accès au service.</p>
-            <p>Si un code de réduction a été renseigné, celui-ci sera appliqué sur la facture que vous recevrez.</p>
-            <button onclick="confirmSubscription()">Confirmer l'abonnement</button>
-            <button onclick="closeSummary()">Annuler</button>
+        <p>Vous avez déjà un compte ? <a href="index.html">Connectez-vous ici</a>.</p>
+
+        <div id="loadingModal" class="modal">
+            <div class="modal-content">
+                <div class="loader"></div>
+                <p>Traitement de votre demande...</p>
+            </div>
+        </div>
+
+        <div id="summaryModal" class="modal">
+            <div class="modal-content">
+                <h2>Résumé de votre Abonnement</h2>
+                <p>Vous êtes sur le point de souscrire à l'abonnement Omniscius.</p>
+                <p><strong>Coût : 8 euros par mois (96 euros par an)</strong></p>
+                <p>Vous recevrez une facture à payer dans les 7 jours pour conserver l'accès au service.</p>
+                <button onclick="confirmSubscription()">Confirmer l'abonnement</button>
+                <button onclick="closeSummary()">Annuler</button>
+            </div>
         </div>
     </div>
 
