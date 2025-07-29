@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppression de Compte</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+            margin: 10px 0;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .cancel-button {
+            background-color: #dc3545; /* Red color */
+        }
+        .cancel-button:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Suppression de Compte</h1>
+    <p>Si vous supprimez votre compte, vous perdrez immédiatement l'accès au service.</p>
+    <p>Si vous supprimez votre compte en cours de période de souscription, vous ne serez pas remboursé.</p>
+    <p>Si vous supprimez votre compte, toutes vos données seront immédiatement et définitivement effacées.</p>
+    
+    <label for="feedback">Pourquoi annulez-vous votre souscription ? Que pourrions-nous améliorer ?</label>
+    <textarea id="feedback" placeholder="Votre retour..."></textarea>
+    
+    <button id="confirmButton">Confirmer</button>
+    <button class="cancel-button" onclick="goBack()">Annuler</button>
+
+    <script>
+        function goBack() {
+            window.location.href = 'forecastEnglish.html'; // Redirect back to account page
+        }
+    </script>
+</body>
+</html>
