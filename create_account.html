@@ -125,6 +125,17 @@
         </div>
     </div>
 
+    <div id="summaryModal" class="modal">
+        <div class="modal-content">
+            <h2>Résumé de votre Abonnement</h2>
+            <p>Vous êtes sur le point de souscrire à l'abonnement Omniscius.</p>
+            <p><strong>Coût : 8 euros par mois (96 euros par an)</strong></p>
+            <p>Vous recevrez une facture à payer dans les 7 jours pour conserver l'accès au service.</p>
+            <button onclick="confirmSubscription()">Confirmer l'abonnement</button>
+            <button onclick="closeSummary()">Annuler</button>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
@@ -150,40 +161,62 @@
             const postalCode = document.getElementById('postalCode').value;
             const discountCode = document.getElementById('discountCode').value;
             const emailFacturation = document.getElementById('emailFacturation').value;
-
+        
             if (email !== confirmEmail) {
                 document.getElementById('message').innerText = "Les emails ne correspondent pas.";
                 return;
             }
-
+        
             if (password !== confirmPassword) {
                 document.getElementById('message').innerText = "Les mots de passe ne correspondent pas.";
                 return;
             }
-
+        
+            // Show the summary modal instead of processing immediately
+            document.getElementById('summaryModal').style.display = 'flex';
+        }
+        
+        function confirmSubscription() {
             document.getElementById('loadingModal').style.display = 'flex';
-
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const userId = userCredential.user.uid;
-
-                await database.ref('users/' + userId).set({
-                    email: email,
-                    fruit: fruit,
-                    country: country,
-                    postalCode: postalCode,
-                    discountCode: discountCode,
-                    emailFacturation: emailFacturation
+        
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fruit = document.getElementById('fruit').value;
+            const country = document.getElementById('country').value;
+            const postalCode = document.getElementById('postalCode').value;
+            const discountCode = document.getElementById('discountCode').value;
+            const emailFacturation = document.getElementById('emailFacturation').value;
+        
+            // Proceed with account creation
+            auth.createUserWithEmailAndPassword(email, password)
+                .then(async (userCredential) => {
+                    const userId = userCredential.user.uid;
+        
+                    await database.ref('users/' + userId).set({
+                        email: email,
+                        fruit: fruit,
+                        country: country,
+                        postalCode: postalCode,
+                        discountCode: discountCode,
+                        emailFacturation: emailFacturation
+                    });
+        
+                    document.getElementById('message').innerText = "Compte créé avec succès!";
+                    window.location.href = 'forecastEnglish.html';
+                })
+                .catch((error) => {
+                    document.getElementById('message').innerText = error.message;
+                })
+                .finally(() => {
+                    document.getElementById('loadingModal').style.display = 'none';
                 });
-
-                document.getElementById('message').innerText = "Compte créé avec succès!";
-                
-                window.location.href = 'forecastEnglish.html';
-            } catch (error) {
-                document.getElementById('message').innerText = error.message;
-            } finally {
-                document.getElementById('loadingModal').style.display = 'none';
-            }
+            
+            // Close the summary modal
+            closeSummary();
+        }
+        
+        function closeSummary() {
+            document.getElementById('summaryModal').style.display = 'none';
         }
 
         document.getElementById('passwordToggle').onclick = function () {
