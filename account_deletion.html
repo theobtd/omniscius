@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suppression de Compte</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
     <style>
         body {
             display: flex;
@@ -65,10 +67,52 @@
     <label for="feedback">Pourquoi annulez-vous votre souscription ? Que pourrions-nous améliorer ?</label>
     <textarea id="feedback" placeholder="Votre retour..."></textarea>
     
-    <button id="confirmButton">Confirmer</button>
+    <button id="confirmButton" onclick="submitFeedback()">Confirmer</button>
     <button class="cancel-button" onclick="goBack()">Annuler</button>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
+            authDomain: "omniscius-7bf29.firebaseapp.com",
+            databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
+            projectId: "omniscius-7bf29",
+            storageBucket: "omniscius-7bf29.appspot.com",
+            messagingSenderId: "24281922885",
+            appId: "1:24281922885:web:5d417050ef79e22e6b522c" // Replace with your actual app ID
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database(); // Initialize the database reference
+
+        // Function to submit feedback
+        function submitFeedback() {
+            const feedback = document.getElementById('feedback').value;
+
+            if (feedback.trim() === "") {
+                alert("Veuillez fournir un retour avant de confirmer."); // Alert if feedback is empty
+                return;
+            }
+
+            // Get a reference to the "Feedback" branch
+            const feedbackRef = database.ref('Feedback');
+
+            // Push the feedback to the database
+            feedbackRef.push({
+                feedback: feedback,
+                timestamp: new Date().toISOString() // Optional: save timestamp
+            }).then(() => {
+                alert("Merci pour votre retour ! Votre compte va maintenant être supprimé.");
+                // Redirect to the appropriate page after feedback submission or account deletion
+                // window.location.href = 'forecastEnglish.html'; // Uncomment this when ready for account deletion
+            }).catch((error) => {
+                console.error('Error saving feedback:', error);
+                alert("Une erreur est survenue lors de l'envoi de votre retour.");
+            });
+        }
+
+        // Function to navigate back to the account page
         function goBack() {
             window.location.href = 'forecastEnglish.html'; // Redirect back to account page
         }
