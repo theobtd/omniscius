@@ -69,44 +69,57 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .subscription-info {
+            margin-bottom: 20px;
+            text-align: center;
+            max-width: 400px; /* Optional: limit max width */
+        }
     </style>
 </head>
 <body>
-    <h1>Create Account</h1>
+    <h1>Créer un compte</h1>
+    
+    <div class="subscription-info">
+        <p>Abonnement : 8 euros par mois, payé annuellement (96 euros par an).</p>
+        <p>Ce service vous permet de recevoir des prévisions de nuisibles pour les pommes, les poires, les tomates et la laitue.</p>
+        <p>Vous bénéficiez de 7 jours gratuits, après quoi votre compte sera verrouillé si vous n'avez pas payé.</p>
+    </div>
+    
     <div id="message"></div>
     
     <form id="signupForm" onsubmit="return false;">
         <input type="email" id="email" placeholder="Email" required>
-        <input type="email" id="confirmEmail" placeholder="Confirm Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <input type="email" id="confirmEmail" placeholder="Confirmer l'email" required>
+        <input type="password" id="password" placeholder="Mot de passe" required>
+        <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
         <span id="passwordToggle">👁️</span>
         <select id="fruit" required>
-            <option value="">Select a fruit</option>
-            <option value="apple">Apple</option>
-            <option value="tomato">Pear</option>
-            <option value="lettuce">Grapes</option>
+            <option value="">Sélectionnez un fruit</option>
+            <option value="apple">Pommes</option>
+            <option value="tomato">Poires</option>
+            <option value="lettuce">Tomates</option>
+            <option value="lettuce">Laitue</option>
         </select>
         <select id="country" required>
-            <option value="">Select a country</option>
-            <option value="Australia">Australia</option>
+            <option value="">Sélectionnez un pays</option>
+            <option value="Australia">Australie</option>
             <option value="Canada">Canada</option>
             <option value="France">France</option>
-            <option value="Italy">Italy</option>
-            <option value="New Zealand">New Zealand</option>
-            <option value="UK">UK</option>
-            <option value="USA">USA</option>
+            <option value="Italy">Italie</option>
+            <option value="New Zealand">Nouvelle-Zélande</option>
+            <option value="UK">Royaume-Uni</option>
+            <option value="USA">États-Unis</option>
         </select>
-        <input type="text" id="postalCode" placeholder="Postal Code" required>
-        <input type="submit" value="Create Account" onclick="createAccount()">
+        <input type="text" id="postalCode" placeholder="Code postal" required>
+        <input type="submit" value="Créer un compte" onclick="createAccount()">
     </form>
 
-    <p>Already have an account? <a href="index.html">Sign in here</a>.</p>
+    <p>Vous avez déjà un compte ? <a href="index.html">Connectez-vous ici</a>.</p>
 
     <div id="loadingModal" class="modal">
         <div class="modal-content">
             <div class="loader"></div>
-            <p>Processing your request...</p>
+            <p>Traitement de votre demande...</p>
         </div>
     </div>
 
@@ -135,12 +148,12 @@
             const postalCode = document.getElementById('postalCode').value;
 
             if (email !== confirmEmail) {
-                document.getElementById('message').innerText = "Emails do not match.";
+                document.getElementById('message').innerText = "Les emails ne correspondent pas.";
                 return;
             }
 
             if (password !== confirmPassword) {
-                document.getElementById('message').innerText = "Passwords do not match.";
+                document.getElementById('message').innerText = "Les mots de passe ne correspondent pas.";
                 return;
             }
 
@@ -157,7 +170,7 @@
                     postalCode: postalCode
                 });
 
-                document.getElementById('message').innerText = "Account created successfully!";
+                document.getElementById('message').innerText = "Compte créé avec succès!";
                 
                 window.location.href = 'forecastEnglish.html';
             } catch (error) {
