@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Suppression de Compte</title>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
     <style>
         body {
             display: flex;
@@ -86,8 +86,9 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database(); // Initialize the database reference
+        const auth = firebase.auth(); // Initialize Firebase Authentication
 
-        // Function to submit feedback and delete account
+        // Function to submit feedback and create a deletion request
         function submitFeedback() {
             const feedback = document.getElementById('feedback').value;
 
@@ -96,33 +97,31 @@
                 return;
             }
 
-            // Get a reference to the "Feedback" branch
-            const feedbackRef = database.ref('Feedback');
+            // Get the current user's UID
+            const userId = auth.currentUser.uid;
 
-            // Push the feedback to the database
+            // Create a feedback record in the "Feedback" branch
+            const feedbackRef = database.ref('Feedback');
             feedbackRef.push({
                 feedback: feedback,
                 timestamp: new Date().toISOString() // Optional: save timestamp
             }).then(() => {
-                if (confirm("Merci pour votre retour ! Voulez-vous vraiment supprimer votre compte ?")) {
-                    deleteAccount(); // Call delete account function
-                }
+                // Create a deletion request in the "DeletionRequests" branch
+                const deletionRequestRef = database.ref('DeletionRequests');
+                deletionRequestRef.push({
+                    userId: userId,
+                    timestamp: new Date().toISOString() // Optional: save timestamp
+                }).then(() => {
+                    // Show confirmation message
+                    alert("Votre compte sera supprimé dans les 48 heures. Vous recevrez un email de confirmation lorsque cela sera effectué.");
+                    window.location.href = 'index.html'; // Redirect back to the main page
+                }).catch((error) => {
+                    console.error('Error saving deletion request:', error);
+                    alert("Une erreur est survenue lors de la demande de suppression.");
+                });
             }).catch((error) => {
                 console.error('Error saving feedback:', error);
                 alert("Une erreur est survenue lors de l'envoi de votre retour.");
-            });
-        }
-
-        // Function to delete the user's account
-        function deleteAccount() {
-            const user = firebase.auth().currentUser; // Get current user
-
-            user.delete().then(() => {
-                alert("Votre compte a été supprimé avec succès.");
-                window.location.href = 'index.html'; // Redirect to login page or home
-            }).catch((error) => {
-                console.error('Error deleting account:', error);
-                alert("Une erreur est survenue lors de la suppression de votre compte.");
             });
         }
 
