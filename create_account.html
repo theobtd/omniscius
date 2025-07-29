@@ -111,6 +111,7 @@
             <option value="USA">États-Unis</option>
         </select>
         <input type="text" id="postalCode" placeholder="Code postal" required>
+        <input type="email" id="emailFacturation" placeholder="Email de facturation (si different)" required>
         <input type="text" id="discountCode" placeholder="Code de réduction" required>
         <input type="submit" value="Créer un compte" onclick="createAccount()">
     </form>
@@ -148,6 +149,7 @@
             const country = document.getElementById('country').value;
             const postalCode = document.getElementById('postalCode').value;
             const discountCode = document.getElementById('discountCode').value;
+            const emailFacturation = document.getElementById('emailFacturation').value;
 
             if (email !== confirmEmail) {
                 document.getElementById('message').innerText = "Les emails ne correspondent pas.";
@@ -170,7 +172,8 @@
                     fruit: fruit,
                     country: country,
                     postalCode: postalCode,
-                    discountCode: discountCode
+                    discountCode: discountCode,
+                    emailFacturation: emailFacturation
                 });
 
                 document.getElementById('message').innerText = "Compte créé avec succès!";
