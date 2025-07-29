@@ -14,10 +14,12 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            height: 90vh;
+            height: 100vh; /* Changed to 100vh */
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
+            padding: 20px; /* Added padding */
+            box-sizing: border-box; /* Include padding in height calculation */
         }
         h1 {
             color: #333;
@@ -26,6 +28,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%; /* Ensure form takes full width */
+            max-width: 400px; /* Optional: limit max width */
         }
         input, select {
             padding: 10px;
@@ -111,7 +115,7 @@
             <option value="USA">États-Unis</option>
         </select>
         <input type="text" id="postalCode" placeholder="Code postal" required>
-        <input type="email" id="emailFacturation" placeholder="Email de facturation (si different)">
+        <input type="email" id="emailFacturation" placeholder="Email de facturation (si différent)">
         <input type="text" id="discountCode" placeholder="Code de réduction">
         <input type="submit" value="Créer un compte" onclick="createAccount()">
     </form>
@@ -131,6 +135,7 @@
             <p>Vous êtes sur le point de souscrire à l'abonnement Omniscius.</p>
             <p><strong>Coût : 8 euros par mois (96 euros par an)</strong></p>
             <p>Vous recevrez une facture à payer dans les 7 jours pour conserver l'accès au service.</p>
+            <p>Si un code de réduction a été renseigné, celui-ci sera appliqué sur la facture que vous recevrez.</p>
             <button onclick="confirmSubscription()">Confirmer l'abonnement</button>
             <button onclick="closeSummary()">Annuler</button>
         </div>
