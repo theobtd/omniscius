@@ -103,7 +103,7 @@
         <span id="postalCodeError" class="error"></span>
     </div>
     <button id="dataButton" onclick="goToData()">Back to data</button>
-    <button id="cancelMembershipButton" class="red-button" onclick="cancelMembership()">Cancel Membership</button> <!-- New button -->
+    <button id="cancelMembershipButton" class="red-button" onclick="cancelMembership()">Cancel Membership</button> <!-- Updated button -->
     <button id="logoutButton" class="red-button" onclick="logout()">Log out</button> <!-- Red button at the bottom -->
 
     <script>
@@ -238,9 +238,9 @@
             window.location.href = 'forecastEnglish.html';
         }
 
-        // Function for the cancel membership button (no functionality yet)
+        // Function for the cancel membership button
         function cancelMembership() {
-            alert("This feature is not yet implemented.");
+            window.location.href = 'account_deletion.html'; // Redirect to account_deletion page
         }
 
         // Check for current user and display their account information
