@@ -30,14 +30,44 @@
         input, select {
             padding: 10px;
             font-size: 16px;
-            margin: 10px 0; /* Only vertical margin */
-            width: 100%; /* Full width */
+            margin: 10px 0;
+            width: 100%;
         }
         #passwordToggle {
             cursor: pointer;
         }
         #message {
             color: red;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -46,13 +76,17 @@
     <div id="message"></div>
     
     <form id="signupForm" onsubmit="return false;">
-        <input type="text" id="CoName" placeholder="Company Name" required>
-        <input type="text" id="FirstLastName" placeholder="Your full name" required>
         <input type="email" id="email" placeholder="Email" required>
         <input type="email" id="confirmEmail" placeholder="Confirm Email" required>
         <input type="password" id="password" placeholder="Password" required>
         <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
         <span id="passwordToggle">👁️</span>
+        <select id="fruit" required>
+            <option value="">Select a fruit</option>
+            <option value="apple">Apple</option>
+            <option value="tomato">Pear</option>
+            <option value="lettuce">Grapes</option>
+        </select>
         <select id="country" required>
             <option value="">Select a country</option>
             <option value="Australia">Australia</option>
@@ -63,21 +97,20 @@
             <option value="UK">UK</option>
             <option value="USA">USA</option>
         </select>
-        <input type="text" id="address" placeholder="Address" required>
         <input type="text" id="postalCode" placeholder="Postal Code" required>
-        <select id="fruit" required>
-            <option value="">Select a fruit</option>
-            <option value="apple">Apple</option>
-            <option value="tomato">Pear</option>
-            <option value="lettuce">Grapes</option>
-        </select>
         <input type="submit" value="Create Account" onclick="createAccount()">
     </form>
 
     <p>Already have an account? <a href="index.html">Sign in here</a>.</p>
 
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
     <script>
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
             authDomain: "omniscius-7bf29.firebaseapp.com",
@@ -85,15 +118,13 @@
             projectId: "omniscius-7bf29",
             storageBucket: "omniscius-7bf29.appspot.com",
             messagingSenderId: "24281922885",
-            appId: "1:24281922885:web:example" // Replace with your actual app ID
+            appId: "1:24281922885:web:example"
         };
 
-        // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // Function to create account
         async function createAccount() {
             const email = document.getElementById('email').value;
             const confirmEmail = document.getElementById('confirmEmail').value;
@@ -102,44 +133,40 @@
             const fruit = document.getElementById('fruit').value;
             const country = document.getElementById('country').value;
             const postalCode = document.getElementById('postalCode').value;
-            const address = document.getElementById('address').value;
-            const CoName = document.getElementById('CoName').value;
-            const FirstLastName = document.getElementById('FirstLastName').value;
-        
+
             if (email !== confirmEmail) {
                 document.getElementById('message').innerText = "Emails do not match.";
                 return;
             }
-        
+
             if (password !== confirmPassword) {
                 document.getElementById('message').innerText = "Passwords do not match.";
                 return;
             }
-        
+
+            document.getElementById('loadingModal').style.display = 'flex';
+
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const userId = userCredential.user.uid;
-        
-                // Store user data in the Realtime Database
+
                 await database.ref('users/' + userId).set({
                     email: email,
                     fruit: fruit,
                     country: country,
-                    postalCode: postalCode,
-                    CoName: CoName,
-                    FirstLastName: FirstLastName
+                    postalCode: postalCode
                 });
-        
+
                 document.getElementById('message').innerText = "Account created successfully!";
                 
-                // Redirect to forecastEnglish.html
                 window.location.href = 'forecastEnglish.html';
             } catch (error) {
                 document.getElementById('message').innerText = error.message;
+            } finally {
+                document.getElementById('loadingModal').style.display = 'none';
             }
         }
 
-        // Toggle password visibility
         document.getElementById('passwordToggle').onclick = function () {
             const passwordFields = [document.getElementById('password'), document.getElementById('confirmPassword')];
             passwordFields.forEach(field => {
