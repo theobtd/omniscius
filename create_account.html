@@ -46,17 +46,13 @@
     <div id="message"></div>
     
     <form id="signupForm" onsubmit="return false;">
+        <input type="text" id="CoName" placeholder="Company Name" required>
+        <input type="text" id="FirstLastName" placeholder="Your full name" required>
         <input type="email" id="email" placeholder="Email" required>
         <input type="email" id="confirmEmail" placeholder="Confirm Email" required>
         <input type="password" id="password" placeholder="Password" required>
         <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
         <span id="passwordToggle">👁️</span>
-        <select id="fruit" required>
-            <option value="">Select a fruit</option>
-            <option value="apple">Apple</option>
-            <option value="tomato">Pear</option>
-            <option value="lettuce">Grapes</option>
-        </select>
         <select id="country" required>
             <option value="">Select a country</option>
             <option value="Australia">Australia</option>
@@ -67,7 +63,14 @@
             <option value="UK">UK</option>
             <option value="USA">USA</option>
         </select>
+        <input type="text" id="address" placeholder="Address" required>
         <input type="text" id="postalCode" placeholder="Postal Code" required>
+        <select id="fruit" required>
+            <option value="">Select a fruit</option>
+            <option value="apple">Apple</option>
+            <option value="tomato">Pear</option>
+            <option value="lettuce">Grapes</option>
+        </select>
         <input type="submit" value="Create Account" onclick="createAccount()">
     </form>
 
@@ -99,6 +102,9 @@
             const fruit = document.getElementById('fruit').value;
             const country = document.getElementById('country').value;
             const postalCode = document.getElementById('postalCode').value;
+            const address = document.getElementById('address').value;
+            const CoName = document.getElementById('CoName').value;
+            const FirstLastName = document.getElementById('FirstLastName').value;
         
             if (email !== confirmEmail) {
                 document.getElementById('message').innerText = "Emails do not match.";
@@ -119,7 +125,9 @@
                     email: email,
                     fruit: fruit,
                     country: country,
-                    postalCode: postalCode
+                    postalCode: postalCode,
+                    CoName: CoName,
+                    FirstLastName: FirstLastName
                 });
         
                 document.getElementById('message').innerText = "Account created successfully!";
