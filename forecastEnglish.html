@@ -347,15 +347,92 @@
             return 'Low';
         }
 
-        function calculateTavelureRisk(averageTemp, minTemp) {
-            const conditionsMet = [
-                averageTemp > 22,
-                minTemp > 18,
-            ].filter(Boolean).length;
-
-            if (conditionsMet === 2) return 'High';
-            if (conditionsMet === 1) return 'Medium';
-            return 'Low';
+        function calculateTavelureRisk(tempmin, tempmax, averageTemp, averageHumidity, totalRain) {
+            if (tempmin <= 6.39) {
+                if (averageTemp <= 9.15) {
+                    if (averageHumidity <= 57.64) {
+                        return 'High'; // class: high
+                    } else {
+                        if (averageTemp <= 8.47) {
+                            return 'Normal'; // class: normal
+                        } else {
+                            if (totalRain <= 20.58) {
+                                return 'High'; // class: high
+                            } else {
+                                return 'Normal'; // class: normal
+                            }
+                        }
+                    }
+                } else {
+                    if (totalRain <= 6.38) {
+                        return 'High'; // class: high
+                    } else {
+                        if (totalRain <= 8.33) {
+                            return 'Normal'; // class: normal
+                        } else {
+                            if (tempmin <= 2.96) {
+                                return 'Normal'; // class: normal
+                            } else {
+                                if (tempmin <= 5.86) {
+                                    if (averageHumidity <= 72.90) {
+                                        if (averageHumidity <= 70.53) {
+                                            return 'High'; // class: high
+                                        } else {
+                                            return 'Normal'; // class: normal
+                                        }
+                                    } else {
+                                        return 'High'; // class: high
+                                    }
+                                } else {
+                                    if (averageHumidity <= 68.69) {
+                                        return 'High'; // class: high
+                                    } else {
+                                        return 'Normal'; // class: normal
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (tempmax <= 25.58) {
+                    if (averageTemp <= 17.01) {
+                        if (tempmax <= 25.27) {
+                            if (averageHumidity <= 59.98) {
+                                return 'High'; // class: high
+                            } else {
+                                if (totalRain <= 26.83) {
+                                    return 'Normal'; // class: normal
+                                } else {
+                                    if (totalRain <= 27.78) {
+                                        return 'High'; // class: high
+                                    } else {
+                                        return 'Normal'; // class: normal
+                                    }
+                                }
+                            }
+                        } else {
+                            return 'High'; // class: high
+                        }
+                    } else {
+                        return 'High'; // class: high
+                    }
+                } else {
+                    if (averageHumidity <= 79.35) {
+                        if (averageTemp <= 17.20) {
+                            if (averageTemp <= 16.73) {
+                                return 'Normal'; // class: normal
+                            } else {
+                                return 'High'; // class: high
+                            }
+                        } else {
+                            return 'Normal'; // class: normal
+                        }
+                    } else {
+                        return 'High'; // class: high
+                    }
+                }
+            }
         }
 
         function calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain) {
