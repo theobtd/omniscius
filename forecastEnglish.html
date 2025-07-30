@@ -280,15 +280,57 @@
             return 'Low';
         }
 
-        function calculateFeubacterienRisk(minTemp, maxTemp) {
-            const conditionsMet = [
-                minTemp > 21,
-                maxTemp < 29,
-            ].filter(Boolean).length;
-
-            if (conditionsMet === 2) return 'Low';
-            if (conditionsMet === 1) return 'Medium';
-            return 'High';
+        function calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain) {
+            // Decision tree logic based on your model's output
+            if (averageTemp <= 18.97) {
+                if (averageHumidity <= 81.26) {
+                    if (averageTemp <= 14.73) {
+                        if (averageHumidity <= 61.61) {
+                            if (totalRain <= 6.92) {
+                                return 'High'; // class: high
+                            } else {
+                                return 'Normal'; // class: normal
+                            }
+                        } else {
+                            return 'High'; // class: high
+                        }
+                    } else {
+                        if (totalRain <= 11.31) {
+                            if (maxTemp <= 26.66) {
+                                if (maxTemp <= 21.76) {
+                                    return 'High'; // class: high
+                                } else {
+                                    if (minTemp <= 9.46) {
+                                        return 'Normal'; // class: normal
+                                    } else {
+                                        if (averageTemp <= 17.68) {
+                                            return 'High'; // class: high
+                                        } else {
+                                            return 'Normal'; // class: normal
+                                        }
+                                    }
+                                }
+                            } else {
+                                return 'High'; // class: high
+                            }
+                        } else {
+                            return 'High'; // class: high
+                        }
+                    }
+                } else {
+                    return 'Normal'; // class: normal
+                }
+            } else {
+                if (averageHumidity <= 65.53) {
+                    return 'Normal'; // class: normal
+                } else {
+                    if (averageHumidity <= 68.63) {
+                        return 'High'; // class: high
+                    } else {
+                        return 'Normal'; // class: normal
+                    }
+                }
+            }
         }
 
         // Function to navigate to account page
