@@ -33,17 +33,13 @@
             color: white;
             text-align: center;
             padding: 10px 0;
+            cursor: pointer; /* Change cursor to pointer for the whole area */
         }
         #accountBar button {
-            cursor: pointer;
-            font-size: 16px;
-            background-color: transparent;
-            border: none;
-            color: white;
-            transition: background-color 0.3s;
+            display: none; /* Hide the button since the entire area is clickable */
         }
-        #accountBar button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        #accountBar:hover {
+            background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect */
         }
         #header {
             width: 100%;
@@ -87,8 +83,8 @@
     <div id="weatherData" style="display: none;">Loading weather data...</div>
     <div id="riskLevels"></div>
 
-    <div id="accountBar">
-        <button id="accountButton" onclick="goToAccount()">Mon Compte</button>
+    <div id="accountBar" onclick="goToAccount()">
+        Mon Compte
     </div>
 
     <script>
