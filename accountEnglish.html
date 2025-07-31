@@ -77,27 +77,27 @@
     </style>
 </head>
 <body>
-    <h1>My Account</h1>
-    <div id="loading">Loading account details...</div>
+    <h1>Mon Compte</h1>
+    <div id="loading">Chargement des données...</div>
     <div id="editForm" style="display: none;">
-        <label for="country">Country:</label>
+        <label for="country">Pays:</label>
         <select id="country" onchange="handleCountryChange()">
             <option value="Australia">Australia</option>
             <option value="Canada">Canada</option>
             <option value="France">France</option>
-            <option value="Italy">Italy</option>
+            <option value="Italy">Italia</option>
             <option value="New Zealand">New Zealand</option>
             <option value="UK">UK</option>
             <option value="USA">USA</option>
         </select><br>
         
-        <label for="fruit">Fruit Category:</label>
+        <label for="fruit">Catégorie:</label>
         <select id="fruit" onchange="updateField('fruit', this.value)">
             <option value="Pomme">Pomme</option>
             <option value="Maraichage">Maraichage</option>
         </select><br>
 
-        <label for="postalCode">Postal Code:</label>
+        <label for="postalCode">Code Postal:</label>
         <input type="text" id="postalCode" oninput="validatePostalCodeInput()" /><br>
         <span id="postalCodeError" class="error"></span>
     </div>
