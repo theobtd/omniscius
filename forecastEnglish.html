@@ -189,6 +189,7 @@
                 'Feu Bacterien': calculateFeubacterienRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                 'Adventice': calculateAdventiceRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                 'Sclerotinia': calculateSclerotiniaRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
             };
         
             let riskHtml = '';  // Initialize an empty string for the risk cards
@@ -592,6 +593,86 @@
                         return 'Normal'; // class: normal
                     } else {
                         return 'High'; // class: high
+                    }
+                }
+            }
+        }
+
+        function calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp) {
+            if (minTemp <= 12.78) {
+                if (averageTemp <= 13.14) {
+                    return 'Normal'; // class: normal
+                } else {
+                    if (averageHumidity <= 66.32) {
+                        if (maxTemp <= 29.33) {
+                            return 'Normal'; // class: normal
+                        } else {
+                            return 'High'; // class: high
+                        }
+                    } else {
+                        if (averageTemp <= 15.44) {
+                            if (averageTemp <= 13.46) {
+                                return 'High'; // class: high
+                            } else {
+                                if (totalRain <= 0.08) {
+                                    return 'High'; // class: high
+                                } else {
+                                    if (averageTemp <= 14.31) {
+                                        if (totalRain <= 0.34) {
+                                            return 'Normal'; // class: normal
+                                        } else {
+                                            return 'High'; // class: high
+                                        }
+                                    } else {
+                                        return 'Normal'; // class: normal
+                                    }
+                                }
+                            }
+                        } else {
+                            if (averageTemp <= 19.44) {
+                                return 'High'; // class: high
+                            } else {
+                                return 'Normal'; // class: normal
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (minTemp <= 15.44) {
+                    if (totalRain <= 25.78) {
+                        return 'High'; // class: high
+                    } else {
+                        return 'Normal'; // class: normal
+                    }
+                } else {
+                    if (minTemp <= 16.03) {
+                        return 'Normal'; // class: normal
+                    } else {
+                        if (averageHumidity <= 54.98) {
+                            if (maxTemp <= 35.45) {
+                                if (averageHumidity <= 51.57) {
+                                    if (minTemp <= 17.65) {
+                                        return 'Normal'; // class: normal
+                                    } else {
+                                        return 'High'; // class: high
+                                    }
+                                } else {
+                                    return 'Normal'; // class: normal
+                                }
+                            } else {
+                                return 'High'; // class: high
+                            }
+                        } else {
+                            if (totalRain <= 0.10) {
+                                if (maxTemp <= 34.90) {
+                                    return 'Normal'; // class: normal
+                                } else {
+                                    return 'High'; // class: high
+                                }
+                            } else {
+                                return 'High'; // class: high
+                            }
+                        }
                     }
                 }
             }
