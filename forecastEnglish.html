@@ -188,6 +188,7 @@
                 'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                 'Feu Bacterien': calculateFeubacterienRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                 'Adventice': calculateAdventiceRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                'Sclerotinia': calculateSclerotiniaeRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
             };
         
             let riskHtml = '';  // Initialize an empty string for the risk cards
@@ -565,6 +566,34 @@
                 }
             } else {
                 return 'High'; // class: high
+            }
+        }
+
+        function calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp) {
+            if (totalRain <= 0.35) {
+                return 'Normal'; // class: normal
+            } else {
+                if (averageHumidity <= 77.01) {
+                    if (minTemp <= -1.55) {
+                        return 'Normal'; // class: normal
+                    } else {
+                        if (maxTemp <= 18.52) {
+                            return 'High'; // class: high
+                        } else {
+                            if (totalRain <= 0.86) {
+                                return 'High'; // class: high
+                            } else {
+                                return 'Normal'; // class: normal
+                            }
+                        }
+                    }
+                } else {
+                    if (averageHumidity <= 85.16) {
+                        return 'Normal'; // class: normal
+                    } else {
+                        return 'High'; // class: high
+                    }
+                }
             }
         }
 
