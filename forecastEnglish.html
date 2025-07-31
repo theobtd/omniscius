@@ -24,19 +24,26 @@
             margin-top: 20px;
             font-size: 20px;
         }
-        #accountButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+        #accountBar {
+            position: absolute; /* Position it at the bottom */
+            bottom: 0;
+            left: 0;
+            width: 100%;
             background-color: #007BFF;
             color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            margin-top: 10px;
+            text-align: center;
+            padding: 10px 0;
         }
-        #accountButton:hover {
-            background-color: #0056b3;
+        #accountBar button {
+            cursor: pointer;
+            font-size: 16px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        #accountBar button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
         #header {
             width: 100%;
@@ -76,10 +83,13 @@
     </style>
 </head>
 <body>
-    <button id="accountButton" onclick="goToAccount()">Mon Compte</button>
     <h1 id="header"></h1>
     <div id="weatherData" style="display: none;">Loading weather data...</div>
     <div id="riskLevels"></div>
+
+    <div id="accountBar">
+        <button id="accountButton" onclick="goToAccount()">Mon Compte</button>
+    </div>
 
     <script>
         // Firebase configuration
