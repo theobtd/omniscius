@@ -177,15 +177,28 @@
         }
 
         function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
-            const riskLevels = {
-                'Puceron Cendré': calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Carpocapse': calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Feu Bacterien': calculateFeubacterienRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Adventice': calculateAdventiceRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Sclerotinia': calculateSclerotiniaRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-            };
+            const fruitType = document.getElementById('header').innerHTML.split('<br>')[0]; // Get the fruit type from header
+        
+            let riskLevels = {};
+        
+            if (fruitType === "Pomme") {
+                riskLevels = {
+                    'Puceron Cendré': calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                    'Carpocapse': calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                    'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                    'Feu Bacterien': calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain),
+                };
+            } else if (fruitType === "Maraichage") {
+                riskLevels = {
+                    'Adventice': calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp),
+                    'Sclerotinia': calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp),
+                    'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
+                };
+            } else {
+                // Handle cases where fruit type is not recognized
+                console.error('Unknown fruit type:', fruitType);
+                return;
+            }
         
             let riskHtml = '';  // Initialize an empty string for the risk cards
             for (const category in riskLevels) {
