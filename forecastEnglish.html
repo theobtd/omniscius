@@ -168,12 +168,6 @@
                 const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
                 const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
 
-                // Get user fruit data from Firebase
-                const userId = firebase.auth().currentUser.uid;
-                const userSnapshot = await database.ref('users/' + userId).once('value');
-                const userData = userSnapshot.val();
-                const fruit = userData ? userData.fruit : 'Pomme'; // Default to 'Pomme' if not found
-
                 // Calculate and display risk levels
                 displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity);
             } catch (error) {
