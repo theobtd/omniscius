@@ -198,7 +198,7 @@
                 riskHtml += `
                     <div class="riskCard ${riskLevel}">
                         <strong>${category.charAt(0).toUpperCase() + category.slice(1)}</strong><br>
-                        Risk Level: ${riskLevels[category]}
+                        Niveau de risque: ${riskLevels[category]}
                     </div>
                 `;
             }
@@ -211,7 +211,7 @@
                     if (totalRain <= 0.42) {
                         return 'Normal'; // class: normal
                     } else {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     }
                 } else {
                     return 'Normal'; // class: normal
@@ -221,42 +221,42 @@
                     if (averageHumidity <= 65.40) {
                         if (tempmax <= 20.51) {
                             if (averageTemp <= 10.64) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 return 'Normal'; // class: normal
                             }
                         } else {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         }
                     } else {
                         if (averageHumidity <= 70.77) {
                             if (averageTemp <= 17.26) {
                                 return 'Normal'; // class: normal
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
                             if (totalRain <= 1.33) {
                                 if (tempmax <= 27.07) {
                                     return 'Normal'; // class: normal
                                 } else {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 }
                             } else {
                                 if (totalRain <= 43.42) {
                                     if (averageTemp <= 16.31) {
                                         if (totalRain <= 2.26) {
                                             if (tempmin <= 7.26) {
-                                                return 'High'; // class: high
+                                                return 'Elevé'; // class: high
                                             } else {
                                                 return 'Normal'; // class: normal
                                             }
                                         } else {
-                                            return 'High'; // class: high
+                                            return 'Elevé'; // class: high
                                         }
                                     } else {
                                         if (averageHumidity <= 76.19) {
-                                            return 'High'; // class: high
+                                            return 'Elevé'; // class: high
                                         } else {
                                             return 'Normal'; // class: normal
                                         }
@@ -278,11 +278,11 @@
                                 if (averageTemp <= 17.49) {
                                     return 'Normal'; // class: normal
                                 } else {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 }
                             }
                         } else {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         }
                     }
                 }
@@ -296,7 +296,7 @@
                         return 'Normal'; // class: normal
                     } else {
                         if (tempmax <= 20.12) {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         } else {
                             return 'Normal'; // class: normal
                         }
@@ -305,7 +305,7 @@
                     if (totalRain <= 11.02) {
                         return 'Normal'; // class: normal
                     } else {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     }
                 }
             } else {
@@ -313,10 +313,10 @@
                     if (averageHumidity <= 68.17) {
                         if (averageTemp <= 17.14) {
                             if (tempmin <= 7.96) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 if (tempmax <= 21.91) {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 } else {
                                     return 'Normal'; // class: normal
                                 }
@@ -330,13 +330,13 @@
                                                 if (averageHumidity <= 42.97) {
                                                     return 'Normal'; // class: normal
                                                 } else {
-                                                    return 'High'; // class: high
+                                                    return 'Elevé'; // class: high
                                                 }
                                             } else {
                                                 return 'Normal'; // class: normal
                                             }
                                         } else {
-                                            return 'High'; // class: high
+                                            return 'Elevé'; // class: high
                                         }
                                     } else {
                                         return 'Normal'; // class: normal
@@ -346,12 +346,12 @@
                                 }
                             } else {
                                 if (tempmax <= 34.53) {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 } else {
                                     if (tempmax <= 35.29) {
                                         return 'Normal'; // class: normal
                                     } else {
-                                        return 'High'; // class: high
+                                        return 'Elevé'; // class: high
                                     }
                                 }
                             }
@@ -362,14 +362,14 @@
                                 return 'Normal'; // class: normal
                             } else {
                                 if (averageTemp <= 19.08) {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 } else {
                                     return 'Normal'; // class: normal
                                 }
                             }
                         } else {
                             if (totalRain <= 0.48) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 return 'Normal'; // class: normal
                             }
@@ -381,13 +381,13 @@
                             if (tempmin <= 9.70) {
                                 return 'Normal'; // class: normal
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
                             return 'Normal'; // class: normal
                         }
                     } else {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     }
                 }
             }
@@ -397,13 +397,13 @@
             if (tempmin <= 6.39) {
                 if (averageTemp <= 9.15) {
                     if (averageHumidity <= 57.64) {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     } else {
                         if (averageTemp <= 8.47) {
                             return 'Normal'; // class: normal
                         } else {
                             if (totalRain <= 20.58) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 return 'Normal'; // class: normal
                             }
@@ -411,7 +411,7 @@
                     }
                 } else {
                     if (totalRain <= 6.38) {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     } else {
                         if (totalRain <= 8.33) {
                             return 'Normal'; // class: normal
@@ -422,16 +422,16 @@
                                 if (tempmin <= 5.86) {
                                     if (averageHumidity <= 72.90) {
                                         if (averageHumidity <= 70.53) {
-                                            return 'High'; // class: high
+                                            return 'Elevé'; // class: high
                                         } else {
                                             return 'Normal'; // class: normal
                                         }
                                     } else {
-                                        return 'High'; // class: high
+                                        return 'Elevé'; // class: high
                                     }
                                 } else {
                                     if (averageHumidity <= 68.69) {
-                                        return 'High'; // class: high
+                                        return 'Elevé'; // class: high
                                     } else {
                                         return 'Normal'; // class: normal
                                     }
@@ -445,23 +445,23 @@
                     if (averageTemp <= 17.01) {
                         if (tempmax <= 25.27) {
                             if (averageHumidity <= 59.98) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 if (totalRain <= 26.83) {
                                     return 'Normal'; // class: normal
                                 } else {
                                     if (totalRain <= 27.78) {
-                                        return 'High'; // class: high
+                                        return 'Elevé'; // class: high
                                     } else {
                                         return 'Normal'; // class: normal
                                     }
                                 }
                             }
                         } else {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         }
                     } else {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     }
                 } else {
                     if (averageHumidity <= 79.35) {
@@ -469,13 +469,13 @@
                             if (averageTemp <= 16.73) {
                                 return 'Normal'; // class: normal
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
                             return 'Normal'; // class: normal
                         }
                     } else {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     }
                 }
             }
@@ -488,34 +488,34 @@
                     if (averageTemp <= 14.73) {
                         if (averageHumidity <= 61.61) {
                             if (totalRain <= 6.92) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 return 'Normal'; // class: normal
                             }
                         } else {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         }
                     } else {
                         if (totalRain <= 11.31) {
                             if (maxTemp <= 26.66) {
                                 if (maxTemp <= 21.76) {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 } else {
                                     if (minTemp <= 9.46) {
                                         return 'Normal'; // class: normal
                                     } else {
                                         if (averageTemp <= 17.68) {
-                                            return 'High'; // class: high
+                                            return 'Elevé'; // class: high
                                         } else {
                                             return 'Normal'; // class: normal
                                         }
                                     }
                                 }
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         }
                     }
                 } else {
@@ -526,7 +526,7 @@
                     return 'Normal'; // class: normal
                 } else {
                     if (averageHumidity <= 68.63) {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     } else {
                         return 'Normal'; // class: normal
                     }
@@ -542,7 +542,7 @@
                             if (totalRain <= 0.01) {
                                 return 'Normal'; // class: normal
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
                             return 'Normal'; // class: normal
@@ -552,7 +552,7 @@
                             if (averageTemp <= 15.14) {
                                 return 'Normal'; // class: normal
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
                             return 'Normal'; // class: normal
@@ -560,13 +560,13 @@
                     }
                 } else {
                     if (totalRain <= 18.66) {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     } else {
                         return 'Normal'; // class: normal
                     }
                 }
             } else {
-                return 'High'; // class: high
+                return 'Elevé'; // class: high
             }
         }
 
@@ -579,10 +579,10 @@
                         return 'Normal'; // class: normal
                     } else {
                         if (maxTemp <= 18.52) {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         } else {
                             if (totalRain <= 0.86) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 return 'Normal'; // class: normal
                             }
@@ -592,7 +592,7 @@
                     if (averageHumidity <= 85.16) {
                         return 'Normal'; // class: normal
                     } else {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     }
                 }
             }
@@ -607,21 +607,21 @@
                         if (maxTemp <= 29.33) {
                             return 'Normal'; // class: normal
                         } else {
-                            return 'High'; // class: high
+                            return 'Elevé'; // class: high
                         }
                     } else {
                         if (averageTemp <= 15.44) {
                             if (averageTemp <= 13.46) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 if (totalRain <= 0.08) {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 } else {
                                     if (averageTemp <= 14.31) {
                                         if (totalRain <= 0.34) {
                                             return 'Normal'; // class: normal
                                         } else {
-                                            return 'High'; // class: high
+                                            return 'Elevé'; // class: high
                                         }
                                     } else {
                                         return 'Normal'; // class: normal
@@ -630,7 +630,7 @@
                             }
                         } else {
                             if (averageTemp <= 19.44) {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             } else {
                                 return 'Normal'; // class: normal
                             }
@@ -640,7 +640,7 @@
             } else {
                 if (minTemp <= 15.44) {
                     if (totalRain <= 25.78) {
-                        return 'High'; // class: high
+                        return 'Elevé'; // class: high
                     } else {
                         return 'Normal'; // class: normal
                     }
@@ -654,23 +654,23 @@
                                     if (minTemp <= 17.65) {
                                         return 'Normal'; // class: normal
                                     } else {
-                                        return 'High'; // class: high
+                                        return 'Elevé'; // class: high
                                     }
                                 } else {
                                     return 'Normal'; // class: normal
                                 }
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         } else {
                             if (totalRain <= 0.10) {
                                 if (maxTemp <= 34.90) {
                                     return 'Normal'; // class: normal
                                 } else {
-                                    return 'High'; // class: high
+                                    return 'Elevé'; // class: high
                                 }
                             } else {
-                                return 'High'; // class: high
+                                return 'Elevé'; // class: high
                             }
                         }
                     }
