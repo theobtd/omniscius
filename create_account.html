@@ -119,7 +119,15 @@
             <input type="text" id="postalCode" placeholder="Code postal" required>
             <input type="email" id="emailFacturation" placeholder="Email de facturation (si différent)">
             <input type="text" id="discountCode" placeholder="Code de réduction">
-            <input type="submit" value="Créer un compte" onclick="createAccount()">
+            <label>
+            <input type="checkbox" id="subscriptionCheckbox" required>
+                Type d'abonnement: Omniscius Basic à 8€ par mois
+            </label>
+            <label>
+                <input type="checkbox" id="termsCheckbox" required>
+                J'accepte les conditions d'utilisation d'Omniscius
+            </label>
+            <input type="submit" value="Créer compte" onclick="createAccount()">
         </form>
 
         <p>Vous avez déjà un compte ? <a href="index.html">Connectez-vous ici</a>.</p>
