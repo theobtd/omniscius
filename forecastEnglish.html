@@ -180,12 +180,12 @@
             const riskLevels = {};
             
             // Check the fruit type and call corresponding risk functions
-            if (fruit === "Pomme") {
+            if (userData.fruit === "Pomme") {
                 riskLevels['Puceron Cendré'] = calculatePuceroncendreRisk(maxTemp, minTemp, averageTemp, averageHumidity, totalRain);
                 riskLevels['Carpocapse'] = calculateCarpocapseRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain);
                 riskLevels['Tavelure'] = calculateTavelureRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain);
                 riskLevels['Feu Bacterien'] = calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain);
-            } else if (fruit === "Maraichage") {
+            } else if (userData.fruit === "Maraichage") {
                 riskLevels['Adventice'] = calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp);
                 riskLevels['Sclerotinia'] = calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp);
                 riskLevels['Punaise Nesidiocoris'] = calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp);
