@@ -22,19 +22,22 @@
             color: #333;
             text-align: center; /* Center the title */
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px;
+        #accountBar {
+            position: absolute; /* Position it at the bottom */
+            bottom: 0;
+            left: 0;
+            width: 100%;
             background-color: #007BFF;
             color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            text-align: center;
+            padding: 10px 0;
+            cursor: pointer; /* Change cursor to pointer for the whole area */
         }
-        button:hover {
-            background-color: #0056b3;
+        #accountBar button {
+            display: none; /* Hide the button since the entire area is clickable */
+        }
+        #accountBar:hover {
+            background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect */
         }
         .red-button {
             background-color: #dc3545; /* Red color */
@@ -101,9 +104,11 @@
         <input type="text" id="postalCode" oninput="validatePostalCodeInput()" /><br>
         <span id="postalCodeError" class="error"></span>
     </div>
-    <button id="dataButton" onclick="goToData()">Back to data</button>
-    <button id="cancelMembershipButton" class="red-button" onclick="cancelMembership()">Cancel Membership</button> <!-- Updated button -->
-    <button id="logoutButton" class="red-button" onclick="logout()">Log out</button> <!-- Red button at the bottom -->
+    <div id="accountBar" onclick="goToData()">
+        Retour aux données
+    </div>
+    <button id="cancelMembershipButton" class="red-button" onclick="cancelMembership()">Me Desinscrire</button> <!-- Updated button -->
+    <button id="logoutButton" class="red-button" onclick="logout()">Me Deconnecter</button> <!-- Red button at the bottom -->
 
     <script>
         // Firebase configuration
