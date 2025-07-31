@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
+    <title>Omniscius</title>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
     <style>
@@ -45,11 +45,11 @@
     
     <form id="signinForm" onsubmit="return false;">
         <input type="email" id="signinEmail" placeholder="Email" required>
-        <input type="password" id="signinPassword" placeholder="Password" required>
-        <input type="submit" value="Sign In" onclick="signIn()">
+        <input type="password" id="signinPassword" placeholder="Mot de passe" required>
+        <input type="submit" value="Se connecter" onclick="signIn()">
     </form>
     
-    <p>Don't have an account? <a href="create_account.html">Create one here</a>.</p>
+    <p>Pas encore membre?? <a href="create_account.html">Cliquez ici pour le devenir</a>.</p>
 
     <script>
         // Firebase configuration
