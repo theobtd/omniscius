@@ -168,6 +168,12 @@
                 const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
                 const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
 
+                // Get user fruit data from Firebase
+                const userId = firebase.auth().currentUser.uid;
+                const userSnapshot = await database.ref('users/' + userId).once('value');
+                const userData = userSnapshot.val();
+                const fruit = userData ? userData.fruit : 'Pomme'; // Default to 'Pomme' if not found
+
                 // Calculate and display risk levels
                 displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity);
             } catch (error) {
@@ -176,16 +182,20 @@
             }
         }
 
-        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
-            const riskLevels = {
-                'Puceron Cendré': calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Carpocapse': calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Feu Bacterien': calculateFeubacterienRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Adventice': calculateAdventiceRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Sclerotinia': calculateSclerotiniaRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-            };
+        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, fruit) {
+            const riskLevels = {};
+            
+            // Check the fruit type and call corresponding risk functions
+            if (fruit === "Pomme") {
+                riskLevels['Puceron Cendré'] = calculatePuceroncendreRisk(maxTemp, minTemp, averageTemp, averageHumidity, totalRain);
+                riskLevels['Carpocapse'] = calculateCarpocapseRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain);
+                riskLevels['Tavelure'] = calculateTavelureRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain);
+                riskLevels['Feu Bacterien'] = calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain);
+            } else if (fruit === "Maraichage") {
+                riskLevels['Adventice'] = calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp);
+                riskLevels['Sclerotinia'] = calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp);
+                riskLevels['Punaise Nesidiocoris'] = calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp);
+            }
         
             let riskHtml = '';  // Initialize an empty string for the risk cards
             for (const category in riskLevels) {
