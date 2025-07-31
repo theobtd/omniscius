@@ -161,6 +161,14 @@
         const database = firebase.database();
 
         async function createAccount() {
+            const subscriptionChecked = document.getElementById('subscriptionCheckbox').checked;
+            const termsChecked = document.getElementById('termsCheckbox').checked;
+        
+            if (!subscriptionChecked || !termsChecked) {
+                document.getElementById('message').innerText = "Veuillez accepter les conditions d'utilisation et/ou le type d'abonnement.";
+                return; // Prevent form submission
+            }
+            
             const email = document.getElementById('email').value;
             const confirmEmail = document.getElementById('confirmEmail').value;
             const password = document.getElementById('password').value;
