@@ -61,7 +61,7 @@
 <body>
     <h1>Hello World!</h1>
 
-    <select id="alertSelect">
+    <select id="alertSelect" onchange="displayAlerts(this.value)">
         <option value="">Select an option</option>
         <option value="Pomme - Carpocapse">Pomme - Carpocapse</option>
         <option value="Pomme - Puceron Cendré">Pomme - Puceron Cendré</option>
@@ -146,8 +146,7 @@
                     alert("Network alert added successfully!");
                     document.getElementById('alertSelect').value = ""; // Reset dropdown
         
-                    // Fetch and display alerts for the selected category
-                    displayAlerts(selectedOption);
+                    // No need to call displayAlerts here anymore
                 } catch (error) {
                     console.error("Error adding alert: ", error);
                 }
@@ -157,6 +156,13 @@
         }
         
         async function displayAlerts(productCategory) {
+            if (!productCategory) {
+                // Clear the table if no category is selected
+                const tableBody = document.getElementById('alertsTable').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = '';
+                return;
+            }
+        
             const alertsRef = database.ref('NetworkAlerts/' + productCategory);
             const tableBody = document.getElementById('alertsTable').getElementsByTagName('tbody')[0];
             
