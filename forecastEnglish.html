@@ -25,18 +25,24 @@
             font-size: 20px;
         }
         #accountBar {
+            display: flex; /* Use flexbox */
+            justify-content: space-between; /* Space between items */
+            align-items: center; /* Center vertically */
             position: absolute; /* Position it at the bottom */
             bottom: 0;
             left: 0;
             width: 100%;
             background-color: #007BFF;
             color: white;
-            text-align: center;
-            padding: 10px 0;
-            cursor: pointer; /* Change cursor to pointer for the whole area */
+            padding: 10px 20px; /* Added padding for better spacing */
         }
-        #accountBar button {
-            display: none; /* Hide the button since the entire area is clickable */
+        
+        #accountText {
+            cursor: pointer; /* Pointer for clickable account */
+        }
+        
+        #alertesText {
+            cursor: default; /* Default cursor for alertes, no functionality yet */
         }
         #accountBar:hover {
             background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect */
@@ -83,8 +89,13 @@
     <div id="weatherData" style="display: none;">Loading weather data...</div>
     <div id="riskLevels"></div>
 
-    <div id="accountBar" onclick="goToAccount()">
-        Mon Compte
+    <div id="accountBar">
+        <div id="accountText" onclick="goToAccount()">
+            Mon Compte
+        </div>
+        <div id="alertesText">
+            Alertes
+        </div>
     </div>
 
     <script>
