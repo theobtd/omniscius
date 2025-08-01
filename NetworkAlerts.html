@@ -62,7 +62,7 @@
             border: 1px solid #ddd; /* Border for the table cells */
             padding: 8px; /* Padding inside cells */
             text-align: center; /* Align text to the center */
-            width: 33.33%; /* Set column width to 33% */
+            width: 22%; /* Set column width to 22% */
         }
         
         th {
@@ -98,6 +98,7 @@
             <tr>
                 <th>Code postal</th>
                 <th>Date</th>
+                <th>Additional Info</th>
             </tr>
         </thead>
         <tbody>
@@ -208,24 +209,26 @@
                 tableBody.innerHTML = '';
                 return;
             }
-        
+
             const alertsRef = database.ref('NetworkAlerts/' + productCategory);
             const tableBody = document.getElementById('alertsTable').getElementsByTagName('tbody')[0];
             
             // Clear existing table rows
             tableBody.innerHTML = '';
-        
+
             // Fetch alerts for the selected category
             const snapshot = await alertsRef.once('value');
             snapshot.forEach(childSnapshot => {
                 const alertData = childSnapshot.val();
                 const row = tableBody.insertRow();
-        
+
                 const postalCodeCell = row.insertCell(0);
                 const timestampCell = row.insertCell(1);
-        
+                const additionalInfoCell = row.insertCell(2); // New cell for additional info
+
                 postalCodeCell.textContent = alertData.postalCode;
                 timestampCell.textContent = new Date(alertData.timestamp).toLocaleDateString(); // Format timestamp to show only date
+                additionalInfoCell.textContent = alertData.additionalInfo || ""; // Display additional info
             });
         }
     </script>
