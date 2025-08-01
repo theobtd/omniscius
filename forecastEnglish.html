@@ -110,13 +110,7 @@
         Mon Compte
     </div>
     <div id="postalCode" style="display: none;"></div>
-    <div id="fruitDisplay" style="display: block; cursor: pointer;" onclick="toggleFruitSelection()">
-        Click to select fruit: <span id="selectedFruit">Pomme</span>
-    </div>
-    <div id="fruitOptions" style="display: none;">
-        <div onclick="updateFruitSelection('Pomme')">Pomme</div>
-        <div onclick="updateFruitSelection('Maraichage')">Maraichage</div>
-    </div>
+    <div id="fruitDisplay" style="display: none;"></div>
 
     <script>
         // Firebase configuration
@@ -145,34 +139,13 @@
             }
         });
 
-        function toggleFruitSelection() {
-            const options = document.getElementById('fruitOptions');
-            options.style.display = options.style.display === 'none' ? 'block' : 'none';
-        }
-        
-        function updateFruitSelection(selectedFruit) {
-            const userId = firebase.auth().currentUser.uid; // Get current user ID
-            const updatedData = { fruit: selectedFruit };
-        
-            // Update the fruit in the database
-            database.ref('users/' + userId).update(updatedData)
-                .then(() => {
-                    console.log(`Fruit updated to ${selectedFruit}`);
-                    document.getElementById('selectedFruit').innerText = selectedFruit; // Update the display
-                    document.getElementById('fruitOptions').style.display = 'none'; // Hide options after selection
-                })
-                .catch((error) => {
-                    console.error('Error updating fruit:', error);
-                });
-        }
-
         function displayUserInfo(userId) {
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    document.getElementById('selectedFruit').innerText = userData.fruit; // Set the selected fruit text
+                    // Update header with fruit
+                    document.getElementById('fruitDisplay').innerText = `${userData.fruit}`;
                     document.getElementById('fruitDisplay').style.display = 'block'; // Show the fruit display div
-                    document.getElementById('fruitOptions').style.display = 'none'; // Ensure options are hidden initially
         
                     // Update postal code display
                     document.getElementById('postalCode').innerText = userData.postalCode;
