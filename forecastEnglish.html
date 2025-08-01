@@ -147,7 +147,7 @@
                 const data = await response.json();
                 if (data.length > 0) {
                     // Extract the city or village name
-                    const locationName = data[0].address.city || data[0].address.village || data[0].address.town || data[0].address.hamlet || data[0].display_name.split(',')[0];
+                    const locationName = data[0].address.city || data[0].display_name.split(',')[0];
                     return { lat: data[0].lat, lon: data[0].lon, locationName };
                 } else {
                     throw new Error('Postal code not found.');
