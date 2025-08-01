@@ -48,6 +48,11 @@
             cursor: pointer;
             font-size: 16px;
         }
+        #alertSelect {
+            margin: 20px;
+            padding: 10px;
+            font-size: 16px;
+        }
     </style>
     <!-- Include Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
@@ -56,6 +61,18 @@
 </head>
 <body>
     <h1>Hello World!</h1>
+
+    <select id="alertSelect">
+        <option value="">Select an option</option>
+        <option value="Pomme - Carpocapse">Pomme - Carpocapse</option>
+        <option value="Pomme - Puceron Cendré">Pomme - Puceron Cendré</option>
+        <option value="Pomme - Tavelure">Pomme - Tavelure</option>
+        <option value="Pomme - Feu Bacterien">Pomme - Feu Bacterien</option>
+        <option value="Maraichage - Adventice">Maraichage - Adventice</option>
+        <option value="Maraichage - Sclerotinia">Maraichage - Sclerotinia</option>
+        <option value="Maraichage - Punaise Nesidiocoris">Maraichage - Punaise Nesidiocoris</option>
+    </select>
+
     <button id="addAlertButton" onclick="addNetworkAlert()">Add Network Alert</button>
 
     <div id="accountBar">
@@ -92,9 +109,10 @@
         }
 
         function addNetworkAlert() {
+            const selectedOption = document.getElementById('alertSelect').value;
             const newAlert = {
                 timestamp: Date.now(),
-                message: "New network alert added!" // You can customize this message
+                message: selectedOption || "New network alert added!" // Use selected option or default message
             };
 
             // Push to the NetworkAlerts branch
@@ -102,6 +120,7 @@
             alertsRef.push(newAlert)
                 .then(() => {
                     alert("Network alert added successfully!");
+                    document.getElementById('alertSelect').value = ""; // Reset dropdown
                 })
                 .catch((error) => {
                     console.error("Error adding alert: ", error);
