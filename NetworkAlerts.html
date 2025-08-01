@@ -110,8 +110,11 @@
         <div id="leftSection" onclick="goToAccount()">
             Mon Compte
         </div>
-        <div id="rightSection" onclick="goToForecast()">
+        <div id="middleSection" onclick="goToForecast()">
             Prévisions
+        </div>
+        <div id="rightSection" onclick="goToAlerts()">
+            Alertes
         </div>
     </div>
 
@@ -160,6 +163,10 @@
         function addNetworkAlert() {
             // Show the modal dialog
             document.getElementById('infoModal').style.display = 'block';
+        }
+
+        function goToAlerts() {
+            window.location.href = 'NetworkAlerts.html';
         }
 
         async function submitAlert() {
