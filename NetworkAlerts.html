@@ -32,7 +32,6 @@
             color: white;
             padding: 10px;
             text-align: center;
-            cursor: pointer;
         }
         #leftSection {
             background-color: #007BFF;
@@ -73,7 +72,7 @@
         <option value="Maraichage - Punaise Nesidiocoris">Maraichage - Punaise Nesidiocoris</option>
     </select>
 
-    <button id="addAlertButton" onclick="addNetworkAlert()">Add Network Alert</button>
+    <button id="addAlertButton" onclick="addNetworkAlert()">Signaler infestation</button>
 
     <div id="accountBar">
         <div id="leftSection" onclick="goToAccount()">
@@ -99,6 +98,7 @@
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const auth = firebase.auth();
 
         function goToAccount() {
             window.location.href = 'accountEnglish.html';
@@ -108,23 +108,35 @@
             window.location.href = 'forecastEnglish.html';
         }
 
-        function addNetworkAlert() {
-            const selectedOption = document.getElementById('alertSelect').value;
-            const newAlert = {
-                timestamp: Date.now(),
-                productcategory: selectedOption || "New network alert added!" // Use selected option or default message
-            };
+        async function addNetworkAlert() {
+            const user = auth.currentUser;
+            if (user) {
+                const userId = user.uid;
+                const selectedOption = document.getElementById('alertSelect').value;
 
-            // Push to the NetworkAlerts branch
-            const alertsRef = database.ref('NetworkAlerts');
-            alertsRef.push(newAlert)
-                .then(() => {
+                try {
+                    // Fetch user's postal code
+                    const snapshot = await database.ref('users/' + userId).once('value');
+                    const userData = snapshot.val();
+                    const postalCode = userData ? userData.postalCode : "Unknown";
+
+                    const newAlert = {
+                        timestamp: Date.now(),
+                        productcategory: selectedOption,
+                        postalCode: postalCode // Include postal code in alert
+                    };
+
+                    // Push to the NetworkAlerts branch
+                    const alertsRef = database.ref('NetworkAlerts');
+                    await alertsRef.push(newAlert);
                     alert("Network alert added successfully!");
                     document.getElementById('alertSelect').value = ""; // Reset dropdown
-                })
-                .catch((error) => {
+                } catch (error) {
                     console.error("Error adding alert: ", error);
-                });
+                }
+            } else {
+                alert("User not logged in.");
+            }
         }
     </script>
 </body>
