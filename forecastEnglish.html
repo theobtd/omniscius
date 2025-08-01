@@ -185,7 +185,7 @@
 
                 // Display last updated time
                 const lastUpdated = new Date(currentData.dt * 1000).toLocaleString(); // Convert Unix timestamp to local time
-                document.getElementById('lastUpdated').innerText = `Dernière mise à jour: ${lastUpdated}`;
+                document.getElementById('lastUpdated').innerText = `Dernière mise à jour des prévisions: ${lastUpdated}`;
 
                 // Fetch forecast data
                 const forecastResponse = await fetch(forecastUrl);
