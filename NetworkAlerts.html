@@ -18,37 +18,45 @@
             color: #333;
         }
         #accountBar {
-            display: flex; /* Use flexbox */
-            justify-content: space-between; /* Space between items */
-            align-items: center; /* Center vertically */
-            position: absolute; /* Position it at the bottom */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 50px; /* Set a height for the bar */
+            height: 50px;
         }
-        
+        #leftSection, #rightSection {
+            flex: 1;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
         #leftSection {
-            flex: 1; /* Take up equal space */
-            background-color: #007BFF; /* Color for the left section */
-            color: white;
-            padding: 10px; /* Padding for better spacing */
-            cursor: pointer; /* Pointer for clickable account */
-            text-align: center; /* Center text */
+            background-color: #007BFF;
         }
-        
         #rightSection {
-            flex: 1; /* Take up equal space */
-            background-color: #28a745; /* Color for the right section */
-            color: white;
-            padding: 10px; /* Padding for better spacing */
-            text-align: center; /* Center text */
-            cursor: default; /* Default cursor for alertes, no functionality yet */
+            background-color: #28a745;
+        }
+        #addAlertButton {
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: #ffcc00;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
         }
     </style>
+    <!-- Include Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
 </head>
 <body>
     <h1>Hello World!</h1>
+    <button id="addAlertButton" onclick="addNetworkAlert()">Add Network Alert</button>
 
     <div id="accountBar">
         <div id="leftSection" onclick="goToAccount()">
@@ -60,12 +68,44 @@
     </div>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
+            authDomain: "omniscius-7bf29.firebaseapp.com",
+            databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
+            projectId: "omniscius-7bf29",
+            storageBucket: "omniscius-7bf29",
+            messagingSenderId: "24281922885",
+            appId: "1:24281922885:web:example"
+        };
+        
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         function goToAccount() {
             window.location.href = 'accountEnglish.html';
         }
 
         function goToForecast() {
             window.location.href = 'forecastEnglish.html';
+        }
+
+        function addNetworkAlert() {
+            const newAlert = {
+                timestamp: Date.now(),
+                message: "New network alert added!" // You can customize this message
+            };
+
+            // Push to the NetworkAlerts branch
+            const alertsRef = database.ref('NetworkAlerts');
+            alertsRef.push(newAlert)
+                .then(() => {
+                    alert("Network alert added successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error adding alert: ", error);
+                });
         }
     </script>
 </body>
