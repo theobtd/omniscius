@@ -100,7 +100,7 @@
         <div id="leftSection" onclick="goToAccount()">
             Mon Compte
         </div>
-        <div id="rightSection">
+        <div id="rightSection" onclick="goToAlerts()">
             Alertes
         </div>
     </div>
@@ -717,6 +717,10 @@
         // Function to navigate to account page
         function goToAccount() {
             window.location.href = 'accountEnglish.html';
+        }
+
+        function goToAlerts() {
+            window.location.href = 'NetworkAlerts.html';
         }
     </script>
 </body>
