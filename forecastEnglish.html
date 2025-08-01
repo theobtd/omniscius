@@ -40,6 +40,18 @@
         #accountBar:hover {
             background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect */
         }
+        #postalCode {
+            position: absolute; /* Position it at the top-left */
+            top: 20px; /* Align with accountBar */
+            left: calc(20px + 150px); /* Adjust the left position based on the accountBar width */
+            background-color: #28a745; /* Different color for distinction */
+            color: white;
+            text-align: center;
+            padding: 10px 20px; /* Increase horizontal padding for a stadium shape */
+            border-radius: 50px; /* Make it stadium-shaped */
+            cursor: default; /* Change cursor to default since it's not clickable */
+            transition: background-color 0.3s; /* Optional transition */
+        }
         #header {
             width: 100%;
             text-align: center; /* Center the text */
@@ -85,6 +97,7 @@
     <div id="accountBar" onclick="goToAccount()">
         Mon Compte
     </div>
+    <div id="postalCode" style="display: none;"></div>
 
     <script>
         // Firebase configuration
@@ -117,8 +130,13 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Update header with fruit on one line and postal code, country on another
-                    document.getElementById('header').innerHTML = `${userData.fruit}<br>${userData.postalCode}, ${userData.country}`;
+                    // Update header with fruit
+                    document.getElementById('header').innerHTML = `${userData.fruit}`;
+        
+                    // Update postal code display
+                    document.getElementById('postalCode').innerText = userData.postalCode;
+                    document.getElementById('postalCode').style.display = 'block'; // Show the postal code div
+        
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
                 }
             }).catch((error) => {
