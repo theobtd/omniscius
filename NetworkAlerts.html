@@ -114,6 +114,16 @@
         </div>
     </div>
 
+    <div id="infoModal" style="display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+        <div style="background: white; margin: 15% auto; padding: 20px; width: 300px; border-radius: 5px;">
+            <h2>Add Additional Info</h2>
+            <textarea id="additionalInfo" rows="4" maxlength="240" placeholder="Enter additional information (max 240 characters)"></textarea>
+            <br><br>
+            <button onclick="submitAlert()">Submit</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -146,11 +156,17 @@
             window.location.href = 'forecastEnglish.html';
         }
 
-        async function addNetworkAlert() {
+        function addNetworkAlert() {
+            // Show the modal dialog
+            document.getElementById('infoModal').style.display = 'block';
+        }
+
+        async function submitAlert() {
             const user = auth.currentUser;
             if (user) {
                 const userId = user.uid;
                 const selectedOption = document.getElementById('alertSelect').value;
+                const additionalInfo = document.getElementById('additionalInfo').value;
         
                 try {
                     // Fetch user's postal code
@@ -160,7 +176,8 @@
         
                     const newAlert = {
                         timestamp: Date.now(),
-                        postalCode: postalCode // Include postal code in alert
+                        postalCode: postalCode, // Include postal code in alert
+                        additionalInfo: additionalInfo // Add additional info
                     };
         
                     // Reference to the product category under NetworkAlerts
@@ -171,14 +188,18 @@
         
                     alert("Network alert added successfully!");
                     document.getElementById('alertSelect').value = ""; // Reset dropdown
-        
-                    // No need to call displayAlerts here anymore
+                    closeModal(); // Close modal after submission
                 } catch (error) {
                     console.error("Error adding alert: ", error);
                 }
             } else {
                 alert("User not logged in.");
             }
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').style.display = 'none';
+            document.getElementById('additionalInfo').value = ''; // Clear the textarea
         }
         
         async function displayAlerts(productCategory) {
