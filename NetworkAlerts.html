@@ -128,15 +128,8 @@
                     // Reference to the product category under NetworkAlerts
                     const alertsRef = database.ref('NetworkAlerts/' + selectedOption);
         
-                    // Check if the product category exists
-                    const categorySnapshot = await alertsRef.once('value');
-                    if (categorySnapshot.exists()) {
-                        // If it exists, push the new alert to the existing branch
-                        await alertsRef.push(newAlert);
-                    } else {
-                        // If it doesn't exist, create the branch and add the alert
-                        await alertsRef.set({ [new Date().toISOString()]: newAlert });
-                    }
+                    // Push the new alert to the specific product category
+                    await alertsRef.push(newAlert); // This automatically creates a unique key
         
                     alert("Network alert added successfully!");
                     document.getElementById('alertSelect').value = ""; // Reset dropdown
