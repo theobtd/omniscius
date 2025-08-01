@@ -17,12 +17,6 @@
         h1 {
             color: #333;
         }
-        .scrollableTable {
-            max-height: calc(100vh - 70px); /* Adjust height based on the accountBar */
-            overflow-y: auto; /* Enable vertical scrolling */
-            width: 100%; /* Same width as the table */
-            margin: 20px auto;
-        }
         #accountBar {
             display: flex;
             justify-content: space-between;
@@ -104,21 +98,19 @@
     </select>
 
     <button id="addAlertButton" onclick="addNetworkAlert()">Signaler infestation</button>
-    
-    <div class="scrollableTable">
-        <table id="alertsTable" style="margin-top: 20px; border-collapse: collapse; width: 80%;">
-            <thead>
-                <tr>
-                    <th>Code postal</th>
-                    <th>Date</th>
-                    <th>Additional Info</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Alert data will be populated here -->
-            </tbody>
-        </table>
-    </div>
+
+    <table id="alertsTable" style="margin-top: 20px; border-collapse: collapse; width: 80%;">
+        <thead>
+            <tr>
+                <th>Code postal</th>
+                <th>Date</th>
+                <th>Additional Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Alert data will be populated here -->
+        </tbody>
+    </table>
 
     <div id="accountBar">
         <div id="leftSection" onclick="goToAccount()">
