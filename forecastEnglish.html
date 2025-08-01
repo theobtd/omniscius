@@ -110,7 +110,11 @@
         Mon Compte
     </div>
     <div id="postalCode" style="display: none;"></div>
-    <div id="fruitDisplay" style="display: none;"></div>
+    <div id="fruitDisplay" style="display: block;"></div>
+    <select id="fruitSelection" onchange="updateFruitSelection(this.value)" style="display: none;">
+        <option value="Pomme">Pomme</option>
+        <option value="Maraichage">Maraichage</option>
+    </select>
 
     <script>
         // Firebase configuration
@@ -139,6 +143,21 @@
             }
         });
 
+        function updateFruitSelection(selectedFruit) {
+            const userId = firebase.auth().currentUser.uid; // Get current user ID
+            const updatedData = { fruit: selectedFruit };
+        
+            // Update the fruit in the database
+            database.ref('users/' + userId).update(updatedData)
+                .then(() => {
+                    console.log(`Fruit updated to ${selectedFruit}`);
+                    document.getElementById('fruitDisplay').innerText = selectedFruit; // Update the display
+                })
+                .catch((error) => {
+                    console.error('Error updating fruit:', error);
+                });
+        }
+
         function displayUserInfo(userId) {
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
@@ -146,6 +165,8 @@
                     // Update header with fruit
                     document.getElementById('fruitDisplay').innerText = `${userData.fruit}`;
                     document.getElementById('fruitDisplay').style.display = 'block'; // Show the fruit display div
+                    document.getElementById('fruitSelection').style.display = 'block'; // Show the fruit selection dropdown
+                    document.getElementById('fruitSelection').value = userData.fruit; // Set the dropdown to the user's current fruit
         
                     // Update postal code display
                     document.getElementById('postalCode').innerText = userData.postalCode;
