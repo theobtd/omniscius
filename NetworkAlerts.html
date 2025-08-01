@@ -82,7 +82,7 @@
 <body>
     <select id="alertSelect" onchange="displayAlerts(this.value)">
         <option value="">Select an option</option>
-        <option value="Pomme - Carpocapse">Pomme - Carpocapse</option>
+        <option value="Pomme - Carpocapse" selected>Pomme - Carpocapse</option>
         <option value="Pomme - Puceron Cendré">Pomme - Puceron Cendré</option>
         <option value="Pomme - Tavelure">Pomme - Tavelure</option>
         <option value="Pomme - Feu Bacterien">Pomme - Feu Bacterien</option>
@@ -125,11 +125,18 @@
             messagingSenderId: "24281922885",
             appId: "1:24281922885:web:example"
         };
-        
+
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const auth = firebase.auth();
+        
+        // Pre-select option and display alerts on page load
+        window.onload = function() {
+            const defaultOption = "Pomme - Carpocapse";
+            document.getElementById('alertSelect').value = defaultOption; // Set the selected option
+            displayAlerts(defaultOption); // Display alerts for the default option
+        };
 
         function goToAccount() {
             window.location.href = 'accountEnglish.html';
