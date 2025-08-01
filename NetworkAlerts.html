@@ -113,22 +113,31 @@
             if (user) {
                 const userId = user.uid;
                 const selectedOption = document.getElementById('alertSelect').value;
-
+        
                 try {
                     // Fetch user's postal code
                     const snapshot = await database.ref('users/' + userId).once('value');
                     const userData = snapshot.val();
                     const postalCode = userData ? userData.postalCode : "Unknown";
-
+        
                     const newAlert = {
                         timestamp: Date.now(),
-                        productcategory: selectedOption,
                         postalCode: postalCode // Include postal code in alert
                     };
-
-                    // Push to the NetworkAlerts branch
-                    const alertsRef = database.ref('NetworkAlerts');
-                    await alertsRef.push(newAlert);
+        
+                    // Reference to the product category under NetworkAlerts
+                    const alertsRef = database.ref('NetworkAlerts/' + selectedOption);
+        
+                    // Check if the product category exists
+                    const categorySnapshot = await alertsRef.once('value');
+                    if (categorySnapshot.exists()) {
+                        // If it exists, push the new alert to the existing branch
+                        await alertsRef.push(newAlert);
+                    } else {
+                        // If it doesn't exist, create the branch and add the alert
+                        await alertsRef.set({ [new Date().toISOString()]: newAlert });
+                    }
+        
                     alert("Network alert added successfully!");
                     document.getElementById('alertSelect').value = ""; // Reset dropdown
                 } catch (error) {
