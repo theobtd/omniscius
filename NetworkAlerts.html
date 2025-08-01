@@ -187,7 +187,6 @@
                     await alertsRef.push(newAlert);
         
                     alert("Network alert added successfully!");
-                    document.getElementById('alertSelect').value = ""; // Reset dropdown
                     closeModal(); // Close modal after submission
                 } catch (error) {
                     console.error("Error adding alert: ", error);
