@@ -74,6 +74,18 @@
 
     <button id="addAlertButton" onclick="addNetworkAlert()">Signaler infestation</button>
 
+    <table id="alertsTable" style="margin-top: 20px; border-collapse: collapse; width: 80%;">
+        <thead>
+            <tr>
+                <th>Postal Code</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Alert data will be populated here -->
+        </tbody>
+    </table>
+
     <div id="accountBar">
         <div id="leftSection" onclick="goToAccount()">
             Mon Compte
@@ -129,16 +141,40 @@
                     const alertsRef = database.ref('NetworkAlerts/' + selectedOption);
         
                     // Push the new alert to the specific product category
-                    await alertsRef.push(newAlert); // This automatically creates a unique key
+                    await alertsRef.push(newAlert);
         
                     alert("Network alert added successfully!");
                     document.getElementById('alertSelect').value = ""; // Reset dropdown
+        
+                    // Fetch and display alerts for the selected category
+                    displayAlerts(selectedOption);
                 } catch (error) {
                     console.error("Error adding alert: ", error);
                 }
             } else {
                 alert("User not logged in.");
             }
+        }
+        
+        async function displayAlerts(productCategory) {
+            const alertsRef = database.ref('NetworkAlerts/' + productCategory);
+            const tableBody = document.getElementById('alertsTable').getElementsByTagName('tbody')[0];
+            
+            // Clear existing table rows
+            tableBody.innerHTML = '';
+        
+            // Fetch alerts for the selected category
+            const snapshot = await alertsRef.once('value');
+            snapshot.forEach(childSnapshot => {
+                const alertData = childSnapshot.val();
+                const row = tableBody.insertRow();
+        
+                const postalCodeCell = row.insertCell(0);
+                const timestampCell = row.insertCell(1);
+        
+                postalCodeCell.textContent = alertData.postalCode;
+                timestampCell.textContent = new Date(alertData.timestamp).toLocaleString(); // Format timestamp
+            });
         }
     </script>
 </body>
