@@ -110,11 +110,13 @@
         Mon Compte
     </div>
     <div id="postalCode" style="display: none;"></div>
-    <div id="fruitDisplay" style="display: block;"></div>
-    <select id="fruitDisplay" onchange="updateFruitSelection(this.value)" style="display: none;">
-        <option value="Pomme">Pomme</option>
-        <option value="Maraichage">Maraichage</option>
-    </select>
+    <div id="fruitDisplay" style="display: block; cursor: pointer;" onclick="toggleFruitSelection()">
+        Click to select fruit: <span id="selectedFruit">Pomme</span>
+    </div>
+    <div id="fruitOptions" style="display: none;">
+        <div onclick="updateFruitSelection('Pomme')">Pomme</div>
+        <div onclick="updateFruitSelection('Maraichage')">Maraichage</div>
+    </div>
 
     <script>
         // Firebase configuration
@@ -143,6 +145,11 @@
             }
         });
 
+        function toggleFruitSelection() {
+            const options = document.getElementById('fruitOptions');
+            options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        }
+        
         function updateFruitSelection(selectedFruit) {
             const userId = firebase.auth().currentUser.uid; // Get current user ID
             const updatedData = { fruit: selectedFruit };
@@ -151,7 +158,8 @@
             database.ref('users/' + userId).update(updatedData)
                 .then(() => {
                     console.log(`Fruit updated to ${selectedFruit}`);
-                    document.getElementById('fruitDisplay').innerText = selectedFruit; // Update the display
+                    document.getElementById('selectedFruit').innerText = selectedFruit; // Update the display
+                    document.getElementById('fruitOptions').style.display = 'none'; // Hide options after selection
                 })
                 .catch((error) => {
                     console.error('Error updating fruit:', error);
@@ -162,11 +170,9 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Update header with fruit
-                    document.getElementById('fruitDisplay').innerText = `${userData.fruit}`;
+                    document.getElementById('selectedFruit').innerText = userData.fruit; // Set the selected fruit text
                     document.getElementById('fruitDisplay').style.display = 'block'; // Show the fruit display div
-                    document.getElementById('fruitSelection').style.display = 'block'; // Show the fruit selection dropdown
-                    document.getElementById('fruitSelection').value = userData.fruit; // Set the dropdown to the user's current fruit
+                    document.getElementById('fruitOptions').style.display = 'none'; // Ensure options are hidden initially
         
                     // Update postal code display
                     document.getElementById('postalCode').innerText = userData.postalCode;
