@@ -52,6 +52,18 @@
             cursor: default; /* Change cursor to default since it's not clickable */
             transition: background-color 0.3s; /* Optional transition */
         }
+        #fruitDisplay {
+            position: absolute; /* Position it at the top-left */
+            top: 80px; /* Adjust to below accountBar */
+            left: 20px; /* Align with accountBar */
+            background-color: #007BFF; /* Same color as accountBar */
+            color: white;
+            text-align: center;
+            padding: 10px 20px; /* Increase horizontal padding for a stadium shape */
+            border-radius: 50px; /* Make it stadium-shaped */
+            cursor: default; /* Change cursor to default since it's not clickable */
+            transition: background-color 0.3s; /* Optional transition */
+        }
         #header {
             width: 100%;
             text-align: center; /* Center the text */
@@ -98,6 +110,7 @@
         Mon Compte
     </div>
     <div id="postalCode" style="display: none;"></div>
+    <div id="fruitDisplay" style="display: none;"></div>
 
     <script>
         // Firebase configuration
@@ -131,7 +144,8 @@
                 const userData = snapshot.val();
                 if (userData) {
                     // Update header with fruit
-                    document.getElementById('header').innerHTML = `${userData.fruit}`;
+                    document.getElementById('fruitDisplay').innerText = `${userData.fruit}`;
+                    document.getElementById('fruitDisplay').style.display = 'block'; // Show the fruit display div
         
                     // Update postal code display
                     document.getElementById('postalCode').innerText = userData.postalCode;
