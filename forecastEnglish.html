@@ -25,19 +25,18 @@
             font-size: 20px;
         }
         #accountBar {
-            position: absolute; /* Position it at the bottom */
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            position: absolute; /* Position it at the top-left */
+            top: 20px; /* Adjust the distance from the top */
+            left: 20px; /* Adjust the distance from the left */
             background-color: #007BFF;
             color: white;
             text-align: center;
-            padding: 10px 0;
-            cursor: pointer; /* Change cursor to pointer for the whole area */
+            padding: 10px 20px; /* Increase horizontal padding for a stadium shape */
+            border-radius: 50px; /* Make it stadium-shaped */
+            cursor: pointer; /* Change cursor to pointer */
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
         }
-        #accountBar button {
-            display: none; /* Hide the button since the entire area is clickable */
-        }
+        
         #accountBar:hover {
             background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect */
         }
