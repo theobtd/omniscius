@@ -32,20 +32,29 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #007BFF;
+            height: 50px; /* Set a height for the bar */
+        }
+        
+        #leftSection {
+            flex: 1; /* Take up equal space */
+            background-color: #007BFF; /* Color for the left section */
             color: white;
-            padding: 10px 20px; /* Added padding for better spacing */
-        }
-        
-        #accountText {
+            padding: 10px; /* Padding for better spacing */
             cursor: pointer; /* Pointer for clickable account */
+            text-align: center; /* Center text */
         }
         
-        #alertesText {
+        #rightSection {
+            flex: 1; /* Take up equal space */
+            background-color: #28a745; /* Color for the right section */
+            color: white;
+            padding: 10px; /* Padding for better spacing */
+            text-align: center; /* Center text */
             cursor: default; /* Default cursor for alertes, no functionality yet */
         }
+        
         #accountBar:hover {
-            background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect */
+            background-color: rgba(0, 123, 255, 0.8); /* Optional hover effect, can be removed */
         }
         #header {
             width: 100%;
@@ -90,10 +99,10 @@
     <div id="riskLevels"></div>
 
     <div id="accountBar">
-        <div id="accountText" onclick="goToAccount()">
+        <div id="leftSection" onclick="goToAccount()">
             Mon Compte
         </div>
-        <div id="alertesText">
+        <div id="rightSection">
             Alertes
         </div>
     </div>
