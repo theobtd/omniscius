@@ -35,23 +35,25 @@
             height: 50px; /* Set a height for the bar */
         }
         
-        #leftSection {
-            flex: 1; /* Take up equal space */
-            background-color: #007BFF; /* Color for the left section */
+        #leftSection, #middleSection, #rightSection {
+            flex: 1; /* Equal width for all sections */
             color: white;
-            padding: 10px; /* Padding for better spacing */
-            cursor: pointer; /* Pointer for clickable account */
-            text-align: center; /* Center text */
+            padding: 10px;
+            text-align: center;
+        }
+        
+        #leftSection {
+            background-color: #007BFF; /* Blue */
+        }
+        
+        #middleSection {
+            background-color: #28a745; /* Green */
         }
         
         #rightSection {
-            flex: 1; /* Take up equal space */
-            background-color: #28a745; /* Color for the right section */
-            color: white;
-            padding: 10px; /* Padding for better spacing */
-            text-align: center; /* Center text */
-            cursor: default; /* Default cursor for alertes, no functionality yet */
+            background-color: #ffc107; /* Yellow */
         }
+        
         #header {
             width: 100%;
             text-align: center; /* Center the text */
@@ -99,6 +101,9 @@
     <div id="accountBar">
         <div id="leftSection" onclick="goToAccount()">
             Mon Compte
+        </div>
+        <div id="middleSection" onclick="goToForecast()">
+            Prévisions
         </div>
         <div id="rightSection" onclick="goToAlerts()">
             Alertes
@@ -714,9 +719,13 @@
             }
         }
 
-        // Function to navigate to account page
-        function goToAccount() {
-            window.location.href = 'accountEnglish.html';
+        function goToForecast() {
+            window.location.href = 'forecastEnglish.html';
+        }
+
+        function addNetworkAlert() {
+            // Show the modal dialog
+            document.getElementById('infoModal').style.display = 'block';
         }
 
         function goToAlerts() {
