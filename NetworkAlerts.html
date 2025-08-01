@@ -198,7 +198,7 @@
                 const timestampCell = row.insertCell(1);
         
                 postalCodeCell.textContent = alertData.postalCode;
-                timestampCell.textContent = new Date(alertData.timestamp).toLocaleString(); // Format timestamp
+                timestampCell.textContent = new Date(alertData.timestamp).toLocaleDateString(); // Format timestamp to show only date
             });
         }
     </script>
