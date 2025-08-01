@@ -160,12 +160,16 @@
 
         async function getCoordinates(postalCode, country) {
             const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=${country}&format=json`;
-
+        
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.length > 0) {
-                    return { lat: data[0].lat, lon: data[0].lon };
+                    return { 
+                        lat: data[0].lat, 
+                        lon: data[0].lon, 
+                        city: data[0].address.city || data[0].address.town || data[0].address.village // Extract city, town, or village
+                    };
                 } else {
                     throw new Error('Postal code not found.');
                 }
@@ -178,33 +182,36 @@
 
         async function getWeatherData(postalCode, country) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your actual OpenWeatherMap API key
-
+        
             try {
-                const { lat, lon } = await getCoordinates(postalCode, country);
+                const { lat, lon, city } = await getCoordinates(postalCode, country); // Destructure city from the response
                 const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
                 const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-
+        
                 // Fetch current weather data
                 const currentResponse = await fetch(currentWeatherUrl);
                 if (!currentResponse.ok) {
                     throw new Error('Failed to fetch weather data');
                 }
                 const currentData = await currentResponse.json();
-
+        
                 // Fetch forecast data
                 const forecastResponse = await fetch(forecastUrl);
                 if (!forecastResponse.ok) {
                     throw new Error('Failed to fetch forecast data');
                 }
                 const forecastData = await forecastResponse.json();
-
+        
                 // Extract necessary data for risk calculations
                 const totalRain = forecastData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0);
                 const averageTemp = forecastData.list.reduce((acc, item) => acc + item.main.temp, 0) / forecastData.list.length;
                 const minTemp = Math.min(...forecastData.list.map(item => item.main.temp_min));
                 const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
                 const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
-
+        
+                // Update postal code display with city name
+                document.getElementById('postalCode').innerText = city; // Display city name
+        
                 // Calculate and display risk levels
                 displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity);
             } catch (error) {
