@@ -244,6 +244,7 @@
                     'Adventice': calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp),
                     'Sclerotinia': calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp),
                     'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
+                    'Botrytis': calculateBotrytisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                 };
             } else {
                 // Handle cases where fruit type is not recognized
@@ -628,6 +629,39 @@
                 return 'élevé'; // class: élevé
             }
         }
+
+        function calculateBotrytisRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain) {
+        // Decision tree logic based on your model's output
+        if (minTemp <= 1.96) {
+            if (averageTemp <= 2.72) {
+                return 'élevé'; // class: élevé
+            } else {
+                if (averageHumidity <= 66.22) {
+                    if (averageHumidity <= 65.39) {
+                        if (maxTemp <= 19.91) {
+                            return 'normal'; // class: normal
+                        } else {
+                            if (averageTemp <= 10.79) {
+                                return 'élevé'; // class: élevé
+                            } else {
+                                return 'normal'; // class: normal
+                            }
+                        }
+                    } else {
+                        return 'élevé'; // class: élevé
+                    }
+                } else {
+                    return 'normal'; // class: normal
+                }
+            }
+        } else {
+            if (maxTemp <= 18.69) {
+                return 'élevé'; // class: élevé
+            } else {
+                return 'normal'; // class: normal
+            }
+        }
+    }
 
         function calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp) {
             if (totalRain <= 0.35) {
