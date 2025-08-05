@@ -210,6 +210,15 @@
                 const lastUpdated = new Date(currentData.dt * 1000).toLocaleString(); // Convert Unix timestamp to local time
                 document.getElementById('lastUpdated').innerText = `Dernière mise à jour des prévisions: ${lastUpdated}`;
 
+                // Add the new message below the last updated text
+                const infoMessage = document.createElement('p');
+                infoMessage.innerText = "AgSafe.farm peut faire des erreurs et les résultats ne sont présentés qu'uniquement à titre indicatif.";
+                infoMessage.style.fontSize = '16px'; // Optional: style the font size
+                infoMessage.style.color = '#555'; // Optional: style the text color
+                infoMessage.style.marginTop = '10px'; // Optional: add some margin
+                document.getElementById('lastUpdated').after(infoMessage); // Insert the message after the last updated element
+                Full Context Example
+
                 // Fetch forecast data
                 const forecastResponse = await fetch(forecastUrl);
                 if (!forecastResponse.ok) {
