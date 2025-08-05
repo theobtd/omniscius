@@ -159,8 +159,14 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    document.getElementById('header').innerHTML = `${userData.fruit}<br>${userData.postalCode}, ${userData.country}`;
-                    getWeatherData(userData.postalCode, userData.country, userData.fruit); // Pass fruit type
+                    // Determine the display fruit name based on userData.fruit
+                    const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
+        
+                    // Update the header
+                    document.getElementById('header').innerHTML = `${displayFruit}<br>${userData.postalCode}, ${userData.country}`;
+                    
+                    // Pass the original fruit type to getWeatherData
+                    getWeatherData(userData.postalCode, userData.country, userData.fruit);
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
