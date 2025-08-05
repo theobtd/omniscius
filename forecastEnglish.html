@@ -171,6 +171,7 @@
                     
                     document.getElementById('header').innerHTML = `${fruitDisplay}<br>${userData.postalCode}, ${userData.country}`;
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
+                    getWeatherData(userData.postalCode, userData.country, userData); // Pass userData as well
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
@@ -195,7 +196,7 @@
             }
         }
 
-        async function getWeatherData(postalCode, country) {
+        async function getWeatherData(postalCode, country, userData) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your actual OpenWeatherMap API key
 
             try {
@@ -234,9 +235,11 @@
                 console.error('Error fetching weather data:', error);
                 document.getElementById('weatherData').innerText = 'Failed to load weather data.';
             }
+            // Calculate and display risk levels, passing userData
+            displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, userData);
         }
 
-        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
+        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, userData) {
             const fruitType = userData.fruit; // Use the original fruit type directly from userData
         
             let riskLevels = {};
