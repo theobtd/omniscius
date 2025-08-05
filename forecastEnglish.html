@@ -159,16 +159,21 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Update header with fruit on one line and postal code, country on another
                     let fruitDisplay;
+                    let fruitType; // Declare fruitType here
+                    
                     if (userData.fruit === "Pomme") {
                         fruitDisplay = "Pomme & Poire";
+                        fruitType = "Pomme"; // Set original fruit type
                     } else if (userData.fruit === "TomateSalade") {
                         fruitDisplay = "Tomate & Salade";
+                        fruitType = "TomateSalade"; // Set original fruit type
                     } else {
-                        fruitDisplay = userData.fruit; // Fallback to the original fruit if not matched
+                        fruitDisplay = userData.fruit; // Fallback
+                        fruitType = userData.fruit; // Also set original fruit type
                     }
                     
+                    // Set the header
                     document.getElementById('header').innerHTML = `${fruitDisplay}<br>${userData.postalCode}, ${userData.country}`;
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
                 }
