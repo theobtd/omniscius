@@ -175,12 +175,14 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Determine the display fruit name based on userData.fruit
                     const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
         
-                    // Update the header
-                    document.getElementById('header').innerHTML = `${displayFruit}<br>${userData.postalCode}, ${userData.country}`;
-                    
+                    // Fetch city name based on postal code and country
+                    getCityName(userData.postalCode, userData.country).then(cityName => {
+                        // Update the header
+                        document.getElementById('header').innerHTML = `${displayFruit}<br>${cityName}, ${userData.postalCode}, ${userData.country}`;
+                    });
+        
                     // Pass the original fruit type to getWeatherData
                     getWeatherData(userData.postalCode, userData.country, userData.fruit);
                 }
@@ -188,22 +190,21 @@
                 console.error('Error fetching user data:', error);
             });
         }
-
-        async function getCoordinates(postalCode, country) {
+        
+        async function getCityName(postalCode, country) {
             const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=${country}&format=json`;
-
+        
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.length > 0) {
-                    return { lat: data[0].lat, lon: data[0].lon };
+                    return data[0].address.city || data[0].address.town || data[0].address.village || "Unknown City"; // Get city, town, or village name
                 } else {
                     throw new Error('Postal code not found.');
                 }
             } catch (error) {
-                console.error('Error fetching coordinates:', error);
-                document.getElementById('weatherData').innerText = 'Failed to retrieve coordinates.';
-                throw error;
+                console.error('Error fetching city name:', error);
+                return "Unknown City"; // Fallback in case of an error
             }
         }
 
