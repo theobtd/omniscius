@@ -159,9 +159,8 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Update header with fruit on one line and postal code, country on another
                     document.getElementById('header').innerHTML = `${userData.fruit}<br>${userData.postalCode}, ${userData.country}`;
-                    getWeatherData(userData.postalCode, userData.country); // Pass country as well
+                    getWeatherData(userData.postalCode, userData.country, userData.fruit); // Pass fruit type
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
@@ -186,7 +185,7 @@
             }
         }
 
-        async function getWeatherData(postalCode, country) {
+        async function getWeatherData(postalCode, country, fruitType) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your actual OpenWeatherMap API key
 
             try {
@@ -220,15 +219,14 @@
                 const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
 
                 // Calculate and display risk levels
-                displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity);
+                displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, fruitType);
             } catch (error) {
                 console.error('Error fetching weather data:', error);
                 document.getElementById('weatherData').innerText = 'Failed to load weather data.';
             }
         }
 
-        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity) {
-            const fruitType = document.getElementById('header').innerHTML.split('<br>')[0]; // Get the fruit type from header
+        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, fruitType) {
         
             let riskLevels = {};
         
