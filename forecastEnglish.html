@@ -192,7 +192,7 @@
         }
         
         async function getCityName(postalCode, country) {
-            const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=${country}&format=json`;
+            const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=France&format=json`;
         
             try {
                 const response = await fetch(url);
