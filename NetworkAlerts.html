@@ -7,28 +7,28 @@
     <style>
         body {
             display: flex;
+            align-items: center;
             flex-direction: column;
-            height: 100%; /* Allow body to take full height of the viewport */
+            height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
-            overflow: auto; /* Allow scrolling */
         }
         h1 {
             color: #333;
         }
         #accountBar {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-around; /* Space evenly around items */
             align-items: center;
-            position: absolute; /* Change to absolute */
+            position: fixed; /* Fix it to the bottom */
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 60px;
-            background-color: #fff;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-            z-index: 1000;
+            height: 60px; /* Slightly taller for better touch targets */
+            background-color: #fff; /* White background for contrast */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Shadow for depth */
+            z-index: 1000; /* Ensure it stays above other content */
         }
     
         #accountBar div {
