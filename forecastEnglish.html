@@ -198,13 +198,32 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.length > 0) {
-                    return data[0].address.city || data[0].address.town || data[0].address.village || "Unknown City"; // Get city, town, or village name
+                    // Safe access to city, town, or village
+                    return data[0].address.city || data[0].address.town || data[0].address.village || "Unknown City";
                 } else {
                     throw new Error('Postal code not found.');
                 }
             } catch (error) {
                 console.error('Error fetching city name:', error);
-                return "Unknown City"; // Fallback in case of an error
+                return "Unknown City"; // Return a fallback city name
+            }
+        }
+
+        async function getCoordinates(postalCode, country) {
+            const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=${country}&format=json`;
+        
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.length > 0) {
+                    return { lat: data[0].lat, lon: data[0].lon };
+                } else {
+                    throw new Error('Postal code not found.');
+                }
+            } catch (error) {
+                console.error('Error fetching coordinates:', error);
+                document.getElementById('weatherData').innerText = 'Failed to retrieve coordinates.';
+                throw error;
             }
         }
 
