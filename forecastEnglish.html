@@ -195,11 +195,9 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 if (data.length > 0) {
-                    return { 
-                        lat: data[0].lat, 
-                        lon: data[0].lon,
-                        city: data[0].address.city || data[0].address.town || data[0].address.village // Get city name
-                    };
+                    // Check for city, town, or village
+                    const city = data[0].address.city || data[0].address.town || data[0].address.village || 'Unknown Location';
+                    return { lat: data[0].lat, lon: data[0].lon, city: city };
                 } else {
                     throw new Error('Postal code not found.');
                 }
