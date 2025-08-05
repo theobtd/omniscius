@@ -175,17 +175,12 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
+                    // Determine the display fruit name based on userData.fruit
                     const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
         
-                    // Get city name using postal code
-                    getCoordinates(userData.postalCode, userData.country).then(({ city }) => {
-                        // Update the header with the city name
-                        document.getElementById('header').innerHTML = `${displayFruit}<br>${city}, ${userData.postalCode}, ${userData.country}`;
-                    }).catch((error) => {
-                        console.error('Error fetching city name:', error);
-                        document.getElementById('header').innerHTML = `${displayFruit}<br>${userData.postalCode}, ${userData.country}`; // Fallback
-                    });
-        
+                    // Update the header
+                    document.getElementById('header').innerHTML = `${displayFruit}<br>${userData.postalCode}, ${userData.country}`;
+                    
                     // Pass the original fruit type to getWeatherData
                     getWeatherData(userData.postalCode, userData.country, userData.fruit);
                 }
@@ -196,17 +191,12 @@
 
         async function getCoordinates(postalCode, country) {
             const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=${country}&format=json`;
-        
+
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                // Log the entire response for debugging
-                console.log('API Response:', data);
-        
                 if (data.length > 0) {
-                    const city = data[0].address.city || data[0].address.town || data[0].address.village || 'Unknown Location';
-                    return { lat: data[0].lat, lon: data[0].lon, city: city };
+                    return { lat: data[0].lat, lon: data[0].lon };
                 } else {
                     throw new Error('Postal code not found.');
                 }
