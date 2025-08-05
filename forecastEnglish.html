@@ -117,11 +117,20 @@
             color: #f5e55b;
             border-color: transparent;
         }
+        #loading {
+            font-size: 24px;
+            color: #333;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <div id="topBar">AgSafe</div>
     
+    <div id="loading" style="display: none;">Loading...</div>
     <h1 id="header"></h1>
     <div id="weatherData" style="display: none;">Loading weather data...</div>
     <div id="lastUpdated" style="margin-top: 0px; margin-bottom: 10px; font-size: 16px; color: #555;"></div>
@@ -172,22 +181,27 @@
         });
 
         function displayUserInfo(userId) {
+            document.getElementById('loading').style.display = 'flex'; // Show loading
+        
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
                     const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
         
                     // Fetch city name based on postal code and country
-                    getCityName(userData.postalCode, userData.country).then(cityName => {
+                    getCityName(userData.postalCode).then(cityName => {
                         // Update the header
-                        document.getElementById('header').innerHTML = `${displayFruit}<br>${cityName}, ${userData.postalCode}, ${userData.country}`;
+                        document.getElementById('header').innerHTML = `${displayFruit}<br>${cityName}, ${userData.postalCode}, France`;
                     });
         
                     // Pass the original fruit type to getWeatherData
-                    getWeatherData(userData.postalCode, userData.country, userData.fruit);
+                    getWeatherData(userData.postalCode, userData.country, userData.fruit).finally(() => {
+                        document.getElementById('loading').style.display = 'none'; // Hide loading
+                    });
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
+                document.getElementById('loading').style.display = 'none'; // Hide loading on error
             });
         }
         
