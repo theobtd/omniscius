@@ -205,10 +205,10 @@
                     // Use the display_name to get the city name from the response
                     const displayName = data[0].display_name;
                     const parts = displayName.split(', '); // Split by comma to get parts of the address
-        
-                    // Assuming the city is the second to last part
-                    const cityName = parts[parts.length - 2]; // Adjust this index if necessary
-                    return cityName;
+                    
+                    // Adjusting to get the city name correctly
+                    const cityName = parts[1]; // City is the second part of the split array
+                    return cityName.trim(); // Trim any extra whitespace
                 } else {
                     throw new Error('Postal code not found.');
                 }
