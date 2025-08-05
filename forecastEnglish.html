@@ -191,7 +191,7 @@
             });
         }
         
-        async function getCityName(postalCode, country) {
+        async function getCityName(postalCode) {
             const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=France&format=json`;
         
             try {
@@ -202,8 +202,13 @@
                 console.log('Geocoding API response:', data);
         
                 if (data.length > 0) {
-                    const address = data[0].address || {};
-                    return address.city || address.town || address.village || "Unknown City";
+                    // Use the display_name to get the city name from the response
+                    const displayName = data[0].display_name;
+                    const parts = displayName.split(', '); // Split by comma to get parts of the address
+        
+                    // Assuming the city is the second to last part
+                    const cityName = parts[parts.length - 2]; // Adjust this index if necessary
+                    return cityName;
                 } else {
                     throw new Error('Postal code not found.');
                 }
