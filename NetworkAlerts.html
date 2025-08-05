@@ -14,6 +14,15 @@
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
+        #topBar {
+            width: 100%;
+            background-color: #C2D6C9;
+            color: #3D5B3E;
+            text-align: center; /* Center text */
+            padding: 15px 0; /* Vertical padding */
+            font-size: 24px; /* Larger font size for the logo */
+            font-weight: bold;
+        }
         h1 {
             color: #333;
         }
@@ -121,6 +130,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
 </head>
 <body>
+    <div id="topBar">AgSafe</div>
+    
     <select id="alertSelect" onchange="displayAlerts(this.value)">
         <option value="">Select an option</option>
         <option value="Pomme - Carpocapse" selected>Pomme - Carpocapse</option>
