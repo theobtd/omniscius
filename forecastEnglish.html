@@ -154,12 +154,6 @@
     </div>
 
     <script>
-        // Define the cache object here
-        const cache = {
-            userData: null,
-            timestamp: null
-        };
-        
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
@@ -187,45 +181,27 @@
         });
 
         function displayUserInfo(userId) {
-            const currentTime = Date.now();
-        
-            // Check if we have cached data and it's still valid (within 1 minute)
-            if (cache.userData && (currentTime - cache.timestamp < 60000)) {
-                // Use cached data
-                const userData = cache.userData;
-                updateUI(userData);
-                return;
-            }
-        
             document.getElementById('loading').style.display = 'flex'; // Show loading
         
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    // Cache the user data and timestamp
-                    cache.userData = userData;
-                    cache.timestamp = currentTime;
+                    const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
         
-                    updateUI(userData);
+                    // Fetch city name based on postal code and country
+                    getCityName(userData.postalCode).then(cityName => {
+                        // Update the header
+                        document.getElementById('header').innerHTML = `${displayFruit}<br>${cityName}, ${userData.postalCode}, France`;
+                    });
+        
+                    // Pass the original fruit type to getWeatherData
+                    getWeatherData(userData.postalCode, userData.country, userData.fruit).finally(() => {
+                        document.getElementById('loading').style.display = 'none'; // Hide loading
+                    });
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
                 document.getElementById('loading').style.display = 'none'; // Hide loading on error
-            });
-        }
-        
-        function updateUI(userData) {
-            const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
-        
-            // Fetch city name based on postal code
-            getCityName(userData.postalCode).then(cityName => {
-                // Update the header
-                document.getElementById('header').innerHTML = `${displayFruit}<br>${cityName}, ${userData.postalCode}, France`;
-            });
-        
-            // Pass the original fruit type to getWeatherData
-            getWeatherData(userData.postalCode, userData.country, userData.fruit).finally(() => {
-                document.getElementById('loading').style.display = 'none'; // Hide loading
             });
         }
         
