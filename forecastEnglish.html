@@ -160,7 +160,16 @@
                 const userData = snapshot.val();
                 if (userData) {
                     // Update header with fruit on one line and postal code, country on another
-                    document.getElementById('header').innerHTML = `${userData.fruit}<br>${userData.postalCode}, ${userData.country}`;
+                    let fruitDisplay;
+                    if (userData.fruit === "Pomme") {
+                        fruitDisplay = "Pomme & Poire";
+                    } else if (userData.fruit === "TomateSalade") {
+                        fruitDisplay = "Tomate & Salade";
+                    } else {
+                        fruitDisplay = userData.fruit; // Fallback to the original fruit if not matched
+                    }
+                    
+                    document.getElementById('header').innerHTML = `${fruitDisplay}<br>${userData.postalCode}, ${userData.country}`;
                     getWeatherData(userData.postalCode, userData.country); // Pass country as well
                 }
             }).catch((error) => {
