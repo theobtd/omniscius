@@ -179,9 +179,15 @@
         
                     // Get city name using postal code
                     getCoordinates(userData.postalCode, userData.country).then(({ city }) => {
-                        // Update the header
+                        // Update the header with the city name
                         document.getElementById('header').innerHTML = `${displayFruit}<br>${city}, ${userData.postalCode}, ${userData.country}`;
+                    }).catch((error) => {
+                        console.error('Error fetching city name:', error);
+                        document.getElementById('header').innerHTML = `${displayFruit}<br>${userData.postalCode}, ${userData.country}`; // Fallback
                     });
+        
+                    // Pass the original fruit type to getWeatherData
+                    getWeatherData(userData.postalCode, userData.country, userData.fruit);
                 }
             }).catch((error) => {
                 console.error('Error fetching user data:', error);
