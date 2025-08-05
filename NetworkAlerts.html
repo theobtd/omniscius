@@ -260,23 +260,32 @@
                 tableBody.innerHTML = '';
                 return;
             }
-
+        
             const alertsRef = database.ref('NetworkAlerts/' + productCategory);
             const tableBody = document.getElementById('alertsTable').getElementsByTagName('tbody')[0];
             
             // Clear existing table rows
             tableBody.innerHTML = '';
-
+        
             // Fetch alerts for the selected category
             const snapshot = await alertsRef.once('value');
+            const alertsArray = [];
+        
             snapshot.forEach(childSnapshot => {
-                const alertData = childSnapshot.val();
+                alertsArray.push(childSnapshot.val());
+            });
+        
+            // Reverse the alerts array to display in reverse order
+            alertsArray.reverse();
+        
+            // Populate the table with the reversed array
+            alertsArray.forEach(alertData => {
                 const row = tableBody.insertRow();
-
+        
                 const postalCodeCell = row.insertCell(0);
                 const timestampCell = row.insertCell(1);
                 const additionalInfoCell = row.insertCell(2); // New cell for additional info
-
+        
                 postalCodeCell.textContent = alertData.postalCode;
                 timestampCell.textContent = new Date(alertData.timestamp).toLocaleDateString(); // Format timestamp to show only date
                 additionalInfoCell.textContent = alertData.additionalInfo || ""; // Display additional info
