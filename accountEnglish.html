@@ -144,6 +144,12 @@
     <button id="cancelMembershipButton" class="red-button" onclick="cancelMembership()">Me désinscrire</button>
     <button id="logoutButton" class="red-button" onclick="logout()">Me déconnecter</button>
 
+    <p>
+        En utilisant <strong>Agsafe.farm</strong> j'accepte automatiquement les <a href="https://github.com/theobtd/omniscius/raw/74b4480b3cf892b8cdc99e4242606f4d2c9bbd59/CGU_AgSafe.pdf" download>
+        conditions generales d'utilisation du site
+        </a>.
+    </p>
+
     <div id="accountBar">
         <div id="leftSection" onclick="goToAccount()" aria-label="My Account">
             <i class="icon-account"></i> Mon Compte
@@ -286,11 +292,6 @@
         // Function to navigate back to the data page
         function goToForecast() {
             window.location.href = 'forecastEnglish.html';
-        }
-
-        function addNetworkAlert() {
-            // Show the modal dialog
-            document.getElementById('infoModal').style.display = 'block';
         }
 
         function goToAlerts() {
