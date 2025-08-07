@@ -291,16 +291,9 @@
             }
         }
 
-        async function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, fruitType) {
+        function displayRiskLevels(totalRain, averageTemp, minTemp, maxTemp, averageHumidity, fruitType) {
         
             let riskLevels = {};
-
-            const tutaData = {
-                tempmin_5days: minTemp,
-                tempmax_5days: maxTemp,
-                humidity_5days: averageHumidity,
-                precip_5days: totalRain,
-            };
         
             if (fruitType === "Pomme") {
                 riskLevels = {
@@ -316,10 +309,6 @@
                     'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Botrytis': calculateBotrytisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                 };
-
-                // Fetch Tuta Absoluta risk level
-                const tutaRiskLevel = await getTutaAbsolutaRisk(tutaData);
-                riskLevels['Tuta Absoluta'] = tutaRiskLevel; // Add Tuta Absoluta risk to levels
             } else {
                 // Handle cases where fruit type is not recognized
                 console.error('Unknown fruit type:', fruitType);
@@ -420,28 +409,6 @@
                         }
                     }
                 }
-            }
-        }
-
-        async function getTutaAbsolutaRisk(data) {
-            try {
-                const response = await fetch('https://models-gmapwmw7brncbfz9tdy8w8.streamlit.app/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-        
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-        
-                const result = await response.json();
-                return result.risk; // Assuming your Streamlit app returns a JSON response with a 'risk' key
-            } catch (error) {
-                console.error('Error fetching Tuta Absoluta risk:', error);
-                return 'unknown';
             }
         }
         
