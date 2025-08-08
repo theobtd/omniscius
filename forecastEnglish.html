@@ -308,6 +308,7 @@
                     'Sclerotinia': calculateSclerotiniaRisk(totalRain, averageHumidity, minTemp, maxTemp),
                     'Punaise Nesidiocoris': calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Botrytis': calculateBotrytisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
+                    'Tuta Absoluta': calculateTutaabsolutaRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                 };
             } else {
                 // Handle cases where fruit type is not recognized
@@ -326,6 +327,10 @@
                 `;
             }
             document.getElementById('riskLevels').innerHTML = riskHtml;
+        }
+
+        function calculatePuceroncendreRisk(tempmax, tempmin, averageTemp, averageHumidity, totalRain) {
+            return 'normal'; // class: normal
         }
 
         function calculatePuceroncendreRisk(tempmax, tempmin, averageTemp, averageHumidity, totalRain) {
