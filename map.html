@@ -97,48 +97,70 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        const colors = [
-            "#FF9999", "#99FF99", "#9999FF", "#FFFF99", 
-            "#FFCC99", "#CCFF99", "#FF99CC", "#99CCFF", 
-            "#FFCCFF", "#CCFFCC", "#FFFFCC", "#CCCCFF"
-        ];
+        const regionCoordinates = {
+            "Hauts de France": { lat: 50.511853, lon: 2.382456 },
+            "Normandie": { lat: 49.204741, lon: 0.250363 },
+            "Bretagne": { lat: 48.128866, lon: -2.536543 },
+            "Pays de la Loire": { lat: 47.515044, lon: -0.866298 },
+            "Centre Val de Loire": { lat: 47.723388, lon: 1.440800 },
+            "Bourgogne Franche Comte": { lat: 47.281186, lon: 4.482647 },
+            "Nouvelle Aquitaine": { lat: 45.319608, lon: 0.343424 },
+            "Occitanie": { lat: 43.755350, lon: 2.143505 },
+            "PACA": { lat: 43.706660, lon: 5.377874 },
+            "Ile de France": { lat: 48.742842, lon: 2.384157 },
+            "Grand Est": { lat: 48.443608, lon: 6.099832 },
+            "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
+        };
 
-        function shuffleColors() {
-            const regions = document.querySelectorAll('.region');
-            const shuffledColors = colors.sort(() => Math.random() - 0.5);
-            
-            regions.forEach((region, index) => {
-                region.setAttribute('fill', shuffledColors[index % shuffledColors.length]);
-            });
+        async function getMaxTemperature(lat, lon) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
-            // Save the current timestamp and colors to the database
-            const now = new Date().toISOString();
-            database.ref('lastShuffle').set(now);
-            database.ref('shuffledColors').set(shuffledColors);
+            const forecastResponse = await fetch(forecastUrl);
+            if (!forecastResponse.ok) {
+                throw new Error('Failed to fetch forecast data');
+            }
+            const forecastData = await forecastResponse.json();
+            const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
+            return maxTemp;
         }
 
-        function checkAndShuffle() {
-            database.ref('lastShuffle').once('value').then((snapshot) => {
+        async function setRegionColors() {
+            const regions = document.querySelectorAll('.region');
+            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
+                try {
+                    const maxTemp = await getMaxTemperature(coordinates.lat, coordinates.lon);
+                    const color = maxTemp > 25 ? 'red' : 'green';
+                    const regionIndex = Object.keys(regionCoordinates).indexOf(regionName);
+                    regions[regionIndex].setAttribute('fill', color);
+                } catch (error) {
+                    console.error(`Error fetching weather data for ${regionName}:`, error);
+                }
+            }
+        }
+
+        async function checkAndShuffle() {
+            database.ref('lastShuffle').once('value').then(async (snapshot) => {
                 const lastShuffle = snapshot.val();
                 const lastDate = lastShuffle ? new Date(lastShuffle) : null;
                 const now = new Date();
 
                 // Check if a day has passed since the last shuffle
                 if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
-                    shuffleColors();
+                    await shuffleColors(); // Shuffle colors if needed
                 } else {
-                    // Load the shuffled colors from the database
-                    database.ref('shuffledColors').once('value').then((colorSnapshot) => {
-                        const loadedColors = colorSnapshot.val();
-                        if (loadedColors) {
-                            const regions = document.querySelectorAll('.region');
-                            regions.forEach((region, index) => {
-                                region.setAttribute('fill', loadedColors[index % loadedColors.length]);
-                            });
-                        }
-                    });
+                    const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
+                    if (loadedColors) {
+                        const regions = document.querySelectorAll('.region');
+                        regions.forEach((region, index) => {
+                            region.setAttribute('fill', loadedColors[index % loadedColors.length]);
+                        });
+                    }
                 }
-                // Hide the loading overlay and show the map container
+                // Set region colors based on weather data
+                await setRegionColors();
+                
+                // Hide loading overlay and show the map container
                 document.getElementById('loadingOverlay').style.display = 'none';
                 document.getElementById('mapContainer').style.display = 'block';
             });
