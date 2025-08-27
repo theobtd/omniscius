@@ -167,7 +167,7 @@
                     };
         
                     const riskLevel = await fetchRiskLevel(modelData);
-                    const color = riskLevel === "élevé" ? 'red' : 'green';
+                    const color = riskLevel === "high" ? 'red' : 'green'; // Change "élevé" to "high"
                     
                     colors.push(color);
                     riskLevels.push(riskLevel);
