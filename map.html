@@ -127,16 +127,28 @@
 
         async function setRegionColors() {
             const regions = document.querySelectorAll('.region');
+            const colors = [];
+
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
                     const maxTemp = await getMaxTemperature(coordinates.lat, coordinates.lon);
                     const color = maxTemp > 25 ? 'red' : 'green';
-                    const regionIndex = Object.keys(regionCoordinates).indexOf(regionName);
-                    regions[regionIndex].setAttribute('fill', color);
+                    colors.push(color);
                 } catch (error) {
                     console.error(`Error fetching weather data for ${regionName}:`, error);
+                    colors.push('white'); // Fallback color in case of error
                 }
             }
+
+            // Save colors and timestamp to Firebase
+            const now = new Date().toISOString();
+            database.ref('shuffledColors').set(colors);
+            database.ref('lastShuffle').set(now);
+
+            // Apply colors to regions
+            regions.forEach((region, index) => {
+                region.setAttribute('fill', colors[index]);
+            });
         }
 
         async function checkAndShuffle() {
@@ -147,18 +159,17 @@
 
                 // Check if a day has passed since the last shuffle
                 if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
-                    await shuffleColors(); // Shuffle colors if needed
+                    await setRegionColors(); // Fetch weather data and set colors
                 } else {
+                    // Load colors from database and apply them
                     const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
                     if (loadedColors) {
                         const regions = document.querySelectorAll('.region');
                         regions.forEach((region, index) => {
-                            region.setAttribute('fill', loadedColors[index % loadedColors.length]);
+                            region.setAttribute('fill', loadedColors[index]);
                         });
                     }
                 }
-                // Set region colors based on weather data
-                await setRegionColors();
                 
                 // Hide loading overlay and show the map container
                 document.getElementById('loadingOverlay').style.display = 'none';
