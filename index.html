@@ -27,7 +27,7 @@
             border-radius: 5px; /* Optional: rounded corners */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for depth */
             height: 15vh;
-            width: 15%;
+            width: 20%;
         }
         h1 {
             color: #333;
@@ -45,7 +45,7 @@
         #mapContainer {
             width: 30%;
             max-width: 1200px;
-            margin: 30vh auto; /* Center the map */
+            margin: 25vh auto; /* Center the map */
             border: 2px solid #3f5787;
             padding: 20px;
             background-color: white;
@@ -97,8 +97,6 @@
             <input type="password" id="signinPassword" placeholder="Mot de passe" required>
             <input type="submit" value="Se connecter" onclick="signIn()">
         </form>
-        
-        <p>Pas encore membre? <a href="create_account.html">Cliquez ici pour le devenir pour seulement 7,99€/mois</a>.</p>
     </div>
 
     <div class="loading-overlay" id="loadingOverlay">
@@ -120,8 +118,11 @@
             <path class="region" fill="white" d="M888.101177,989.075448l171.242914,50.191887L1180.395116,932.97863l14.762325-44.286961h-59.049286l-5.904928-59.04928-44.28696-38.382032-90.050147,59.04928l13.286082,38.382032h-100.383775l25.095952,26.572178-45.763202,73.811601Z" />
             <path class="region" fill="white" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
         </svg>
+        
+        <p>Pas encore membre? <a href="create_account.html">Cliquez ici pour le devenir pour seulement 7,99€/mois</a>.</p>
+        
     </div>
-
+    
     <script>
         // Firebase configuration
         const firebaseConfig = {
