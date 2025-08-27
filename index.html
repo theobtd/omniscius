@@ -264,8 +264,7 @@
 
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                // Redirect to the same page (refresh to show map)
-                window.location.reload();
+                window.location.href = 'forecast.html';
             } catch (error) {
                 document.getElementById('message').innerText = error.message;
             }
