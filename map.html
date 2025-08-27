@@ -112,7 +112,7 @@
             "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
         };
 
-        async function getMaxTemperature(lat, lon) {
+        async function getWeatherData(lat, lon) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
             const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
@@ -121,22 +121,50 @@
                 throw new Error('Failed to fetch forecast data');
             }
             const forecastData = await forecastResponse.json();
+
+            const totalRain = forecastData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0);
+            const averageTemp = forecastData.list.reduce((acc, item) => acc + item.main.temp, 0) / forecastData.list.length;
+            const minTemp = Math.min(...forecastData.list.map(item => item.main.temp_min));
             const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
-            return maxTemp;
+            const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
+
+            return { totalRain, averageTemp, minTemp, maxTemp, averageHumidity };
+        }
+
+        async function fetchRiskLevel(data) {
+            // Replace this URL with your actual model endpoint
+            const modelUrl = "https://your-pythonanywhere-domain.com/your-model-endpoint";
+            const response = await fetch(modelUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch risk level');
+            }
+            const result = await response.json();
+            return result.risk; // Assuming the response contains a 'risk' field
         }
 
         async function setRegionColors() {
             const regions = document.querySelectorAll('.region');
             const colors = [];
+            const riskLevels = [];
 
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
-                    const maxTemp = await getMaxTemperature(coordinates.lat, coordinates.lon);
-                    const color = maxTemp > 25 ? 'red' : 'green';
+                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
+                    const riskLevel = await fetchRiskLevel(weatherData);
+                    const color = riskLevel === "élevé" ? 'red' : 'green';
+                    
                     colors.push(color);
+                    riskLevels.push(riskLevel);
                 } catch (error) {
-                    console.error(`Error fetching weather data for ${regionName}:`, error);
+                    console.error(`Error fetching data for ${regionName}:`, error);
                     colors.push('white'); // Fallback color in case of error
+                    riskLevels.push('unknown'); // Fallback risk level
                 }
             }
 
@@ -144,6 +172,7 @@
             const now = new Date().toISOString();
             database.ref('shuffledColors').set(colors);
             database.ref('lastShuffle').set(now);
+            database.ref('riskLevels').set(riskLevels);
 
             // Apply colors to regions
             regions.forEach((region, index) => {
