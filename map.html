@@ -152,11 +152,21 @@
             const regions = document.querySelectorAll('.region');
             const colors = [];
             const riskLevels = [];
-
+        
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
                     const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
-                    const riskLevel = await fetchRiskLevel(weatherData);
+        
+                    // Map the weather data to the variable names expected by the model
+                    const modelData = {
+                        tempmin_5days: weatherData.minTemp,
+                        tempmax_5days: weatherData.maxTemp,
+                        temp_5days: weatherData.averageTemp,
+                        humidity_5days: weatherData.averageHumidity,
+                        precip_5days: weatherData.totalRain
+                    };
+        
+                    const riskLevel = await fetchRiskLevel(modelData);
                     const color = riskLevel === "élevé" ? 'red' : 'green';
                     
                     colors.push(color);
@@ -167,13 +177,13 @@
                     riskLevels.push('unknown'); // Fallback risk level
                 }
             }
-
+        
             // Save colors and timestamp to Firebase
             const now = new Date().toISOString();
             database.ref('shuffledColors').set(colors);
             database.ref('lastShuffle').set(now);
             database.ref('riskLevels').set(riskLevels);
-
+        
             // Apply colors to regions
             regions.forEach((region, index) => {
                 region.setAttribute('fill', colors[index]);
