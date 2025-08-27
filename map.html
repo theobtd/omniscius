@@ -14,6 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            position: relative; /* For positioning the loader */
         }
         .map-container {
             max-width: 1200px;
@@ -21,6 +22,7 @@
             padding: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             background-color: white;
+            display: none; /* Hidden until colors are loaded */
         }
         svg {
             width: 100%;
@@ -30,10 +32,39 @@
             stroke: #3f5787;
             stroke-width: 2.708;
         }
+        /* Loading overlay styles */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Ensure it stays above other content */
+        }
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite; /* Animation */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <div class="map-container">
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+    
+    <div class="map-container" id="mapContainer">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1354 1354">
             <path class="region" fill="#FF9999" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
             <path class="region" fill="#99FF99" d="M622.379416,150.575665l26.572177,20.667248-.000001,88.573922-17.714786,41.334495-53.144354,22.14348-8.857392,63.477975-159.433058-44.286961-35.429568-19.191015-29.524641-140.242042l50.191888,2.952464l17.714784,41.334497l88.573921,8.857392l121.05103-85.621455Z" />
@@ -107,6 +138,9 @@
                         }
                     });
                 }
+                // Hide the loading overlay and show the map container
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('mapContainer').style.display = 'block';
             });
         }
 
