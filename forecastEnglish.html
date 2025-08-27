@@ -188,11 +188,7 @@
                 if (userData) {
                     const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
         
-                    // Fetch city name based on postal code and country
-                    getCityName(userData.postalCode).then(cityName => {
-                        // Update the header
-                        document.getElementById('header').innerHTML = `${displayFruit}<br>${cityName}, ${userData.postalCode}, France`;
-                    });
+                    document.getElementById('header').innerHTML = displayFruit;
         
                     // Pass the original fruit type to getWeatherData
                     getWeatherData(userData.postalCode, userData.country, userData.fruit).finally(() => {
@@ -203,51 +199,6 @@
                 console.error('Error fetching user data:', error);
                 document.getElementById('loading').style.display = 'none'; // Hide loading on error
             });
-        }
-        
-        async function getCityName(postalCode) {
-            const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=France&format=json`;
-        
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-        
-                // Log the response for debugging
-                console.log('Geocoding API response:', data);
-        
-                if (data.length > 0) {
-                    // Use the display_name to get the city name from the response
-                    const displayName = data[0].display_name;
-                    const parts = displayName.split(', '); // Split by comma to get parts of the address
-                    
-                    // Adjusting to get the city name correctly
-                    const cityName = parts[1]; // City is the second part of the split array
-                    return cityName.trim(); // Trim any extra whitespace
-                } else {
-                    throw new Error('Postal code not found.');
-                }
-            } catch (error) {
-                console.error('Error fetching city name:', error);
-                return "Unknown City"; // Fallback in case of an error
-            }
-        }
-
-        async function getCoordinates(postalCode, country) {
-            const url = `https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&country=${country}&format=json`;
-        
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data.length > 0) {
-                    return { lat: data[0].lat, lon: data[0].lon };
-                } else {
-                    throw new Error('Postal code not found.');
-                }
-            } catch (error) {
-                console.error('Error fetching coordinates:', error);
-                document.getElementById('weatherData').innerText = 'Failed to retrieve coordinates.';
-                throw error;
-            }
         }
 
         async function getWeatherData(postalCode, country, fruitType) {
