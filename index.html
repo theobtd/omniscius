@@ -81,6 +81,11 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .signup-message {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            margin: 0; /* Add vertical margin */
+        }
     </style>
 </head>
 <body>
@@ -115,7 +120,7 @@
         </svg>
     </div>
 
-    <p>Pas encore membre? <a href="create_account.html">Cliquez ici pour le devenir pour seulement 7,99€/mois</a>.</p>
+    <p class="signup-message">Pas encore membre? <a href="create_account.html">Cliquez ici pour le devenir pour seulement 7,99€/mois</a>.</p>
     
     <script>
         // Firebase configuration
