@@ -268,7 +268,7 @@
                 riskLevels = {
                     'Puceron Cendré': calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Carpocapse': calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                    'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                    'Tavelure': fetchTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Feu Bacterien': calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain),
                 };
             } else if (fruitType === "TomateSalade") {
@@ -308,7 +308,7 @@
             };
         
             try {
-                const response = await fetch('https://theoagri.pythonanywhere.com/predict', {
+                const response = await fetch('https://theoagri.pythonanywhere.com/predict/tuta', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
