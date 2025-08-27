@@ -35,8 +35,6 @@
 <body>
     <div class="map-container">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1354 1354">
-            <!-- SVG paths here -->
-            <!-- Example path -->
             <path class="region" fill="#FF9999" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
             <path class="region" fill="#99FF99" d="M622.379416,150.575665l26.572177,20.667248-.000001,88.573922-17.714786,41.334495-53.144354,22.14348-8.857392,63.477975-159.433058-44.286961-35.429568-19.191015-29.524641-140.242042l50.191888,2.952464l17.714784,41.334497l88.573921,8.857392l121.05103-85.621455Z" />
             <path class="region" fill="#9999FF" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
@@ -82,9 +80,10 @@
                 region.setAttribute('fill', shuffledColors[index % shuffledColors.length]);
             });
 
-            // Save the current timestamp to the database
+            // Save the current timestamp and colors to the database
             const now = new Date().toISOString();
             database.ref('lastShuffle').set(now);
+            database.ref('shuffledColors').set(shuffledColors);
         }
 
         function checkAndShuffle() {
@@ -96,6 +95,17 @@
                 // Check if a day has passed since the last shuffle
                 if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
                     shuffleColors();
+                } else {
+                    // Load the shuffled colors from the database
+                    database.ref('shuffledColors').once('value').then((colorSnapshot) => {
+                        const loadedColors = colorSnapshot.val();
+                        if (loadedColors) {
+                            const regions = document.querySelectorAll('.region');
+                            regions.forEach((region, index) => {
+                                region.setAttribute('fill', loadedColors[index % loadedColors.length]);
+                            });
+                        }
+                    });
                 }
             });
         }
