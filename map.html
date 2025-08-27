@@ -48,5 +48,36 @@
             <path class="region" fill="#CCCCFF" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
         </svg>
     </div>
+
+    <script>
+        const colors = [
+            "#FF9999", "#99FF99", "#9999FF", "#FFFF99", 
+            "#FFCC99", "#CCFF99", "#FF99CC", "#99CCFF", 
+            "#FFCCFF", "#CCFFCC", "#FFFFCC", "#CCCCFF"
+        ];
+
+        function shuffleColors() {
+            const regions = document.querySelectorAll('.region');
+            const shuffledColors = colors.sort(() => Math.random() - 0.5);
+            
+            regions.forEach((region, index) => {
+                region.setAttribute('fill', shuffledColors[index % shuffledColors.length]);
+            });
+
+            localStorage.setItem('lastShuffle', new Date().toISOString());
+        }
+
+        function checkAndShuffle() {
+            const lastShuffle = localStorage.getItem('lastShuffle');
+            const lastDate = lastShuffle ? new Date(lastShuffle) : null;
+            const now = new Date();
+
+            if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
+                shuffleColors();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAndShuffle);
+    </script>
 </body>
 </html>
