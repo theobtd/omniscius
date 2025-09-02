@@ -356,7 +356,7 @@
         
         async function checkAndShuffleTavelure() {
             // Similar logic to checkAndShuffle but for the second map
-            database.ref('lastShuffleTavelure').once('value').then(async (snapshot) => {
+            database.ref('lastShuffle').once('value').then(async (snapshot) => {
                 const lastShuffle = snapshot.val();
                 const lastDate = lastShuffle ? new Date(lastShuffle) : null;
                 const now = new Date();
