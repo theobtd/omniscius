@@ -370,7 +370,7 @@
                     const loadedColors = await database.ref('tavelureColors').once('value').then(colorSnapshot => colorSnapshot.val());
                     console.log('Loaded Tavelure Colors:', loadedColors); // Debugging line
                     if (loadedColors) {
-                        const regions = document.querySelectorAll('.region');
+                        const regions = document.querySelectorAll('#mapContainer2 .region');
                         regions.forEach((region, index) => {
                             region.setAttribute('fill', loadedColors[index]);
                             console.log(`Setting region ${index} to color: ${loadedColors[index]}`); // Debugging line
