@@ -236,13 +236,11 @@
         async function setRegionColors() {
             const regions = document.querySelectorAll('.region');
             const colors = [];
-            const riskLevels = [];
-        
+            
+            // Fetch and calculate colors based on current weather data
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
                     const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
-        
-                    // Map the weather data to the variable names expected by the model
                     const modelData = {
                         tempmin_5days: weatherData.minTemp,
                         tempmax_5days: weatherData.maxTemp,
@@ -250,56 +248,49 @@
                         humidity_5days: weatherData.averageHumidity,
                         precip_5days: weatherData.totalRain
                     };
-        
-                    const riskLevel = await fetchRiskLevel(modelData);
-                    const color = riskLevel === "high" ? 'red' : 'green'; // Change "élevé" to "high"
                     
+                    const riskLevel = await fetchRiskLevel(modelData);
+                    const color = riskLevel === "high" ? 'red' : 'green';
                     colors.push(color);
-                    riskLevels.push(riskLevel);
                 } catch (error) {
                     console.error(`Error fetching data for ${regionName}:`, error);
-                    colors.push('white'); // Fallback color in case of error
-                    riskLevels.push('unknown'); // Fallback risk level
+                    colors.push('white'); // Fallback color
                 }
             }
-        
-            // Save colors and timestamp to Firebase
+            
+            // Save colors to Firebase
             const now = new Date().toISOString();
             database.ref('shuffledColors').set(colors);
             database.ref('lastShuffle').set(now);
-            database.ref('riskLevels').set(riskLevels);
-        
+            
             // Apply colors to regions
             regions.forEach((region, index) => {
                 region.setAttribute('fill', colors[index]);
             });
         }
-
+        
         async function checkAndShuffle() {
-            database.ref('lastShuffle').once('value').then(async (snapshot) => {
-                const lastShuffle = snapshot.val();
-                const lastDate = lastShuffle ? new Date(lastShuffle) : null;
-                const now = new Date();
-
-                // Check if a day has passed since the last shuffle
-                if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
-                    await setRegionColors(); // Fetch weather data and set colors
-                } else {
-                    // Load colors from database and apply them
-                    const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
-                    console.log('Loaded Colors:', loadedColors);
-                    if (loadedColors) {
-                        const regions = document.querySelectorAll('.region');
-                        regions.forEach((region, index) => {
-                            region.setAttribute('fill', loadedColors[index]);
-                        });
-                    }
+            const snapshot = await database.ref('lastShuffle').once('value');
+            const lastShuffle = snapshot.val();
+            const lastDate = lastShuffle ? new Date(lastShuffle) : null;
+            const now = new Date();
+        
+            // Check if a day has passed since the last shuffle
+            if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
+                await setRegionColors(); // Fetch new weather data and set colors
+            } else {
+                // Load colors from database and apply them
+                const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
+                if (loadedColors) {
+                    const regions = document.querySelectorAll('.region');
+                    regions.forEach((region, index) => {
+                        region.setAttribute('fill', loadedColors[index]);
+                    });
                 }
-                
-                // Hide loading overlay and show the map container
-                document.getElementById('loadingOverlay1').style.display = 'none';
-                // document.getElementById('mapContainer').style.display = 'block';
-            });
+            }
+        
+            // Hide loading overlay
+            document.getElementById('loadingOverlay1').style.display = 'none';
         }
 
         async function fetchRiskLevelTavelure(data) {
