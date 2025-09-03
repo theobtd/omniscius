@@ -366,7 +366,7 @@
                 } else {
                     const loadedColors = await database.ref('tavelureColors').once('value').then(colorSnapshot => colorSnapshot.val());
                     if (loadedColors) {
-                        const regions = document.querySelectorAll('#mapContainer2 .region');
+                        const regions = document.querySelectorAll('.region');
                         regions.forEach((region, index) => {
                             region.setAttribute('fill', loadedColors[index]);
                         });
