@@ -287,6 +287,7 @@
                 } else {
                     // Load colors from database and apply them
                     const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
+                    console.log('Loaded Colors:', loadedColors);
                     if (loadedColors) {
                         const regions = document.querySelectorAll('.region');
                         regions.forEach((region, index) => {
@@ -352,7 +353,9 @@
             database.ref('tavelureRiskLevels').set(riskLevels);
         
             // Apply colors to regions
+            console.log('Colors:', colors);
             regions.forEach((region, index) => {
+                console.log(`Setting region ${index} to color: ${colors[index]}`);
                 region.setAttribute('fill', colors[index]);
             });
         }
