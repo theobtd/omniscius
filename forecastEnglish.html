@@ -186,7 +186,7 @@
             database.ref('users/' + userId).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 if (userData) {
-                    const displayFruit = userData.fruit === "TomateSalade" ? "Tomate & Salade" : userData.fruit;
+                    const displayFruit = userData.fruit === "TomateSalade" ? "Tomate" : userData.fruit;
                     
                     document.getElementById('header').innerHTML = displayFruit;
         
