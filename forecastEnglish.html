@@ -273,7 +273,6 @@
                 };
             } else if (fruitType === "TomateSalade") {
                 riskLevels = {
-                    'Adventice': calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp),
                     'Oidium': await calculateOidiumRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Punaise Nesidiocoris': await calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Botrytis': await calculateBotrytisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
@@ -447,42 +446,6 @@
             } catch (error) {
                 console.error('Error fetching Carpocapse risk:', error);
                 return 'normal'; // Fallback in case of an error
-            }
-        }
-
-        function calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp) {
-            if (averageTemp <= 26.38) {
-                if (averageHumidity <= 79.06) {
-                    if (averageHumidity <= 51.49) {
-                        if (maxTemp <= 30.53) {
-                            if (totalRain <= 0.01) {
-                                return 'normal'; // class: normal
-                            } else {
-                                return 'élevé'; // class: élevé
-                            }
-                        } else {
-                            return 'normal'; // class: normal
-                        }
-                    } else {
-                        if (maxTemp <= 23.02) {
-                            if (averageTemp <= 15.14) {
-                                return 'normal'; // class: normal
-                            } else {
-                                return 'élevé'; // class: élevé
-                            }
-                        } else {
-                            return 'normal'; // class: normal
-                        }
-                    }
-                } else {
-                    if (totalRain <= 18.66) {
-                        return 'élevé'; // class: élevé
-                    } else {
-                        return 'normal'; // class: normal
-                    }
-                }
-            } else {
-                return 'élevé'; // class: élevé
             }
         }
 
