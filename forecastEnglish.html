@@ -266,7 +266,7 @@
         
             if (fruitType === "Pomme") {
                 riskLevels = {
-                    'Puceron Cendré': calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                    'Puceron Cendré': await calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Carpocapse': calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Feu Bacterien': calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain),
