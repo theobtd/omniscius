@@ -267,7 +267,7 @@
             if (fruitType === "Pomme") {
                 riskLevels = {
                     'Puceron Cendré': await calculatePuceroncendreRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
-                    'Carpocapse': calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
+                    'Carpocapse': await calculateCarpocapseRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Tavelure': calculateTavelureRisk(totalRain, averageTemp, minTemp, maxTemp, averageHumidity),
                     'Feu Bacterien': calculateFeubacterienRisk(minTemp, maxTemp, averageTemp, averageHumidity, totalRain),
                 };
@@ -359,108 +359,34 @@
                 return 'normal'; // Fallback in case of an error
             }
         }
+
+        async function calculateCarpocapseRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp) {
+            const data = {
+                tempmin_5days: minTemp,
+                tempmax_5days: maxTemp,
+                temp_5days: averageTemp,
+                humidity_5days: averageHumidity,
+                precip_5days: totalRain
+            };
         
-        function calculateCarpocapseRisk(tempmin, tempmax, averageTemp, averageHumidity, totalRain) {
-            if (tempmin <= 7.20) {
-                if (averageTemp <= 16.06) {
-                    if (tempmin <= 6.00) {
-                        return 'normal'; // class: normal
-                    } else {
-                        if (tempmax <= 20.12) {
-                            return 'élevé'; // class: élevé
-                        } else {
-                            return 'normal'; // class: normal
-                        }
-                    }
-                } else {
-                    if (totalRain <= 11.02) {
-                        return 'normal'; // class: normal
-                    } else {
-                        return 'élevé'; // class: élevé
-                    }
+            try {
+                const response = await fetch('https://theoagri.pythonanywhere.com/predict_carpocapse', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            } else {
-                if (totalRain <= 15.80) {
-                    if (averageHumidity <= 68.17) {
-                        if (averageTemp <= 17.14) {
-                            if (tempmin <= 7.96) {
-                                return 'élevé'; // class: élevé
-                            } else {
-                                if (tempmax <= 21.91) {
-                                    return 'élevé'; // class: élevé
-                                } else {
-                                    return 'normal'; // class: normal
-                                }
-                            }
-                        } else {
-                            if (averageHumidity <= 54.35) {
-                                if (averageHumidity <= 54.13) {
-                                    if (totalRain <= 1.99) {
-                                        if (totalRain <= 0.00) {
-                                            if (tempmin <= 19.68) {
-                                                if (averageHumidity <= 42.97) {
-                                                    return 'normal'; // class: normal
-                                                } else {
-                                                    return 'élevé'; // class: élevé
-                                                }
-                                            } else {
-                                                return 'normal'; // class: normal
-                                            }
-                                        } else {
-                                            return 'élevé'; // class: élevé
-                                        }
-                                    } else {
-                                        return 'normal'; // class: normal
-                                    }
-                                } else {
-                                    return 'normal'; // class: normal
-                                }
-                            } else {
-                                if (tempmax <= 34.53) {
-                                    return 'élevé'; // class: élevé
-                                } else {
-                                    if (tempmax <= 35.29) {
-                                        return 'normal'; // class: normal
-                                    } else {
-                                        return 'élevé'; // class: élevé
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if (tempmax <= 27.80) {
-                            if (totalRain <= 1.54) {
-                                return 'normal'; // class: normal
-                            } else {
-                                if (averageTemp <= 19.08) {
-                                    return 'élevé'; // class: élevé
-                                } else {
-                                    return 'normal'; // class: normal
-                                }
-                            }
-                        } else {
-                            if (totalRain <= 0.48) {
-                                return 'élevé'; // class: élevé
-                            } else {
-                                return 'normal'; // class: normal
-                            }
-                        }
-                    }
-                } else {
-                    if (tempmin <= 16.65) {
-                        if (tempmax <= 26.95) {
-                            if (tempmin <= 9.70) {
-                                return 'normal'; // class: normal
-                            } else {
-                                return 'élevé'; // class: élevé
-                            }
-                        } else {
-                            return 'normal'; // class: normal
-                        }
-                    } else {
-                        return 'élevé'; // class: élevé
-                    }
-                }
+        
+                const result = await response.json();
+                return result.risk === "high" ? "élevé" : "moyen";;  // Return the risk level from the response
+            } catch (error) {
+                console.error('Error fetching Puceron Cendré risk:', error);
+                return 'normal'; // Fallback in case of an error
             }
         }
 
