@@ -274,7 +274,7 @@
             } else if (fruitType === "TomateSalade") {
                 riskLevels = {
                     'Adventice': calculateAdventiceRisk(totalRain, averageTemp, averageHumidity, maxTemp),
-                    'Oidium': await calculateOidiumRisk(totalRain, averageHumidity, minTemp, maxTemp),
+                    'Oidium': await calculateOidiumRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Punaise Nesidiocoris': await calculatePunaisenesidiocorisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Botrytis': await calculateBotrytisRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp),
                     'Tuta Absoluta': await fetchTutaAbsolutaRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp), // New fetch call
