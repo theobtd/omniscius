@@ -329,87 +329,33 @@
             }
         }
 
-        function calculatePuceroncendreRisk(tempmax, tempmin, averageTemp, averageHumidity, totalRain) {
-            if (tempmax <= 18.74) {
-                if (totalRain <= 1.08) {
-                    if (totalRain <= 0.42) {
-                        return 'normal'; // class: normal
-                    } else {
-                        return 'élevé'; // class: élevé
-                    }
-                } else {
-                    return 'normal'; // class: normal
+        async function calculatePuceroncendreRisk(tempmax, tempmin, averageTemp, averageHumidity, totalRain) {
+            const data = {
+                tempmax: tempmax,
+                tempmin: tempmin,
+                averageTemp: averageTemp,
+                averageHumidity: averageHumidity,
+                totalRain: totalRain
+            };
+        
+            try {
+                const response = await fetch('https://theoagri.pythonanywhere.com/predict_puceroncendre', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            } else {
-                if (tempmin <= 10.05) {
-                    if (averageHumidity <= 65.40) {
-                        if (tempmax <= 20.51) {
-                            if (averageTemp <= 10.64) {
-                                return 'élevé'; // class: élevé
-                            } else {
-                                return 'normal'; // class: normal
-                            }
-                        } else {
-                            return 'élevé'; // class: élevé
-                        }
-                    } else {
-                        if (averageHumidity <= 70.77) {
-                            if (averageTemp <= 17.26) {
-                                return 'normal'; // class: normal
-                            } else {
-                                return 'élevé'; // class: élevé
-                            }
-                        } else {
-                            if (totalRain <= 1.33) {
-                                if (tempmax <= 27.07) {
-                                    return 'normal'; // class: normal
-                                } else {
-                                    return 'élevé'; // class: élevé
-                                }
-                            } else {
-                                if (totalRain <= 43.42) {
-                                    if (averageTemp <= 16.31) {
-                                        if (totalRain <= 2.26) {
-                                            if (tempmin <= 7.26) {
-                                                return 'élevé'; // class: élevé
-                                            } else {
-                                                return 'normal'; // class: normal
-                                            }
-                                        } else {
-                                            return 'élevé'; // class: élevé
-                                        }
-                                    } else {
-                                        if (averageHumidity <= 76.19) {
-                                            return 'élevé'; // class: élevé
-                                        } else {
-                                            return 'normal'; // class: normal
-                                        }
-                                    }
-                                } else {
-                                    return 'normal'; // class: normal
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (averageHumidity <= 63.61) {
-                        return 'normal'; // class: normal
-                    } else {
-                        if (tempmax <= 29.82) {
-                            if (averageHumidity <= 76.89) {
-                                return 'normal'; // class: normal
-                            } else {
-                                if (averageTemp <= 17.49) {
-                                    return 'normal'; // class: normal
-                                } else {
-                                    return 'élevé'; // class: élevé
-                                }
-                            }
-                        } else {
-                            return 'élevé'; // class: élevé
-                        }
-                    }
-                }
+        
+                const result = await response.json();
+                return result.risk;  // Return the risk level from the response
+            } catch (error) {
+                console.error('Error fetching Puceron Cendré risk:', error);
+                return 'normal'; // Fallback in case of an error
             }
         }
         
