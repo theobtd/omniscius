@@ -353,7 +353,7 @@
                 }
         
                 const result = await response.json();
-                return result.risk;  // Return the risk level from the response
+                return result.risk === "high" ? "élevé" : "moyen";;  // Return the risk level from the response
             } catch (error) {
                 console.error('Error fetching Puceron Cendré risk:', error);
                 return 'normal'; // Fallback in case of an error
