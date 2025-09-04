@@ -330,13 +330,13 @@
             }
         }
 
-        async function calculatePuceroncendreRisk(tempmax, tempmin, averageTemp, averageHumidity, totalRain) {
+        async function calculatePuceroncendreRisk(totalRain, averageTemp, averageHumidity, minTemp, maxTemp) {
             const data = {
-                tempmax: tempmax,
-                tempmin: tempmin,
-                averageTemp: averageTemp,
-                averageHumidity: averageHumidity,
-                totalRain: totalRain
+                tempmax_5days: maxTemp,
+                tempmin_5days: minTemp,
+                temp_5days: averageTemp,
+                humidity_5days: averageHumidity,
+                precip_5days: totalRain
             };
         
             try {
