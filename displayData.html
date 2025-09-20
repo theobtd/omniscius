@@ -93,10 +93,24 @@
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        const regionCoordinates = [
+            "Hauts de France",
+            "Normandie",
+            "Bretagne",
+            "Pays de la Loire",
+            "Centre Val de Loire",
+            "Bourgogne Franche Comte",
+            "Nouvelle Aquitaine",
+            "Occitanie",
+            "PACA",
+            "Ile de France",
+            "Grand Est",
+            "Auvergne Rhone Alpes"
+        ];
+
         async function fetchRiskLevels() {
             const results = {};
-            const regions = Object.keys(regionCoordinates);
-            for (const region of regions) {
+            for (const region of regionCoordinates) {
                 try {
                     const tutaRisk = await database.ref(`TutaAbsoluta/${region}`).once('value').then(snapshot => snapshot.val());
                     const botrytisRisk = await database.ref(`Botrytis/${region}`).once('value').then(snapshot => snapshot.val());
