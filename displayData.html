@@ -112,27 +112,20 @@
             const results = {};
             for (const region of regionCoordinates) {
                 try {
-                    const tutaRisk = await database.ref(`TutaAbsoluta/${region}`).once('value').then(snapshot => snapshot.val());
-                    const botrytisRisk = await database.ref(`Botrytis/${region}`).once('value').then(snapshot => snapshot.val());
+                    const overallRisk = await database.ref(`OverallRisk/${region}`).once('value').then(snapshot => snapshot.val());
                     
-                    results[region] = {
-                        tuta: tutaRisk,
-                        botrytis: botrytisRisk
-                    };
+                    results[region] = overallRisk;
                 } catch (error) {
-                    console.error(`Error fetching risk level for ${region}:`, error);
-                    results[region] = {
-                        tuta: "unknown",
-                        botrytis: "unknown"
-                    };
+                    console.error(`Error fetching overall risk level for ${region}:`, error);
+                    results[region] = "unknown";
                 }
             }
             return results;
         }
 
-        function getColor(tutaRisk, botrytisRisk) {
-            if (tutaRisk === "high" && botrytisRisk === "high") return 'red';
-            if (tutaRisk === "high" || botrytisRisk === "high") return 'yellow';
+        function getColor(overallRisk) {
+            if (overallRisk === "High") return 'red';
+            if (overallRisk === "Medium") return 'yellow';
             return 'green';
         }
 
@@ -145,7 +138,7 @@
                 const riskData = riskLevels[regionName];
                 
                 if (riskData) {
-                    const color = getColor(riskData.tuta, riskData.botrytis);
+                    const color = getColor(riskData);
                     region.setAttribute('fill', color);
                 }
             });
