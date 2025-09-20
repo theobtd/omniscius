@@ -41,6 +41,7 @@
     <div>
         <button id="fetchWeatherBtn">Tuta Absoluta</button>
         <button id="fetchBotrytisBtn">Botrytis</button>
+        <button id="fetchOverallRiskBtn">Overall Risk</button>
         <div id="message"></div>
     </div>
 
@@ -160,8 +161,34 @@
             document.getElementById('message').innerText = "Weather data for Botrytis fetched and saved successfully!";
         }
 
+        async function fetchOverallRisk() {
+            const overallRisk = {};
+
+            for (const regionName of Object.keys(regionCoordinates)) {
+                const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
+
+                // Determine the overall risk
+                if (tutaRisk === "High" && botrytisRisk === "High") {
+                    overallRisk[regionName] = "High";
+                } else if (tutaRisk === "High" || botrytisRisk === "High") {
+                    overallRisk[regionName] = "Medium";
+                } else {
+                    overallRisk[regionName] = "Low";
+                }
+            }
+
+            // Store overall risk in Firebase
+            for (const [regionName, risk] of Object.entries(overallRisk)) {
+                database.ref(`OverallRisk/${regionName}`).set(risk);
+            }
+
+            document.getElementById('message').innerText = "Overall risk levels calculated and saved successfully!";
+        }
+
         document.getElementById('fetchWeatherBtn').addEventListener('click', fetchAndStoreRisk);
         document.getElementById('fetchBotrytisBtn').addEventListener('click', fetchAndStoreBotrytis);
+        document.getElementById('fetchOverallRiskBtn').addEventListener('click', fetchOverallRisk);
     </script>
 </body>
 </html>
