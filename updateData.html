@@ -169,9 +169,9 @@
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
 
                 // Determine the overall risk
-                if (tutaRisk === "High" && botrytisRisk === "High") {
-                    overallRisk[regionName] = "High";
-                } else if (tutaRisk === "High" || botrytisRisk === "High") {
+                if (tutaRisk === "high" && botrytisRisk === "high") {
+                    overallRisk[regionName] = "high";
+                } else if (tutaRisk === "high" || botrytisRisk === "high") {
                     overallRisk[regionName] = "Medium";
                 } else {
                     overallRisk[regionName] = "Low";
