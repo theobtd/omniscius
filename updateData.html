@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Risk Assessment</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #message {
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <button id="fetchWeatherBtn">Fetch Weekly Risk</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
+            authDomain: "omniscius-7bf29.firebaseapp.com",
+            databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
+            projectId: "omniscius-7bf29",
+            storageBucket: "omniscius-7bf29",
+            messagingSenderId: "24281922885",
+            appId: "1:24281922885:web:5d417050ef79e22e6b522c"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        const regionCoordinates = {
+            "Hauts de France": { lat: 50.511853, lon: 2.382456 },
+            "Normandie": { lat: 49.204741, lon: 0.250363 },
+            "Bretagne": { lat: 48.128866, lon: -2.536543 },
+            "Pays de la Loire": { lat: 47.515044, lon: -0.866298 },
+            "Centre Val de Loire": { lat: 47.723388, lon: 1.440800 },
+            "Bourgogne Franche Comte": { lat: 47.281186, lon: 4.482647 },
+            "Nouvelle Aquitaine": { lat: 45.319608, lon: 0.343424 },
+            "Occitanie": { lat: 43.755350, lon: 2.143505 },
+            "PACA": { lat: 43.706660, lon: 5.377874 },
+            "Ile de France": { lat: 48.742842, lon: 2.384157 },
+            "Grand Est": { lat: 48.443608, lon: 6.099832 },
+            "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
+        };
+
+        async function getWeatherData(lat, lon) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+            const forecastResponse = await fetch(forecastUrl);
+            if (!forecastResponse.ok) {
+                throw new Error('Failed to fetch forecast data');
+            }
+            return await forecastResponse.json();
+        }
+
+        async function fetchRiskLevel(data) {
+            const modelUrl = "https://theoagri.pythonanywhere.com/predict"; // Replace with your actual model endpoint
+            const response = await fetch(modelUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch risk level');
+            }
+            const result = await response.json();
+            return result.risk; // Assuming the response contains a 'risk' field
+        }
+
+        async function fetchAndStoreRisk() {
+            const results = {};
+            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
+                try {
+                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
+                    const modelData = {
+                        tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
+                        tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
+                        temp_5days: weatherData.list.reduce((acc, item) => acc + item.main.temp, 0) / weatherData.list.length,
+                        humidity_5days: weatherData.list.reduce((acc, item) => acc + item.main.humidity, 0) / weatherData.list.length,
+                        precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
+                    };
+
+                    const riskLevel = await fetchRiskLevel(modelData);
+                    results[regionName] = riskLevel;
+                } catch (error) {
+                    console.error(`Error fetching data for ${regionName}:`, error);
+                    results[regionName] = "unknown"; // Fallback risk level
+                }
+            }
+
+            // Store results in Firebase
+            for (const [regionName, risk] of Object.entries(results)) {
+                database.ref(`WeeklyRisk/region_${regionName}`).set(risk);
+            }
+
+            document.getElementById('message').innerText = "Weather data fetched and saved successfully!";
+        }
+
+        document.getElementById('fetchWeatherBtn').addEventListener('click', fetchAndStoreRisk);
+    </script>
+</body>
+</html>
