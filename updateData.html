@@ -16,6 +16,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            position: relative;
         }
         button {
             padding: 15px 30px;
@@ -33,12 +34,30 @@
             margin-top: 20px;
             color: red;
         }
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Initially hidden */
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite; /* Animation */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div>
         <button id="fetchWeatherBtn">Fetch Weekly Risk</button>
         <div id="message"></div>
+        <div class="loader" id="loader"></div>
     </div>
 
     <script>
@@ -101,6 +120,8 @@
         }
 
         async function fetchAndStoreRisk() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'block'; // Show loader
             const results = {};
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
@@ -126,6 +147,7 @@
                 database.ref(`TutaAbsoluta/${regionName}`).set(risk);
             }
 
+            loader.style.display = 'none'; // Hide loader
             document.getElementById('message').innerText = "Weather data fetched and saved successfully!";
         }
 
