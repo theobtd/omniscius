@@ -16,7 +16,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            position: relative;
+            flex-direction: column;
         }
         button {
             padding: 15px 30px;
@@ -26,6 +26,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin: 10px; /* Add some margin between buttons */
         }
         button:hover {
             background-color: #2980b9;
@@ -34,30 +35,13 @@
             margin-top: 20px;
             color: red;
         }
-        .loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none; /* Initially hidden */
-            border: 8px solid #f3f3f3; /* Light grey */
-            border-top: 8px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite; /* Animation */
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
     <div>
-        <button id="fetchWeatherBtn">Tuta Absoluta</button>
+        <button id="fetchWeatherBtn">Fetch Weekly Risk</button>
+        <button id="fetchBotrytisBtn">Fetch Botrytis</button>
         <div id="message"></div>
-        <div class="loader" id="loader"></div>
     </div>
 
     <script>
@@ -103,9 +87,8 @@
             return await forecastResponse.json();
         }
 
-        async function fetchRiskLevel(data) {
-            const modelUrl = "https://theoagri.pythonanywhere.com/predict"; // Replace with your actual model endpoint
-            const response = await fetch(modelUrl, {
+        async function fetchRiskLevel(data, endpoint) {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -120,8 +103,6 @@
         }
 
         async function fetchAndStoreRisk() {
-            const loader = document.getElementById('loader');
-            loader.style.display = 'block'; // Show loader
             const results = {};
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
@@ -134,7 +115,7 @@
                         precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
                     };
 
-                    const riskLevel = await fetchRiskLevel(modelData);
+                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict");
                     results[regionName] = riskLevel;
                 } catch (error) {
                     console.error(`Error fetching data for ${regionName}:`, error);
@@ -147,11 +128,40 @@
                 database.ref(`TutaAbsoluta/${regionName}`).set(risk);
             }
 
-            loader.style.display = 'none'; // Hide loader
-            document.getElementById('message').innerText = "Weather data fetched and saved successfully!";
+            document.getElementById('message').innerText = "Weather data for weekly risk fetched and saved successfully!";
+        }
+
+        async function fetchAndStoreBotrytis() {
+            const results = {};
+            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
+                try {
+                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
+                    const modelData = {
+                        tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
+                        tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
+                        temp_5days: weatherData.list.reduce((acc, item) => acc + item.main.temp, 0) / weatherData.list.length,
+                        humidity_5days: weatherData.list.reduce((acc, item) => acc + item.main.humidity, 0) / weatherData.list.length,
+                        precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
+                    };
+
+                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_botrytis");
+                    results[regionName] = riskLevel;
+                } catch (error) {
+                    console.error(`Error fetching data for ${regionName}:`, error);
+                    results[regionName] = "unknown"; // Fallback risk level
+                }
+            }
+
+            // Store results in Firebase
+            for (const [regionName, risk] of Object.entries(results)) {
+                database.ref(`Botrytis/${regionName}`).set(risk);
+            }
+
+            document.getElementById('message').innerText = "Weather data for Botrytis fetched and saved successfully!";
         }
 
         document.getElementById('fetchWeatherBtn').addEventListener('click', fetchAndStoreRisk);
+        document.getElementById('fetchBotrytisBtn').addEventListener('click', fetchAndStoreBotrytis);
     </script>
 </body>
 </html>
