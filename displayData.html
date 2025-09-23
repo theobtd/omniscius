@@ -207,10 +207,11 @@
                 const overallRiskList = await database.ref('OverallRiskList').once('value').then(snapshot => snapshot.val());
                 const riskLevelsArray = overallRiskList.split(','); // Convert the string to an array
         
-                // Create an object mapping region names to their risk levels
+                // Create an object to store region names and their corresponding risk levels
                 const results = {};
-                regionOrder.forEach((regionName, index) => {
-                    results[regionName] = riskLevelsArray[index] || "unknown"; // Use "unknown" if there's no corresponding risk
+                riskLevelsArray.forEach(entry => {
+                    const [regionName, riskLevel] = entry.split('='); // Split each entry into region and risk
+                    results[regionName.trim()] = riskLevel.trim(); // Store in the results object
                 });
         
                 return results; // Return the object
