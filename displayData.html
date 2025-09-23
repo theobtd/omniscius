@@ -13,7 +13,7 @@
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
-
+        
         .info-container {
             height: 80%; /* Same height as map */
             width: 40%; /* Adjust width as needed */
@@ -38,13 +38,17 @@
             padding: 20px; /* Add some padding */
             box-sizing: border-box; /* Include padding in height/width calculations */
         }
+        
         svg {
             height: 75vh;
         }
+        
         .region {
             stroke: #3f5787;
             stroke-width: 2.708;
         }
+        
+        /* Loading overlay styles */
         .loading-overlay {
             position: absolute;
             top: 0;
@@ -57,6 +61,7 @@
             align-items: center;
             z-index: 999; /* Ensure it stays above other content */
         }
+        
         .loader {
             border: 8px solid #f3f3f3; /* Light grey */
             border-top: 8px solid #3498db; /* Blue */
@@ -65,9 +70,24 @@
             height: 60px;
             animation: spin 1s linear infinite; /* Animation */
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        /* Media queries for responsive design */
+        @media (max-width: 768px) { /* Adjust this value for mobile breakpoints */
+            .info-container,
+            #mapContainer {
+                position: relative; /* Change to relative to stack them */
+                width: 90%; /* Full width for mobile */
+                margin: 5vh auto; /* Center with vertical margin */
+            }
+        
+            #mapContainer {
+                height: auto; /* Allow height to adjust */
+            }
         }
     </style>
 </head>
