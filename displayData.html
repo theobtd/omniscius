@@ -71,6 +71,13 @@
             height: 60px;
             animation: spin 1s linear infinite; /* Animation */
         }
+
+        .title {
+            text-align: center; /* Center the text */
+            margin: 20px 0; /* Add some vertical spacing */
+            font-size: 2em; /* Adjust font size as needed */
+            color: #3f5787; /* Change color to match your theme */
+        }
         
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -94,6 +101,8 @@
     </style>
 </head>
 <body>
+
+    <h1 class="title">AgSafe.Farm</h1>
     
     <div class="map-container" id="mapContainer">
         <div class="loading-overlay" id="loadingOverlay">
