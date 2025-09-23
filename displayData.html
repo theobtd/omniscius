@@ -203,9 +203,9 @@
         
                 region.addEventListener('click', async () => {
                     const { tutaRisk, botrytisRisk } = await fetchRiskLevelsForRegion(regionName);
-                    const infoMessage = `Region: ${regionName}<br>Tuta Absoluta Risk: ${tutaRisk}<br>Botrytis Risk: ${botrytisRisk}`;
+                    const infoMessage = `Tuta Absoluta Risk: ${tutaRisk}<br>Botrytis Risk: ${botrytisRisk}`;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
-        
+                
                     // Update the title to the selected region
                     titleElement.textContent = regionName;
                 });
