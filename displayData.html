@@ -188,10 +188,14 @@
             const riskLevels = await fetchRiskLevels();
             const regions = document.querySelectorAll('.region');
         
+            // Set initial title
+            const titleElement = document.querySelector('#infoContainer h2');
+            titleElement.textContent = "Select a region";
+        
             regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
                 const riskData = riskLevels[regionName];
-                
+        
                 if (riskData) {
                     const color = getColor(riskData);
                     region.setAttribute('fill', color);
@@ -201,6 +205,9 @@
                     const { tutaRisk, botrytisRisk } = await fetchRiskLevelsForRegion(regionName);
                     const infoMessage = `Region: ${regionName}<br>Tuta Absoluta Risk: ${tutaRisk}<br>Botrytis Risk: ${botrytisRisk}`;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
+        
+                    // Update the title to the selected region
+                    titleElement.textContent = regionName;
                 });
             });
         
