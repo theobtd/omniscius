@@ -165,7 +165,7 @@
         async function setRegionColors() {
             const riskLevels = await fetchRiskLevels();
             const regions = document.querySelectorAll('.region');
-            
+        
             regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
                 const riskData = riskLevels[regionName];
@@ -176,18 +176,12 @@
                 }
         
                 region.addEventListener('click', async () => {
-                    // Reset stroke width for all regions
-                    regions.forEach(r => r.setAttribute('stroke-width', '2.708'));
-        
-                    // Set stroke width for the selected region
-                    region.setAttribute('stroke-width', '4'); // Thicker border
-        
                     const { tutaRisk, botrytisRisk } = await fetchRiskLevelsForRegion(regionName);
                     const infoMessage = `Region: ${regionName}<br>Tuta Absoluta Risk: ${tutaRisk}<br>Botrytis Risk: ${botrytisRisk}`;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
                 });
             });
-            
+        
             document.getElementById('loadingOverlay').style.display = 'none'; // Hide loader
         }
 
