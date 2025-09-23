@@ -83,11 +83,16 @@
             .info-container {
                 position: relative; /* Change to relative to stack them */
                 width: 90%; /* Full width for mobile */
-                margin: 5vh auto; /* Center with vertical margin and auto for left/right margins */
+                margin: 5vh 5vh 5vh 0; /* Center with vertical margin and auto for left/right margins */
                 max-width: 600px; /* Optional: set a max width to prevent too wide on large phones */
             }
         
             #mapContainer {
+                height: auto; /* Allow height to adjust */
+            }
+
+            .info-container {
+                /* Ensure it doesn't have fixed positioning */
                 height: auto; /* Allow height to adjust */
             }
         }
