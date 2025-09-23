@@ -162,27 +162,31 @@
         }
 
         async function fetchOverallRisk() {
-            const overallRisk = {};
-
+            const overallRiskArray = []; // Create an array to hold the risk levels
+        
             for (const regionName of Object.keys(regionCoordinates)) {
                 const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
-
+        
                 // Determine the overall risk
+                let overallRisk;
                 if (tutaRisk === "high" && botrytisRisk === "high") {
-                    overallRisk[regionName] = "High";
+                    overallRisk = "High";
                 } else if (tutaRisk === "high" || botrytisRisk === "high") {
-                    overallRisk[regionName] = "Medium";
+                    overallRisk = "Medium";
                 } else {
-                    overallRisk[regionName] = "Low";
+                    overallRisk = "Low";
                 }
+        
+                overallRiskArray.push(overallRisk); // Add the risk to the array
             }
-
-            // Store overall risk in Firebase
-            for (const [regionName, risk] of Object.entries(overallRisk)) {
-                database.ref(`OverallRisk/${regionName}`).set(risk);
-            }
-
+        
+            // Join the array into a comma-separated string
+            const overallRiskString = overallRiskArray.join(',');
+        
+            // Store overall risk as a comma-separated list in Firebase
+            database.ref(`OverallRiskList`).set(overallRiskString);
+        
             document.getElementById('message').innerText = "Overall risk levels calculated and saved successfully!";
         }
 
