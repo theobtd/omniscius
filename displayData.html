@@ -187,13 +187,39 @@
             "Pays de la Loire"
         ];
 
+        const regionOrder = [
+            "Occitanie",
+            "Centre Val de Loire",
+            "Hauts de France",
+            "Bretagne",
+            "PACA",
+            "Ile de France",
+            "Auvergne Rhone Alpes",
+            "Normandie",
+            "Pays de la Loire",
+            "Nouvelle Aquitaine",
+            "Bourgogne Franche Comte",
+            "Grand Est"
+        ];
+
         async function fetchRiskLevels() {
             try {
                 const overallRiskList = await database.ref('OverallRiskList').once('value').then(snapshot => snapshot.val());
-                return overallRiskList.split(','); // Convert the comma-separated string to an array
+                const riskLevelsArray = overallRiskList.split(','); // Convert the string to an array
+        
+                // Create an object mapping region names to their risk levels
+                const results = {};
+                regionOrder.forEach((regionName, index) => {
+                    results[regionName] = riskLevelsArray[index] || "unknown"; // Use "unknown" if there's no corresponding risk
+                });
+        
+                return results; // Return the object
             } catch (error) {
                 console.error('Error fetching overall risk levels:', error);
-                return Array(12).fill("unknown"); // Return an array of "unknown" if there's an error
+                return regionOrder.reduce((acc, region) => {
+                    acc[region] = "unknown"; // Return "unknown" for all regions if there's an error
+                    return acc;
+                }, {});
             }
         }
 
@@ -215,16 +241,16 @@
         }
 
         async function setRegionColors() {
-            const riskLevels = await fetchRiskLevels(); // Get the array of risk levels
+            const riskLevels = await fetchRiskLevels(); // Get the object of risk levels
             const regions = document.querySelectorAll('.region');
             
             // Set initial title
             const titleElement = document.querySelector('#infoContainer h2');
             titleElement.textContent = "Select a region";
             
-            regions.forEach((region, index) => {
+            regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
-                const riskData = riskLevels[index]; // Get the corresponding risk level
+                const riskData = riskLevels[regionName]; // Get the risk level using the region name
                 
                 if (riskData) {
                     const color = getColor(riskData);
@@ -235,7 +261,7 @@
                     const { tutaRisk, botrytisRisk } = await fetchRiskLevelsForRegion(regionName);
                     const infoMessage = `Tuta Absoluta Risk: ${tutaRisk}<br>Botrytis Risk: ${botrytisRisk}`;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
-                    
+        
                     // Update the title to the selected region
                     titleElement.textContent = regionName;
                 });
