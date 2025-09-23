@@ -128,6 +128,17 @@
             return 'green';
         }
 
+        async function fetchRiskLevelsForRegion(regionName) {
+            try {
+                const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
+                return { tutaRisk, botrytisRisk };
+            } catch (error) {
+                console.error(`Error fetching risk levels for ${regionName}:`, error);
+                return { tutaRisk: "unknown", botrytisRisk: "unknown" };
+            }
+        }
+
         async function setRegionColors() {
             const riskLevels = await fetchRiskLevels();
             const regions = document.querySelectorAll('.region');
@@ -142,8 +153,9 @@
                 }
         
                 // Add click event listener to each region
-                region.addEventListener('click', () => {
-                    alert(`Region clicked: ${regionName}`);
+                region.addEventListener('click', async () => {
+                    const { tutaRisk, botrytisRisk } = await fetchRiskLevelsForRegion(regionName);
+                    alert(`Region: ${regionName}\nTuta Absoluta Risk: ${tutaRisk}\nBotrytis Risk: ${botrytisRisk}`);
                 });
             });
         
