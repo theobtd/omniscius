@@ -131,7 +131,7 @@
         async function setRegionColors() {
             const riskLevels = await fetchRiskLevels();
             const regions = document.querySelectorAll('.region');
-
+        
             regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
                 const riskData = riskLevels[regionName];
@@ -140,8 +140,13 @@
                     const color = getColor(riskData);
                     region.setAttribute('fill', color);
                 }
+        
+                // Add click event listener to each region
+                region.addEventListener('click', () => {
+                    alert(`Region clicked: ${regionName}`);
+                });
             });
-
+        
             document.getElementById('loadingOverlay').style.display = 'none'; // Hide loader
         }
 
