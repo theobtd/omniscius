@@ -162,13 +162,15 @@
         }
 
         async function fetchOverallRisk() {
-            const overallRiskArray = []; // Create an array to hold the risk levels
+            const overallRiskArray = []; // Create an array to hold the risk levels in the desired format
         
+            // Loop through each region using the keys from regionCoordinates
             for (const regionName of Object.keys(regionCoordinates)) {
+                // Fetch the risk levels for TutaAbsoluta and Botrytis
                 const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
         
-                // Determine the overall risk
+                // Determine the overall risk based on the fetched values
                 let overallRisk;
                 if (tutaRisk === "high" && botrytisRisk === "high") {
                     overallRisk = "High";
@@ -178,7 +180,8 @@
                     overallRisk = "Low";
                 }
         
-                overallRiskArray.push(overallRisk); // Add the risk to the array
+                // Construct the string in the format "Region=RiskLevel" and add it to the array
+                overallRiskArray.push(`${regionName}=${overallRisk}`);
             }
         
             // Join the array into a comma-separated string
