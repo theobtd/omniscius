@@ -42,6 +42,7 @@
         <button id="fetchWeatherBtn">Fetch Weather Data</button>
         <button id="fetchRiskBtn">Tuta Absoluta</button>
         <button id="fetchBotrytisBtn">Botrytis</button>
+        <button id="fetchPuceroncendreBtn">Puceron Cendré</button>
         <button id="fetchOverallRiskBtn">Overall Risk</button>
         <div id="message"></div>
     </div>
@@ -200,6 +201,41 @@
             document.getElementById('message').innerText = "Risk levels for Botrytis fetched and saved successfully!";
         }
 
+        async function fetchAndStorePuceroncendre() {
+            const results = {};
+            for (const regionName of Object.keys(regionCoordinates)) {
+                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+                if (!weatherData) {
+                    console.error(`No weather data available for ${regionName}`);
+                    results[regionName] = "unknown"; // Handle missing data
+                    continue;
+                }
+
+                const modelData = {
+                    tempmin_5days: weatherData.tempmin_5days,
+                    tempmax_5days: weatherData.tempmax_5days,
+                    temp_5days: weatherData.temp_5days,
+                    humidity_5days: weatherData.humidity_5days,
+                    precip_5days: weatherData.precip_5days
+                };
+
+                try {
+                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_puceroncendre");
+                    results[regionName] = riskLevel;
+                } catch (error) {
+                    console.error(`Error fetching risk for ${regionName}:`, error);
+                    results[regionName] = "unknown"; // Fallback risk level
+                }
+            }
+
+            // Store results in Firebase
+            for (const [regionName, risk] of Object.entries(results)) {
+                database.ref(`PuceronCendre/${regionName}`).set(risk);
+            }
+
+            document.getElementById('message').innerText = "Risk levels for Puceron Cendré fetched and saved successfully!";
+        }
+
         async function fetchOverallRisk() {
             const overallRiskArray = [];
 
@@ -228,6 +264,7 @@
         document.getElementById('fetchWeatherBtn').addEventListener('click', fetchWeather);
         document.getElementById('fetchRiskBtn').addEventListener('click', fetchAndStoreRisk);
         document.getElementById('fetchBotrytisBtn').addEventListener('click', fetchAndStoreBotrytis);
+        document.getElementById('fetchPuceroncendreBtn').addEventListener('click', fetchAndStorePuceroncendre);
         document.getElementById('fetchOverallRiskBtn').addEventListener('click', fetchOverallRisk);
     </script>
 </body>
