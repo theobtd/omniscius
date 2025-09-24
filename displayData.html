@@ -269,44 +269,53 @@
             const riskLevels = await fetchRiskLevels(); // Get the object of risk levels
             const regions = document.querySelectorAll('.region');
             
-            // Set initial title
+            // Set initial title with dates
+            const nPlus5Date = formatDate(5);
+            const nPlus12Date = formatDate(12);
             const titleElement = document.querySelector('#infoContainer h2');
-            titleElement.textContent = "Sélectionnez une région";
+            titleElement.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date}`;
             
             regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
                 const riskData = riskLevels[regionName]; // Get the risk level using the region name
-            
+                
                 if (riskData) {
                     const color = getColor(riskData);
                     region.setAttribute('fill', color);
                 }
-            
+                
                 region.addEventListener('click', async () => {
                     // Show loader
                     document.getElementById('loadingInfo').style.display = 'flex';
-            
+                    
                     const { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk } = await fetchRiskLevelsForRegion(regionName);
-            
+                    
                     // Hide loader
                     document.getElementById('loadingInfo').style.display = 'none';
-            
+                    
                     const infoMessage = `
                         Tuta Absoluta: ${tutaRisk}<br>
                         Botrytis: ${botrytisRisk}<br>
                         Puceron Cendré: ${puceroncendreRisk}<br>
                         Punaise Nesidiocoris: ${punaisenesidiocorisRisk}<br>
-                        Acariose Bronzee: ${acariosebronzeeRisk}<br>
+                        Acariose Bronzée: ${acariosebronzeeRisk}<br>
                         Aleurodes: ${aleurodesRisk}
                     `;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
-            
-                    // Update the title to the selected region
-                    titleElement.textContent = regionName;
+                    
+                    // Update the title to the selected region with dates
+                    titleElement.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date} pour ${regionName}`;
                 });
             });
-        
+            
             document.getElementById('loadingOverlay').style.display = 'none'; // Hide loader
+        }
+
+        function formatDate(offset) {
+            const date = new Date();
+            date.setDate(date.getDate() + offset);
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+            return date.toLocaleDateString(undefined, options); // Use default locale formatting
         }
 
         // Button selection handling
