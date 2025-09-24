@@ -44,6 +44,7 @@
         <button id="fetchBotrytisBtn">Botrytis</button>
         <button id="fetchCarpocapseBtn">Carpocapse</button>
         <button id="fetchFeubacterienBtn">Feubacterien</button>
+        <button id="fetchPuceroncendreBtn">Puceroncendre</button>
         <button id="fetchOverallRiskBtn">Overall Risk</button>
         <div id="message"></div>
     </div>
@@ -272,6 +273,41 @@
             document.getElementById('message').innerText = "Risk levels for Feubacterien fetched and saved successfully!";
         }
 
+        async function fetchAndStorePuceroncendre() {
+            const results = {};
+            for (const regionName of Object.keys(regionCoordinates)) {
+                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+                if (!weatherData) {
+                    console.error(`No weather data available for ${regionName}`);
+                    results[regionName] = "unknown"; // Handle missing data
+                    continue;
+                }
+
+                const modelData = {
+                    tempmin_5days: weatherData.tempmin_5days,
+                    tempmax_5days: weatherData.tempmax_5days,
+                    temp_5days: weatherData.temp_5days,
+                    humidity_5days: weatherData.humidity_5days,
+                    precip_5days: weatherData.precip_5days
+                };
+
+                try {
+                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_puceroncendre");
+                    results[regionName] = riskLevel;
+                } catch (error) {
+                    console.error(`Error fetching risk for ${regionName}:`, error);
+                    results[regionName] = "unknown"; // Fallback risk level
+                }
+            }
+
+            // Store results in Firebase
+            for (const [regionName, risk] of Object.entries(results)) {
+                database.ref(`Puceroncendre/${regionName}`).set(risk);
+            }
+
+            document.getElementById('message').innerText = "Risk levels for Puceroncendre fetched and saved successfully!";
+        }
+
         async function fetchOverallRisk() {
             const overallRiskArray = [];
 
@@ -280,11 +316,12 @@
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const carpocapseRisk = await database.ref(`Carpocapse/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const feubacterienRisk = await database.ref(`Feubacterien/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const puceroncendreRisk = await database.ref(`Puceroncendre/${regionName}`).once('value').then(snapshot => snapshot.val());
 
                 let overallRisk;
-                if (tutaRisk === "high" || botrytisRisk === "high" || carpocapseRisk === "high" || feubacterienRisk === "high") {
+                if (tutaRisk === "high" || botrytisRisk === "high" || carpocapseRisk === "high" || feubacterienRisk === "high" || puceroncendreRisk === "high") {
                     overallRisk = "High";
-                } else if (tutaRisk === "medium" || botrytisRisk === "medium" || carpocapseRisk === "medium" || feubacterienRisk === "medium") {
+                } else if (tutaRisk === "medium" || botrytisRisk === "medium" || carpocapseRisk === "medium" || feubacterienRisk === "medium" || puceroncendreRisk === "medium") {
                     overallRisk = "Medium";
                 } else {
                     overallRisk = "Low";
@@ -304,6 +341,7 @@
         document.getElementById('fetchBotrytisBtn').addEventListener('click', fetchAndStoreBotrytis);
         document.getElementById('fetchCarpocapseBtn').addEventListener('click', fetchAndStoreCarpocapse);
         document.getElementById('fetchFeubacterienBtn').addEventListener('click', fetchAndStoreFeubacterien);
+        document.getElementById('fetchPuceroncendreBtn').addEventListener('click', fetchAndStorePuceroncendre);
         document.getElementById('fetchOverallRiskBtn').addEventListener('click', fetchOverallRisk);
     </script>
 </body>
