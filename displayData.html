@@ -234,10 +234,13 @@
             try {
                 const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
-                return { tutaRisk, botrytisRisk };
+                const puceroncendreRisk = await database.ref(`PuceronCendre/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
+                
+                return { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk };
             } catch (error) {
                 console.error(`Error fetching risk levels for ${regionName}:`, error);
-                return { tutaRisk: "unknown", botrytisRisk: "unknown" };
+                return { tutaRisk: "unknown", botrytisRisk: "unknown", puceroncendreRisk: "unknown", punaisenesidiocorisRisk: "unknown" };
             }
         }
 
@@ -252,17 +255,22 @@
             regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
                 const riskData = riskLevels[regionName]; // Get the risk level using the region name
-                
+            
                 if (riskData) {
                     const color = getColor(riskData);
                     region.setAttribute('fill', color);
                 }
-        
+            
                 region.addEventListener('click', async () => {
-                    const { tutaRisk, botrytisRisk } = await fetchRiskLevelsForRegion(regionName);
-                    const infoMessage = `Tuta Absoluta Risk: ${tutaRisk}<br>Botrytis Risk: ${botrytisRisk}`;
+                    const { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk } = await fetchRiskLevelsForRegion(regionName);
+                    const infoMessage = `
+                        Tuta Absoluta Risk: ${tutaRisk}<br>
+                        Botrytis Risk: ${botrytisRisk}<br>
+                        Puceron Cendré Risk: ${puceroncendreRisk}<br>
+                        Punaise Nesidiocoris Risk: ${punaisenesidiocorisRisk}
+                    `;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
-        
+            
                     // Update the title to the selected region
                     titleElement.textContent = regionName;
                 });
