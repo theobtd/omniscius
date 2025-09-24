@@ -39,7 +39,8 @@
 </head>
 <body>
     <div>
-        <button id="fetchWeatherBtn">Tuta Absoluta</button>
+        <button id="fetchWeatherBtn">Fetch Weather Data</button>
+        <button id="fetchRiskBtn">Tuta Absoluta</button>
         <button id="fetchBotrytisBtn">Botrytis</button>
         <button id="fetchOverallRiskBtn">Overall Risk</button>
         <div id="message"></div>
@@ -103,23 +104,55 @@
             return result.risk; // Assuming the response contains a 'risk' field
         }
 
-        async function fetchAndStoreRisk() {
+        async function fetchWeather() {
             const results = {};
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
                 try {
                     const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
-                    const modelData = {
+                    results[regionName] = {
                         tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
                         tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
                         temp_5days: weatherData.list.reduce((acc, item) => acc + item.main.temp, 0) / weatherData.list.length,
                         humidity_5days: weatherData.list.reduce((acc, item) => acc + item.main.humidity, 0) / weatherData.list.length,
                         precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
                     };
+                } catch (error) {
+                    console.error(`Error fetching data for ${regionName}:`, error);
+                    results[regionName] = null; // Handle error
+                }
+            }
 
+            // Store results in Firebase
+            for (const [regionName, data] of Object.entries(results)) {
+                database.ref(`WeatherData/${regionName}`).set(data);
+            }
+
+            document.getElementById('message').innerText = "Weather data fetched and saved successfully!";
+        }
+
+        async function fetchAndStoreRisk() {
+            const results = {};
+            for (const regionName of Object.keys(regionCoordinates)) {
+                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+                if (!weatherData) {
+                    console.error(`No weather data available for ${regionName}`);
+                    results[regionName] = "unknown"; // Handle missing data
+                    continue;
+                }
+
+                const modelData = {
+                    tempmin_5days: weatherData.tempmin_5days,
+                    tempmax_5days: weatherData.tempmax_5days,
+                    temp_5days: weatherData.temp_5days,
+                    humidity_5days: weatherData.humidity_5days,
+                    precip_5days: weatherData.precip_5days
+                };
+
+                try {
                     const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict");
                     results[regionName] = riskLevel;
                 } catch (error) {
-                    console.error(`Error fetching data for ${regionName}:`, error);
+                    console.error(`Error fetching risk for ${regionName}:`, error);
                     results[regionName] = "unknown"; // Fallback risk level
                 }
             }
@@ -129,26 +162,32 @@
                 database.ref(`TutaAbsoluta/${regionName}`).set(risk);
             }
 
-            document.getElementById('message').innerText = "Weather data for weekly risk fetched and saved successfully!";
+            document.getElementById('message').innerText = "Risk levels for Tuta Absoluta fetched and saved successfully!";
         }
 
         async function fetchAndStoreBotrytis() {
             const results = {};
-            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
-                try {
-                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
-                    const modelData = {
-                        tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
-                        tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
-                        temp_5days: weatherData.list.reduce((acc, item) => acc + item.main.temp, 0) / weatherData.list.length,
-                        humidity_5days: weatherData.list.reduce((acc, item) => acc + item.main.humidity, 0) / weatherData.list.length,
-                        precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
-                    };
+            for (const regionName of Object.keys(regionCoordinates)) {
+                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+                if (!weatherData) {
+                    console.error(`No weather data available for ${regionName}`);
+                    results[regionName] = "unknown"; // Handle missing data
+                    continue;
+                }
 
+                const modelData = {
+                    tempmin_5days: weatherData.tempmin_5days,
+                    tempmax_5days: weatherData.tempmax_5days,
+                    temp_5days: weatherData.temp_5days,
+                    humidity_5days: weatherData.humidity_5days,
+                    precip_5days: weatherData.precip_5days
+                };
+
+                try {
                     const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_botrytis");
                     results[regionName] = riskLevel;
                 } catch (error) {
-                    console.error(`Error fetching data for ${regionName}:`, error);
+                    console.error(`Error fetching risk for ${regionName}:`, error);
                     results[regionName] = "unknown"; // Fallback risk level
                 }
             }
@@ -158,19 +197,16 @@
                 database.ref(`Botrytis/${regionName}`).set(risk);
             }
 
-            document.getElementById('message').innerText = "Weather data for Botrytis fetched and saved successfully!";
+            document.getElementById('message').innerText = "Risk levels for Botrytis fetched and saved successfully!";
         }
 
         async function fetchOverallRisk() {
-            const overallRiskArray = []; // Create an array to hold the risk levels in the desired format
-        
-            // Loop through each region using the keys from regionCoordinates
+            const overallRiskArray = [];
+
             for (const regionName of Object.keys(regionCoordinates)) {
-                // Fetch the risk levels for TutaAbsoluta and Botrytis
                 const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
-        
-                // Determine the overall risk based on the fetched values
+
                 let overallRisk;
                 if (tutaRisk === "high" && botrytisRisk === "high") {
                     overallRisk = "High";
@@ -179,21 +215,18 @@
                 } else {
                     overallRisk = "Low";
                 }
-        
-                // Construct the string in the format "Region=RiskLevel" and add it to the array
+
                 overallRiskArray.push(`${regionName}=${overallRisk}`);
             }
-        
-            // Join the array into a comma-separated string
+
             const overallRiskString = overallRiskArray.join(',');
-        
-            // Store overall risk as a comma-separated list in Firebase
             database.ref(`OverallRiskList`).set(overallRiskString);
-        
+
             document.getElementById('message').innerText = "Overall risk levels calculated and saved successfully!";
         }
 
-        document.getElementById('fetchWeatherBtn').addEventListener('click', fetchAndStoreRisk);
+        document.getElementById('fetchWeatherBtn').addEventListener('click', fetchWeather);
+        document.getElementById('fetchRiskBtn').addEventListener('click', fetchAndStoreRisk);
         document.getElementById('fetchBotrytisBtn').addEventListener('click', fetchAndStoreBotrytis);
         document.getElementById('fetchOverallRiskBtn').addEventListener('click', fetchOverallRisk);
     </script>
