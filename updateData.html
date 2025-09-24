@@ -274,26 +274,31 @@
 
         async function fetchOverallRisk() {
             const overallRiskArray = [];
-
+        
             for (const regionName of Object.keys(regionCoordinates)) {
                 const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
-
+                const puceroncendreRisk = await database.ref(`PuceronCendre/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
+        
+                const riskLevels = [tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk];
+                const highRiskCount = riskLevels.filter(risk => risk === "high").length;
+        
                 let overallRisk;
-                if (tutaRisk === "high" && botrytisRisk === "high") {
+                if (highRiskCount >= 3) {
                     overallRisk = "High";
-                } else if (tutaRisk === "high" || botrytisRisk === "high") {
+                } else if (highRiskCount === 1 || highRiskCount === 2) {
                     overallRisk = "Medium";
                 } else {
                     overallRisk = "Low";
                 }
-
+        
                 overallRiskArray.push(`${regionName}=${overallRisk}`);
             }
-
+        
             const overallRiskString = overallRiskArray.join(',');
             database.ref(`OverallRiskList`).set(overallRiskString);
-
+        
             document.getElementById('message').innerText = "Overall risk levels calculated and saved successfully!";
         }
 
