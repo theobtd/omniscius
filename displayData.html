@@ -269,11 +269,15 @@
             const riskLevels = await fetchRiskLevels(); // Get the object of risk levels
             const regions = document.querySelectorAll('.region');
             
-            // Set initial title with dates
+            // Set initial title with dates in the mapContainer
             const nPlus5Date = formatDate(5);
             const nPlus12Date = formatDate(12);
-            const titleElement = document.querySelector('.map-container h2'); // Correct selector
-            titleElement.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date}`;
+            const titleElementMap = document.querySelector('.map-container h2'); // Title in mapContainer
+            titleElementMap.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date}`;
+            
+            // Set initial title in info-container
+            const titleElementInfo = document.querySelector('#infoContainer h2'); // Title in infoContainer
+            titleElementInfo.textContent = "Sélectionnez une région"; // Initial title
             
             regions.forEach(region => {
                 const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
@@ -303,8 +307,8 @@
                     `;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
                     
-                    // Update the title to the selected region with dates
-                    titleElement.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date} pour ${regionName}`;
+                    // Update the title in info-container to the selected region
+                    titleElementInfo.textContent = `Risque Tomate pour ${regionName}`;
                 });
             });
             
