@@ -89,6 +89,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .button {
+            background-color: #3f5787; /* Match your theme color */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
         
         /* Media queries for responsive design */
         @media (max-width: 768px) { /* Adjust this value for mobile breakpoints */
@@ -139,6 +149,9 @@
             <div class="loader"></div>
         </div>
         <div id="infoMessage">Tuta Absoluta: À SELECTIONNER<br>Botrytis: À SELECTIONNER<br>Puceron Cendré: À SELECTIONNER<br>Punaise Nesidiocoris: À SELECTIONNER</div>
+
+        <button id="signUpButton" class="button">Sign Up</button>
+        
     </div>
 
     <script>
@@ -283,6 +296,10 @@
         });
 
         document.addEventListener('DOMContentLoaded', setRegionColors);
+
+        document.getElementById('signUpButton').addEventListener('click', () => {
+            window.location.href = 'SignUp.html'; // Redirect to SignUp.html
+        });
     </script>
 </body>
 </html>
