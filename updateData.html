@@ -318,7 +318,7 @@
                 const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const acariosebronzeeRisk = await database.ref(`AcarioseBronzee/${regionName}`).once('value').then(snapshot => snapshot.val());
         
-                const riskLevels = [tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, const acariosebronzeeRisk];
+                const riskLevels = [tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk];
                 const highRiskCount = riskLevels.filter(risk => risk === "high").length;
         
                 let overallRisk;
