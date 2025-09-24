@@ -153,6 +153,9 @@
 
     <div class="info-container" id="infoContainer">
         <h2>Region Information</h2>
+        <div id="loadingInfo" class="loading-overlay" style="display: none;">
+            <div class="loader"></div>
+        </div>
         <div id="infoMessage">Tuta Absoluta: À SELECTIONNER<br>Botrytis: À SELECTIONNER<br>Puceron Cendré: À SELECTIONNER<br>Punaise Nesidiocoris: À SELECTIONNER</div>
     </div>
 
@@ -262,7 +265,14 @@
                 }
             
                 region.addEventListener('click', async () => {
+                    // Show loader
+                    document.getElementById('loadingInfo').style.display = 'flex';
+            
                     const { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk } = await fetchRiskLevelsForRegion(regionName);
+            
+                    // Hide loader
+                    document.getElementById('loadingInfo').style.display = 'none';
+            
                     const infoMessage = `
                         Tuta Absoluta Risk: ${tutaRisk}<br>
                         Botrytis Risk: ${botrytisRisk}<br>
