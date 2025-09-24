@@ -26,7 +26,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px; /* Add some margin between buttons */
+            margin: 10px;
         }
         button:hover {
             background-color: #2980b9;
@@ -41,6 +41,7 @@
     <div>
         <button id="fetchWeatherBtn">Tuta Absoluta</button>
         <button id="fetchBotrytisBtn">Botrytis</button>
+        <button id="fetchOidiumBtn">Oidium</button> <!-- New Button for Oidium -->
         <button id="fetchOverallRiskBtn">Overall Risk</button>
         <div id="message"></div>
     </div>
@@ -161,6 +162,35 @@
             document.getElementById('message').innerText = "Weather data for Botrytis fetched and saved successfully!";
         }
 
+        async function fetchAndStoreOidium() { // New function for Oidium
+            const results = {};
+            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
+                try {
+                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
+                    const modelData = {
+                        tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
+                        tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
+                        temp_5days: weatherData.list.reduce((acc, item) => acc + item.main.temp, 0) / weatherData.list.length,
+                        humidity_5days: weatherData.list.reduce((acc, item) => acc + item.main.humidity, 0) / weatherData.list.length,
+                        precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
+                    };
+
+                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_oidium");
+                    results[regionName] = riskLevel;
+                } catch (error) {
+                    console.error(`Error fetching data for ${regionName}:`, error);
+                    results[regionName] = "unknown"; // Fallback risk level
+                }
+            }
+
+            // Store results in Firebase
+            for (const [regionName, risk] of Object.entries(results)) {
+                database.ref(`Oidium/${regionName}`).set(risk);
+            }
+
+            document.getElementById('message').innerText = "Weather data for Oidium fetched and saved successfully!";
+        }
+
         async function fetchOverallRisk() {
             const overallRiskArray = []; // Create an array to hold the risk levels in the desired format
         
@@ -169,12 +199,13 @@
                 // Fetch the risk levels for TutaAbsoluta and Botrytis
                 const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
-        
+                const oidiumRisk = await database.ref(`Oidium/${regionName}`).once('value').then(snapshot => snapshot.val()); // Fetch Oidium risk
+
                 // Determine the overall risk based on the fetched values
                 let overallRisk;
-                if (tutaRisk === "high" && botrytisRisk === "high") {
+                if (tutaRisk === "high" || botrytisRisk === "high" || oidiumRisk === "high") {
                     overallRisk = "High";
-                } else if (tutaRisk === "high" || botrytisRisk === "high") {
+                } else if (tutaRisk === "medium" || botrytisRisk === "medium" || oidiumRisk === "medium") {
                     overallRisk = "Medium";
                 } else {
                     overallRisk = "Low";
@@ -195,6 +226,7 @@
 
         document.getElementById('fetchWeatherBtn').addEventListener('click', fetchAndStoreRisk);
         document.getElementById('fetchBotrytisBtn').addEventListener('click', fetchAndStoreBotrytis);
+        document.getElementById('fetchOidiumBtn').addEventListener('click', fetchAndStoreOidium); // Event listener for Oidium button
         document.getElementById('fetchOverallRiskBtn').addEventListener('click', fetchOverallRisk);
     </script>
 </body>
