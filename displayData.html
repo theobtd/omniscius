@@ -142,7 +142,7 @@
         <div id="loadingInfo" class="loading-overlay" style="display: none;">
             <div class="loader"></div>
         </div>
-        <div id="infoMessage">Tuta Absoluta:<br>Botrytis:<br>Puceron Cendré:<br>Punaise Nesidiocoris:<br>Acariose Bronzée:</div>
+        <div id="infoMessage">Tuta Absoluta:<br>Botrytis:<br>Puceron Cendré:<br>Punaise Nesidiocoris:<br>Acariose Bronzée:<br>Aleurodes:</div>
     </div>
 
     <script>
@@ -226,11 +226,12 @@
                 const puceroncendreRisk = await database.ref(`PuceronCendre/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const acariosebronzeeRisk = await database.ref(`AcarioseBronzee/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const aleurodesRisk = await database.ref(`Aleurodes/${regionName}`).once('value').then(snapshot => snapshot.val());
                 
-                return { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk };
+                return { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk };
             } catch (error) {
                 console.error(`Error fetching risk levels for ${regionName}:`, error);
-                return { tutaRisk: "unknown", botrytisRisk: "unknown", puceroncendreRisk: "unknown", punaisenesidiocorisRisk: "unknown", acariosebronzeeRisk: "unknown" };
+                return { tutaRisk: "unknown", botrytisRisk: "unknown", puceroncendreRisk: "unknown", punaisenesidiocorisRisk: "unknown", acariosebronzeeRisk: "unknown", aleurodesRisk: "unknown" };
             }
         }
 
@@ -255,7 +256,7 @@
                     // Show loader
                     document.getElementById('loadingInfo').style.display = 'flex';
             
-                    const { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk } = await fetchRiskLevelsForRegion(regionName);
+                    const { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk } = await fetchRiskLevelsForRegion(regionName);
             
                     // Hide loader
                     document.getElementById('loadingInfo').style.display = 'none';
@@ -265,7 +266,8 @@
                         Botrytis Risk: ${botrytisRisk}<br>
                         Puceron Cendré Risk: ${puceroncendreRisk}<br>
                         Punaise Nesidiocoris Risk: ${punaisenesidiocorisRisk}<br>
-                        Acariose Bronzee Risk: ${acariosebronzeeRisk}
+                        Acariose Bronzee Risk: ${acariosebronzeeRisk}<br>
+                        Aleurodes Risk: ${aleurodesRisk}
                     `;
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
             
