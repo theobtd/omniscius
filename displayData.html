@@ -227,11 +227,33 @@
                 const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const acariosebronzeeRisk = await database.ref(`AcarioseBronzee/${regionName}`).once('value').then(snapshot => snapshot.val());
                 const aleurodesRisk = await database.ref(`Aleurodes/${regionName}`).once('value').then(snapshot => snapshot.val());
-                
-                return { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk };
+        
+                // Mapping for risk levels
+                const riskMapping = {
+                    "normal": "normal - pas de facteurs de risque particuliers",
+                    "high": "élevé - situation à surveiller",
+                    "unknown": "inconnu" // Optional: handle unknown case
+                };
+        
+                // Translate risks
+                return {
+                    tutaRisk: riskMapping[tutaRisk] || tutaRisk,
+                    botrytisRisk: riskMapping[botrytisRisk] || botrytisRisk,
+                    puceroncendreRisk: riskMapping[puceroncendreRisk] || puceroncendreRisk,
+                    punaisenesidiocorisRisk: riskMapping[punaisenesidiocorisRisk] || punaisenesidiocorisRisk,
+                    acariosebronzeeRisk: riskMapping[acariosebronzeeRisk] || acariosebronzeeRisk,
+                    aleurodesRisk: riskMapping[aleurodesRisk] || aleurodesRisk
+                };
             } catch (error) {
                 console.error(`Error fetching risk levels for ${regionName}:`, error);
-                return { tutaRisk: "unknown", botrytisRisk: "unknown", puceroncendreRisk: "unknown", punaisenesidiocorisRisk: "unknown", acariosebronzeeRisk: "unknown", aleurodesRisk: "unknown" };
+                return {
+                    tutaRisk: "inconnu",
+                    botrytisRisk: "inconnu",
+                    puceroncendreRisk: "inconnu",
+                    punaisenesidiocorisRisk: "inconnu",
+                    acariosebronzeeRisk: "inconnu",
+                    aleurodesRisk: "inconnu"
+                };
             }
         }
 
