@@ -272,7 +272,7 @@
             // Set initial title with dates
             const nPlus5Date = formatDate(5);
             const nPlus12Date = formatDate(12);
-            const titleElement = document.querySelector('#infoContainer h2');
+            const titleElement = document.querySelector('.map-container h2'); // Correct selector
             titleElement.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date}`;
             
             regions.forEach(region => {
