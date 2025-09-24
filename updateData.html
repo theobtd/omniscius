@@ -359,9 +359,9 @@
                 const highRiskCount = riskLevels.filter(risk => risk === "high").length;
         
                 let overallRisk;
-                if (highRiskCount >= 3) {
+                if (highRiskCount >= 4) {
                     overallRisk = "High";
-                } else if (highRiskCount === 2) {
+                } else if (highRiskCount === 3) {
                     overallRisk = "Medium";
                 } else {
                     overallRisk = "Low";
