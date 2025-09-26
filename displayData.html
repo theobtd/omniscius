@@ -188,6 +188,30 @@
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // Weather API Functions
+        async function getWeatherData(lat, lon) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    
+            const forecastResponse = await fetch(forecastUrl);
+            if (!forecastResponse.ok) {
+                throw new Error('Failed to fetch forecast data');
+            }
+            return await forecastResponse.json();
+        }
+
+        async function getCoordinatesFromPostalCode(postalCode) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${postalCode}&appid=${apiKey}`;
+        
+            const response = await fetch(geoUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch coordinates');
+            }
+            const data = await response.json();
+            return { lat: data.coord.lat, lon: data.coord.lon };
+        }
+
         const regionCoordinates = [
             "Occitanie",
             "Centre Val de Loire",
@@ -441,18 +465,6 @@
                 }
             });
         });
-
-        async function getCoordinatesFromPostalCode(postalCode) {
-            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
-            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${postalCode}&appid=${apiKey}`;
-        
-            const response = await fetch(geoUrl);
-            if (!response.ok) {
-                throw new Error('Failed to fetch coordinates');
-            }
-            const data = await response.json();
-            return { lat: data.coord.lat, lon: data.coord.lon };
-        }
 
         document.addEventListener('DOMContentLoaded', setRegionColors);
     </script>
