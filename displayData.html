@@ -224,6 +224,24 @@
             return { lat: data.coord.lat, lon: data.coord.lon };
         }
 
+        // Add this function to send data to the ML model
+        async function fetchRiskLevel(modelData) {
+            const response = await fetch("https://theoagri.pythonanywhere.com/predict", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modelData)
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch risk level');
+            }
+            
+            const result = await response.json();
+            return result; // Assuming the response contains the risk level
+        }
+
         const regionCoordinates = [
             "Occitanie",
             "Centre Val de Loire",
@@ -471,6 +489,19 @@
                     try {
                         const weatherData = await getWeatherData(lat, lon);
                         console.log("Weather Data:", weatherData);
+            
+                        // Prepare data for the model
+                        const modelData = {
+                            tempmin_5days: Math.min(...weatherData.map(item => item.temp_min)),
+                            tempmax_5days: Math.max(...weatherData.map(item => item.temp_max)),
+                            temp_5days: weatherData.reduce((acc, item) => acc + item.temp, 0) / weatherData.length,
+                            humidity_5days: weatherData.reduce((acc, item) => acc + item.humidity, 0) / weatherData.length,
+                            precip_5days: weatherData.reduce((acc, item) => acc + item.rain, 0)
+                        };
+            
+                        // Send the data to the model
+                        const riskLevel = await fetchRiskLevel(modelData);
+                        console.log("Predicted Risk Level:", riskLevel);
                     } catch (error) {
                         console.error("Error fetching weather data:", error);
                     }
