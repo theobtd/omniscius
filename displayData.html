@@ -84,6 +84,17 @@
             justify-content: center; /* Center buttons horizontally */
             margin: 20px 0; /* Add some vertical spacing */
         }
+
+        .map-button {
+            background-color: #3f5787; /* Button background color */
+            color: white; /* Text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Add padding */
+            margin: 0 10px; /* Space between buttons */
+            cursor: pointer; /* Pointer cursor on hover */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 1em; /* Font size */
+        }
         
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -124,7 +135,10 @@
 </head>
 <body>
 
-    <h1 class="title">AgSafe.Farm</h1>
+    <div class="button-container">
+        <button class="map-button">Carte</button>
+        <button class="map-button">Mon Potager</button>
+    </div>
     
     <div class="map-container" id="mapContainer">
         <div class="loading-overlay" id="loadingOverlay">
