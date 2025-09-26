@@ -509,11 +509,18 @@
                             "Aleurodes": "https://theoagri.pythonanywhere.com/predict_aleurodes"
                         };
             
+                        // Prepare a message to display risk levels
+                        let riskMessage = '';
+            
                         // Fetch risk levels for all models
                         for (const [modelName, endpoint] of Object.entries(endpoints)) {
                             const riskLevel = await fetchRiskLevel(modelData, endpoint);
-                            console.log(`${modelName} Risk Level:`, riskLevel);
+                            riskMessage += `${modelName}: ${riskLevel}<br>`; // Append each risk level to the message
                         }
+            
+                        // Display the risk levels in the infoMessage
+                        document.getElementById('infoMessage').innerHTML = riskMessage;
+            
                     } catch (error) {
                         console.error("Error fetching weather data:", error);
                     }
