@@ -80,9 +80,24 @@
         }
 
         .button-container {
-            display: flex; /* Use flexbox for row layout */
-            justify-content: center; /* Center buttons horizontally */
-            margin: 20px 0; /* Add some vertical spacing */
+            display: flex; /* Use flexbox for layout */
+            justify-content: center; /* Center the buttons */
+            margin-top: 20px; /* Add some spacing above the buttons */
+        }
+        
+        .button-container button {
+            background-color: #3f5787; /* Button background color */
+            color: white; /* Text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Add padding */
+            margin: 0 10px; /* Space between buttons */
+            cursor: pointer; /* Change cursor on hover */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 1em; /* Font size */
+        }
+        
+        .button-container button:hover {
+            background-color: #2a3e68; /* Darker shade on hover */
         }
         
         @keyframes spin {
@@ -147,6 +162,11 @@
             <path class="region" id="Bourgogne_Franche_Comte" fill="white" d="M1035.72438,620.017439l70.859138-153.528124-138.765808-8.857393L796.574793,357.248147l-35.429565,29.524639v177.14784l85.621452,82.668992l188.9577-26.572179Z" />
             <path class="region" id="Grand_Est" fill="white" d="M1195.157436,268.674227L861.529002,162.385521L799.527258,301.15133l-2.952465,56.096818L967.817705,457.631923l138.765808,8.857392l44.286959-14.76232l44.286964-183.052768Z" />
         </svg>
+
+        <div class="button-container">
+            <button class="map-button">Carte</button>
+            <button class="map-button">Mon Potager</button>
+        </div>
     </div>
 
     <div class="info-container" id="infoContainer">
