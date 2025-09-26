@@ -403,22 +403,56 @@
             `;
         
             // Add event listener for the "Let's go!" button
-            document.getElementById('letsGoButton').addEventListener('click', () => {
+            document.getElementById('letsGoButton').addEventListener('click', async () => {
                 const latitude = document.getElementById('latitude').value;
                 const longitude = document.getElementById('longitude').value;
                 const postalCode = document.getElementById('postalCode').value;
-        
+            
                 // Clear previous error message
                 document.getElementById('errorMessage').textContent = '';
-        
+            
                 // Validate input
                 if ((latitude && longitude) && postalCode) {
                     document.getElementById('errorMessage').textContent = "Please enter either latitude/longitude or postal code, not both.";
                 } else {
-                    console.log(`Latitude: ${latitude}, Longitude: ${longitude}, Postal Code: ${postalCode}`);
+                    // Determine the coordinates to use
+                    let lat = latitude;
+                    let lon = longitude;
+            
+                    // If postal code is provided, fetch weather data using it
+                    if (postalCode) {
+                        const geoData = await getCoordinatesFromPostalCode(postalCode);
+                        if (geoData) {
+                            lat = geoData.lat;
+                            lon = geoData.lon;
+                        } else {
+                            document.getElementById('errorMessage').textContent = "Invalid postal code.";
+                            return;
+                        }
+                    }
+            
+                    // Fetch weather data and log it
+                    try {
+                        const weatherData = await getWeatherData(lat, lon);
+                        console.log("Weather Data:", weatherData);
+                    } catch (error) {
+                        console.error("Error fetching weather data:", error);
+                    }
                 }
             });
         });
+
+        async function getCoordinatesFromPostalCode(postalCode) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${postalCode}&appid=${apiKey}`;
+        
+            const response = await fetch(geoUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch coordinates');
+            }
+            const data = await response.json();
+            return { lat: data.coord.lat, lon: data.coord.lon };
+        }
 
         document.addEventListener('DOMContentLoaded', setRegionColors);
     </script>
