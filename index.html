@@ -188,6 +188,11 @@
             Acariose Bronzée:<br>
             Aleurodes:
         </div>
+        <div class="email-container" style="margin-top: 20px;">
+            <input type="email" id="emailInput" placeholder="Entrez votre email" required>
+            <button id="submitEmailButton" class="map-button" style="margin-left: 10px;">Valider</button>
+            <div id="emailMessage" style="color: red; margin-top: 5px;"></div>
+        </div>
         <div class="info-footer">Les prévision agsafe.farm sont indicatives et leur exactitude n'est pas garantie. L'utilisateur reste responsable de ses décisions.</div>
     </div>
 
@@ -598,6 +603,32 @@
         document.addEventListener('DOMContentLoaded', () => {
             setRegionColors();
             document.getElementById('carteButton').click(); // Automatically click the carteButton
+        });
+
+        document.getElementById('submitEmailButton').addEventListener('click', async () => {
+            const email = document.getElementById('emailInput').value;
+            const emailMessage = document.getElementById('emailMessage');
+        
+            // Clear previous message
+            emailMessage.textContent = '';
+        
+            // Validate the email format
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                emailMessage.textContent = "Veuillez entrer un email valide.";
+                return;
+            }
+        
+            try {
+                // Store the email in the Firebase database
+                const usersRef = database.ref('Utilisateurs');
+                await usersRef.push({ email: email }); // Store email
+                emailMessage.textContent = "Email enregistré avec succès!";
+                document.getElementById('emailInput').value = ''; // Clear input field
+            } catch (error) {
+                console.error("Error saving email:", error);
+                emailMessage.textContent = "Erreur lors de l'enregistrement de l'email.";
+            }
         });
         
     </script>
