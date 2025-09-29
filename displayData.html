@@ -458,6 +458,9 @@
 
             // Change the title in the info-container
             document.querySelector('#infoContainer h2').textContent = "Risque pour votre potager";
+
+            // Reset the infoMessage content to empty
+            document.getElementById('infoMessage').innerHTML = '';
         
             // Add event listener for the "Let's go!" button
             document.getElementById('letsGoButton').addEventListener('click', async () => {
