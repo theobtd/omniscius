@@ -434,6 +434,18 @@
                     <path class="region" id="Grand_Est" fill="white" d="M1195.157436,268.674227L861.529002,162.385521L799.527258,301.15133l-2.952465,56.096818L967.817705,457.631923l138.765808,8.857392l44.286959-14.76232l44.286964-183.052768Z" />
                 </svg>
             `;
+
+            // Reset the infoMessage content to just the titles
+            const titles = [
+                "Tuta Absoluta:",
+                "Botrytis:",
+                "Puceron Cendré:",
+                "Punaise Nesidiocoris:",
+                "Acariose Bronzée:",
+                "Aleurodes:"
+            ];
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+            
             setRegionColors(); // Call your existing function to set colors
         });
         
