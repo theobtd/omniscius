@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgSafe - Map</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #loginSection {
+            position: absolute; /* Change to absolute positioning */
+            top: 20px; /* Distance from the top */
+            right: 20px; /* Distance from the right */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 10px; /* Add some padding */
+            background-color: transparent; /* Optional: background for visibility */
+            height: 15vh;
+            width: 20%;
+        }
+        h1 {
+            color: #333;
+        }
+        input {
+            padding: 10px;
+            font-size: 12px;
+            margin: 5px 0; /* Only vertical margin */
+            width: 80%; /* Full width */
+            max-width: 300px; /* Max width for better appearance */
+        }
+        #message {
+            color: red;
+        }
+        #mapContainer {
+            width: 25%;
+            max-width: 1200px;
+            margin: 20vh auto; /* Center the map */
+            border: 2px solid #3f5787;
+            background-color: white;
+            display: block; /* Hidden until colors are loaded */
+            position: relative; /* For loader positioning */
+        }
+        svg {
+            width: 100%;
+            height: auto;
+        }
+        .region {
+            stroke: #3f5787;
+            stroke-width: 2.708;
+        }
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Ensure it stays above other content */
+        }
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite; /* Animation */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .signup-message {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            margin: 0; /* Add vertical margin */
+        }
+        .map-title {
+            text-align: center; /* Center the title */
+            margin: 10px 0; /* Add some margin for spacing */
+            color: #333; /* Choose a color that fits your design */
+            font-size: 24px; /* Set the font size */
+            position: relative; /* Position relative for potential adjustments */
+            z-index: 10; /* Ensure it's above other elements */
+        }
+        #mapContainer svg {
+            width: 100%;
+            height: auto; /* Keep this for responsiveness */
+            margin-bottom: 0; /* Remove any bottom margin */
+            padding-bottom: 0; /* Remove any bottom padding */
+        }
+    </style>
+</head>
+<body>
+    <div id="loginSection">
+        <div id="message"></div>
+        
+        <form id="signinForm" onsubmit="return false;">
+            <input type="email" id="signinEmail" placeholder="Email" required>
+            <input type="password" id="signinPassword" placeholder="Mot de passe" required>
+            <input type="submit" value="Se connecter" onclick="signIn()">
+        </form>
+    </div>
+    
+    <div class="map-container" id="mapContainer">
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loader"></div>
+        </div>
+        <h2 class="map-title">Risque Ravageurs</h2>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1354 1354">
+            <path class="region" fill="white" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
+            <path class="region" fill="white" d="M622.379416,150.575665l26.572177,20.667248-.000001,88.573922-17.714786,41.334495-53.144354,22.14348-8.857392,63.477975-159.433058-44.286961-35.429568-19.191015-29.524641-140.242042l50.191888,2.952464l17.714784,41.334497l88.573921,8.857392l121.05103-85.621455Z" />
+            <path class="region" fill="white" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
+            <path class="region" fill="white" d="M1195.157436,268.674227L861.529002,162.385521L799.527258,301.15133l-2.952465,56.096818L967.817705,457.631923l138.765808,8.857392l44.286959-14.76232l44.286964-183.052768Z" />
+            <path class="region" fill="white" d="M99.793284,323.294811L235.606629,286.38901l23.619712,28.048407l115.146097,8.857392l35.429568,19.191014l2.952463,64.954208L291.703444,466.48931L105.698211,386.772782l26.572176-29.524639-32.477103-33.953332Z" />
+            <path class="region" fill="white" d="M761.145225,563.920628l.000002-177.147841-129.908419-85.621458-53.144353,22.143481-8.857392,63.477976-67.906674,126.955953l103.33624,97.431312l91.526385,8.857392l64.954211-56.096815Z" />
+            <path class="region" fill="white" d="M374.372439,622.969908l62.00175-11.809856-23.61972-67.906672l88.57392-29.52464l67.906674-126.955952-159.433058-44.286962l2.952463,64.95421-121.051025,59.049279l82.668996,156.480593Z" />
+            <path class="region" fill="white" d="M327.133014,989.075447l47.239427-366.105539l62.001742-11.809856-23.619714-67.906673l88.573919-29.52464l103.336235,97.431312l91.526389,8.857392-19.191016,174.195378-54.62058-2.952464L454.08896,1068.791975L327.133014,989.075447Z" />
+            <path class="region" fill="white" d="M1035.72438,620.017439l70.859138-153.528124-138.765808-8.857393L796.574793,357.248147l-35.429565,29.524639v177.14784l85.621452,82.668992l188.9577-26.572179Z" />
+            <path class="region" fill="white" d="M908.768426,885.739206L677,794.212822l19.191016-174.195378l64.954209-56.096813l85.621456,82.668991l188.957699-26.57218l56.096815-8.857393l38.382031,121.051024-44.28696,59.04928-90.050147,59.049279l13.286082,38.382032-100.383775-2.952458Z" />
+            <path class="region" fill="white" d="M888.101177,989.075448l171.242914,50.191887L1180.395116,932.97863l14.762325-44.286961h-59.049286l-5.904928-59.04928-44.28696-38.382032-90.050147,59.04928l13.286082,38.382032h-100.383775l25.095952,26.572178-45.763202,73.811601Z" />
+            <path class="region" fill="white" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
+        </svg>
+    </div>
+
+    <p class="signup-message">Pas encore membre? <a href="create_account.html"> Obtenez des prévisions ravageurs personalisées pour seulement 7,99€/mois</a>.</p>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
+            authDomain: "omniscius-7bf29.firebaseapp.com",
+            databaseURL: "https://omniscius-7bf29-default-rtdb.firebaseio.com",
+            projectId: "omniscius-7bf29",
+            storageBucket: "omniscius-7bf29",
+            messagingSenderId: "24281922885",
+            appId: "1:24281922885:web:example" // Replace with your actual app ID
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        const regionCoordinates = {
+            "Hauts de France": { lat: 50.511853, lon: 2.382456 },
+            "Normandie": { lat: 49.204741, lon: 0.250363 },
+            "Bretagne": { lat: 48.128866, lon: -2.536543 },
+            "Pays de la Loire": { lat: 47.515044, lon: -0.866298 },
+            "Centre Val de Loire": { lat: 47.723388, lon: 1.440800 },
+            "Bourgogne Franche Comte": { lat: 47.281186, lon: 4.482647 },
+            "Nouvelle Aquitaine": { lat: 45.319608, lon: 0.343424 },
+            "Occitanie": { lat: 43.755350, lon: 2.143505 },
+            "PACA": { lat: 43.706660, lon: 5.377874 },
+            "Ile de France": { lat: 48.742842, lon: 2.384157 },
+            "Grand Est": { lat: 48.443608, lon: 6.099832 },
+            "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
+        };
+
+        async function getWeatherData(lat, lon) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+            const forecastResponse = await fetch(forecastUrl);
+            if (!forecastResponse.ok) {
+                throw new Error('Failed to fetch forecast data');
+            }
+            const forecastData = await forecastResponse.json();
+
+            const totalRain = forecastData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0);
+            const averageTemp = forecastData.list.reduce((acc, item) => acc + item.main.temp, 0) / forecastData.list.length;
+            const minTemp = Math.min(...forecastData.list.map(item => item.main.temp_min));
+            const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
+            const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
+
+            return { totalRain, averageTemp, minTemp, maxTemp, averageHumidity };
+        }
+
+        async function fetchRiskLevel(data) {
+            // Replace this URL with your actual model endpoint
+            const modelUrl = "https://theoagri.pythonanywhere.com/predict";
+            const response = await fetch(modelUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch risk level');
+            }
+            const result = await response.json();
+            return result.risk; // Assuming the response contains a 'risk' field
+        }
+
+        async function setRegionColors() {
+            const regions = document.querySelectorAll('.region');
+            const colors = [];
+            const riskLevels = [];
+        
+            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
+                try {
+                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
+        
+                    // Map the weather data to the variable names expected by the model
+                    const modelData = {
+                        tempmin_5days: weatherData.minTemp,
+                        tempmax_5days: weatherData.maxTemp,
+                        temp_5days: weatherData.averageTemp,
+                        humidity_5days: weatherData.averageHumidity,
+                        precip_5days: weatherData.totalRain
+                    };
+        
+                    const riskLevel = await fetchRiskLevel(modelData);
+                    const color = riskLevel === "high" ? 'red' : 'green'; // Change "élevé" to "high"
+                    
+                    colors.push(color);
+                    riskLevels.push(riskLevel);
+                } catch (error) {
+                    console.error(`Error fetching data for ${regionName}:`, error);
+                    colors.push('white'); // Fallback color in case of error
+                    riskLevels.push('unknown'); // Fallback risk level
+                }
+            }
+        
+            // Save colors and timestamp to Firebase
+            const now = new Date().toISOString();
+            database.ref('shuffledColors').set(colors);
+            database.ref('lastShuffle').set(now);
+            database.ref('riskLevels').set(riskLevels);
+        
+            // Apply colors to regions
+            regions.forEach((region, index) => {
+                region.setAttribute('fill', colors[index]);
+            });
+        }
+
+        async function checkAndShuffle() {
+            database.ref('lastShuffle').once('value').then(async (snapshot) => {
+                const lastShuffle = snapshot.val();
+                const lastDate = lastShuffle ? new Date(lastShuffle) : null;
+                const now = new Date();
+
+                // Check if a day has passed since the last shuffle
+                if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
+                    await setRegionColors(); // Fetch weather data and set colors
+                } else {
+                    // Load colors from database and apply them
+                    const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
+                    if (loadedColors) {
+                        const regions = document.querySelectorAll('.region');
+                        regions.forEach((region, index) => {
+                            region.setAttribute('fill', loadedColors[index]);
+                        });
+                    }
+                }
+                
+                // Hide loading overlay and show the map container
+                document.getElementById('loadingOverlay').style.display = 'none';
+                // document.getElementById('mapContainer').style.display = 'block';
+            });
+        }
+
+        async function signIn() {
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                window.location.href = 'forecastEnglish.html';
+            } catch (error) {
+                document.getElementById('message').innerText = error.message;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAndShuffle);
+    </script>
+</body>
+</html>
