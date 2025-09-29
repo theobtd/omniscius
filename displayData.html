@@ -537,12 +537,19 @@
             
                         // Prepare a message to display risk levels
                         let riskMessage = '';
+
+                        // Define a mapping for the risk levels
+                        const riskMapping = {
+                            "high": "élevé",
+                            "normal": "normal"
+                        };
             
                         // Fetch risk levels for all models
                         for (const [modelName, endpoint] of Object.entries(endpoints)) {
                             const riskResponse = await fetchRiskLevel(modelData, endpoint);
                             const riskLevel = riskResponse.risk; // Adjust this line based on the actual response structure
-                            riskMessage += `${modelName}: ${riskLevel}<br>`; // Append each risk level to the message
+                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel; // Use mapping, fallback to original
+                            riskMessage += `${modelName}: ${mappedRiskLevel}<br>`; // Append each risk level to the message
                         }
             
                         // Display the risk levels in the infoMessage
