@@ -459,8 +459,16 @@
             // Change the title in the info-container
             document.querySelector('#infoContainer h2').textContent = "Risque pour votre potager";
 
-            // Reset the infoMessage content to empty
-            document.getElementById('infoMessage').innerHTML = '';
+            // Reset the infoMessage content to just the titles
+            const titles = [
+                "Tuta Absoluta:",
+                "Botrytis:",
+                "Puceron Cendré:",
+                "Punaise Nesidiocoris:",
+                "Acariose Bronzée:",
+                "Aleurodes:"
+            ];
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
         
             // Add event listener for the "Let's go!" button
             document.getElementById('letsGoButton').addEventListener('click', async () => {
