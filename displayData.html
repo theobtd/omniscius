@@ -173,7 +173,17 @@
         <div id="loadingInfo" class="loading-overlay" style="display: none;">
             <div class="loader"></div>
         </div>
-        <div id="infoMessage">Tuta Absoluta:<br>Botrytis:<br>Puceron Cendré:<br>Punaise Nesidiocoris:<br>Acariose Bronzée:<br>Aleurodes:</div>
+        <div id="infoMessage">
+            <div id="loadingInfo" class="loading-overlay" style="display: none;">
+                <div class="loader"></div>
+            </div>
+            Tuta Absoluta:<br>
+            Botrytis:<br>
+            Puceron Cendré:<br>
+            Punaise Nesidiocoris:<br>
+            Acariose Bronzée:<br>
+            Aleurodes:
+        </div>
         <div class="info-footer">Les prévision agsafe.farm sont indicatives et leur exactitude n'est pas garantie. L'utilisateur reste responsable de ses décisions.</div>
     </div>
 
@@ -516,6 +526,9 @@
                             return;
                         }
                     }
+
+                    // Show loader
+                    document.getElementById('loadingInfo').style.display = 'flex';
             
                     // Fetch weather data and log it
                     try {
@@ -563,6 +576,9 @@
             
                     } catch (error) {
                         console.error("Error fetching weather data:", error);
+                    } finally {
+                        // Hide loader
+                        document.getElementById('loadingInfo').style.display = 'none';
                     }
                 }
             });
