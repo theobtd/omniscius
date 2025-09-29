@@ -568,7 +568,11 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', setRegionColors);
+        document.addEventListener('DOMContentLoaded', () => {
+            setRegionColors();
+            document.getElementById('carteButton').click(); // Automatically click the carteButton
+        });
+        
     </script>
 </body>
 </html>
