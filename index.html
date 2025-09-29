@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgSafe - Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Risque Ravageurs Tomates</title>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
@@ -13,49 +13,43 @@
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
-        #loginSection {
-            position: absolute; /* Change to absolute positioning */
-            top: 20px; /* Distance from the top */
-            right: 20px; /* Distance from the right */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding: 10px; /* Add some padding */
-            background-color: transparent; /* Optional: background for visibility */
-            height: 15vh;
-            width: 20%;
-        }
-        h1 {
-            color: #333;
-        }
-        input {
-            padding: 10px;
-            font-size: 12px;
-            margin: 5px 0; /* Only vertical margin */
-            width: 80%; /* Full width */
-            max-width: 300px; /* Max width for better appearance */
-        }
-        #message {
-            color: red;
-        }
-        #mapContainer {
-            width: 25%;
-            max-width: 1200px;
-            margin: 20vh auto; /* Center the map */
+        
+        .info-container {
+            height: 80%; /* Same height as map */
+            width: 40%; /* Adjust width as needed */
+            margin: 5vh 0; /* Center vertically and add bottom margin */
             border: 2px solid #3f5787;
             background-color: white;
-            display: block; /* Hidden until colors are loaded */
-            position: relative; /* For loader positioning */
+            position: fixed; /* Fixed position on the right */
+            right: 5%; /* Align to the right */
+            padding: 20px; /* Add some padding */
+            box-sizing: border-box; /* Include padding in height/width calculations */
+            overflow-y: auto; /* Scroll if content overflows */
         }
+        
+        #mapContainer {
+            height: 80%;
+            width: 40%;
+            margin: 5vh 0; /* Center vertically and add bottom margin */
+            border: 2px solid #3f5787;
+            background-color: white;
+            position: fixed; /* Fixed position on the right */
+            left: 5%; /* Align to the left */
+            padding: 20px; /* Add some padding */
+            box-sizing: border-box; /* Include padding in height/width calculations */
+        }
+        
         svg {
-            width: 100%;
-            height: auto;
+            width: 100%; /* Take full width of the container */
+            height: 100%; /* Adjust height based on width */
         }
+        
         .region {
             stroke: #3f5787;
             stroke-width: 2.708;
         }
+        
+        /* Loading overlay styles */
         .loading-overlay {
             position: absolute;
             top: 0;
@@ -68,6 +62,7 @@
             align-items: center;
             z-index: 999; /* Ensure it stays above other content */
         }
+        
         .loader {
             border: 8px solid #f3f3f3; /* Light grey */
             border-top: 8px solid #3498db; /* Blue */
@@ -76,65 +71,122 @@
             height: 60px;
             animation: spin 1s linear infinite; /* Animation */
         }
+
+        .title {
+            text-align: center; /* Center the text */
+            margin: 20px 0; /* Add some vertical spacing */
+            font-size: 2em; /* Adjust font size as needed */
+            color: #3f5787; /* Change color to match your theme */
+        }
+
+        .button-container {
+            display: flex; /* Use flexbox for row layout */
+            justify-content: center; /* Center buttons horizontally */
+            margin: 20px 0; /* Add some vertical spacing */
+        }
+
+        .map-button {
+            background-color: #3f5787; /* Button background color */
+            color: white; /* Text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Add padding */
+            margin: 0 10px; /* Space between buttons */
+            cursor: pointer; /* Pointer cursor on hover */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 1em; /* Font size */
+        }
+
+        .selected {
+            background-color: lightblue; /* Change this to your desired color */
+            color: black; /* Optional: change text color for better contrast */
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .signup-message {
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            margin: 0; /* Add vertical margin */
+
+        .risk-title {
+            margin: 0; /* Adjust this value as needed */
         }
-        .map-title {
-            text-align: center; /* Center the title */
-            margin: 10px 0; /* Add some margin for spacing */
-            color: #333; /* Choose a color that fits your design */
-            font-size: 24px; /* Set the font size */
-            position: relative; /* Position relative for potential adjustments */
-            z-index: 10; /* Ensure it's above other elements */
+
+        .info-footer {
+            text-align: center; /* Center the text */
+            font-size: 0.9em; /* Adjust font size as needed */
+            color: #555; /* Change color to a lighter shade */
+            margin-top: 20px; /* Add some spacing from the infoMessage */
         }
-        #mapContainer svg {
-            width: 100%;
-            height: auto; /* Keep this for responsiveness */
-            margin-bottom: 0; /* Remove any bottom margin */
-            padding-bottom: 0; /* Remove any bottom padding */
+        
+        /* Media queries for responsive design */
+        @media (max-width: 768px) { /* Adjust this value for mobile breakpoints */
+            #mapContainer,
+            .info-container {
+                position: relative; /* Change to relative to stack them */
+                width: 90%; /* Full width for mobile */
+                left: 5%;
+                margin: 0;
+                max-width: 600px; /* Optional: set a max width to prevent too wide on large phones */
+            }
+        
+            #mapContainer {
+                top: 2vh; /* Position from the top */
+            }
+        
+            .info-container {
+                top: calc(5vh + 80%); /* Position below the map container */
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loginSection">
-        <div id="message"></div>
-        
-        <form id="signinForm" onsubmit="return false;">
-            <input type="email" id="signinEmail" placeholder="Email" required>
-            <input type="password" id="signinPassword" placeholder="Mot de passe" required>
-            <input type="submit" value="Se connecter" onclick="signIn()">
-        </form>
+
+    <div class="button-container">
+        <button class="map-button" id="carteButton">Carte</button>
+        <button class="map-button" id="monPotagerButton">Mon Potager</button>
     </div>
     
     <div class="map-container" id="mapContainer">
         <div class="loading-overlay" id="loadingOverlay">
             <div class="loader"></div>
         </div>
-        <h2 class="map-title">Risque Ravageurs</h2>
+        <div class="button-container">
+            <h2 class="risk-title">Risque Tomates</h2>
+        </div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1354 1354">
-            <path class="region" fill="white" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
-            <path class="region" fill="white" d="M622.379416,150.575665l26.572177,20.667248-.000001,88.573922-17.714786,41.334495-53.144354,22.14348-8.857392,63.477975-159.433058-44.286961-35.429568-19.191015-29.524641-140.242042l50.191888,2.952464l17.714784,41.334497l88.573921,8.857392l121.05103-85.621455Z" />
-            <path class="region" fill="white" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
-            <path class="region" fill="white" d="M1195.157436,268.674227L861.529002,162.385521L799.527258,301.15133l-2.952465,56.096818L967.817705,457.631923l138.765808,8.857392l44.286959-14.76232l44.286964-183.052768Z" />
-            <path class="region" fill="white" d="M99.793284,323.294811L235.606629,286.38901l23.619712,28.048407l115.146097,8.857392l35.429568,19.191014l2.952463,64.954208L291.703444,466.48931L105.698211,386.772782l26.572176-29.524639-32.477103-33.953332Z" />
-            <path class="region" fill="white" d="M761.145225,563.920628l.000002-177.147841-129.908419-85.621458-53.144353,22.143481-8.857392,63.477976-67.906674,126.955953l103.33624,97.431312l91.526385,8.857392l64.954211-56.096815Z" />
-            <path class="region" fill="white" d="M374.372439,622.969908l62.00175-11.809856-23.61972-67.906672l88.57392-29.52464l67.906674-126.955952-159.433058-44.286962l2.952463,64.95421-121.051025,59.049279l82.668996,156.480593Z" />
-            <path class="region" fill="white" d="M327.133014,989.075447l47.239427-366.105539l62.001742-11.809856-23.619714-67.906673l88.573919-29.52464l103.336235,97.431312l91.526389,8.857392-19.191016,174.195378-54.62058-2.952464L454.08896,1068.791975L327.133014,989.075447Z" />
-            <path class="region" fill="white" d="M1035.72438,620.017439l70.859138-153.528124-138.765808-8.857393L796.574793,357.248147l-35.429565,29.524639v177.14784l85.621452,82.668992l188.9577-26.572179Z" />
-            <path class="region" fill="white" d="M908.768426,885.739206L677,794.212822l19.191016-174.195378l64.954209-56.096813l85.621456,82.668991l188.957699-26.57218l56.096815-8.857393l38.382031,121.051024-44.28696,59.04928-90.050147,59.049279l13.286082,38.382032-100.383775-2.952458Z" />
-            <path class="region" fill="white" d="M888.101177,989.075448l171.242914,50.191887L1180.395116,932.97863l14.762325-44.286961h-59.049286l-5.904928-59.04928-44.28696-38.382032-90.050147,59.04928l13.286082,38.382032h-100.383775l25.095952,26.572178-45.763202,73.811601Z" />
-            <path class="region" fill="white" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
+            <path class="region" id="Occitanie" fill="white" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
+            <path class="region" id="Centre_Val_de_Loire" fill="white" d="M761.145225,563.920628l.000002-177.147841-129.908419-85.621458-53.144353,22.143481-8.857392,63.477976-67.906674,126.955953l103.33624,97.431312l91.526385,8.857392l64.954211-56.096815Z" />
+            <path class="region" id="Hauts_de_France" fill="white" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
+            <path class="region" id="Bretagne" fill="white" d="M99.793284,323.294811L235.606629,286.38901l23.619712,28.048407l115.146097,8.857392l35.429568,19.191014l2.952463,64.954208L291.703444,466.48931L105.698211,386.772782l26.572176-29.524639-32.477103-33.953332Z" />
+            <path class="region" id="PACA" fill="white" d="M888.101177,989.075448l171.242914,50.191887L1180.395116,932.97863l14.762325-44.286961h-59.049286l-5.904928-59.04928-44.28696-38.382032-90.050147,59.04928l13.286082,38.382032h-100.383775l25.095952,26.572178-45.763202,73.811601Z" />
+            <path class="region" id="Ile_de_France" fill="white" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
+            <path class="region" id="Auvergne_Rhone_Alpes" fill="white" d="M908.768426,885.739206L677,794.212822l19.191016-174.195378l64.954209-56.096813l85.621456,82.668991l188.957699-26.57218l56.096815-8.857393l38.382031,121.051024-44.28696,59.04928-90.050147,59.049279l13.286082,38.382032-100.383775-2.952458Z" />   
+            <path class="region" id="Normandie" fill="white" d="M622.379416,150.575665l26.572177,20.667248-.000001,88.573922-17.714786,41.334495-53.144354,22.14348-8.857392,63.477975-159.433058-44.286961-35.429568-19.191015-29.524641-140.242042l50.191888,2.952464l17.714784,41.334497l88.573921,8.857392l121.05103-85.621455Z" />
+            <path class="region" id="Pays_de_la_Loire" fill="white" d="M374.372439,622.969908l62.00175-11.809856-23.61972-67.906672l88.57392-29.52464l67.906674-126.955952-159.433058-44.286962l2.952463,64.95421-121.051025,59.049279l82.668996,156.480593Z" />
+            <path class="region" id="Nouvelle_Aquitaine" fill="white" d="M327.133014,989.075447l47.239427-366.105539l62.001742-11.809856-23.619714-67.906673l88.573919-29.52464l103.336235,97.431312l91.526389,8.857392-19.191016,174.195378-54.62058-2.952464L454.08896,1068.791975L327.133014,989.075447Z" />
+            <path class="region" id="Bourgogne_Franche_Comte" fill="white" d="M1035.72438,620.017439l70.859138-153.528124-138.765808-8.857393L796.574793,357.248147l-35.429565,29.524639v177.14784l85.621452,82.668992l188.9577-26.572179Z" />
+            <path class="region" id="Grand_Est" fill="white" d="M1195.157436,268.674227L861.529002,162.385521L799.527258,301.15133l-2.952465,56.096818L967.817705,457.631923l138.765808,8.857392l44.286959-14.76232l44.286964-183.052768Z" />
         </svg>
     </div>
 
-    <p class="signup-message">Pas encore membre? <a href="create_account.html"> Obtenez des prévisions ravageurs personalisées pour seulement 7,99€/mois</a>.</p>
-    
+    <div class="info-container" id="infoContainer">
+        <h2>Cliquez sur une région pour la sélectionner</h2>
+        <div id="loadingInfo" class="loading-overlay" style="display: none;">
+            <div class="loader"></div>
+        </div>
+        <div id="infoMessage">
+            <div id="loadingInfo" class="loading-overlay" style="display: none;">
+                <div class="loader"></div>
+            </div>
+            Tuta Absoluta:<br>
+            Botrytis:<br>
+            Puceron Cendré:<br>
+            Punaise Nesidiocoris:<br>
+            Acariose Bronzée:<br>
+            Aleurodes:
+        </div>
+        <div class="info-footer">Les prévision agsafe.farm sont indicatives et leur exactitude n'est pas garantie. L'utilisateur reste responsable de ses décisions.</div>
+    </div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -144,146 +196,399 @@
             projectId: "omniscius-7bf29",
             storageBucket: "omniscius-7bf29",
             messagingSenderId: "24281922885",
-            appId: "1:24281922885:web:example" // Replace with your actual app ID
+            appId: "1:24281922885:web:5d417050ef79e22e6b522c"
         };
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const database = firebase.database();
 
-        const regionCoordinates = {
-            "Hauts de France": { lat: 50.511853, lon: 2.382456 },
-            "Normandie": { lat: 49.204741, lon: 0.250363 },
-            "Bretagne": { lat: 48.128866, lon: -2.536543 },
-            "Pays de la Loire": { lat: 47.515044, lon: -0.866298 },
-            "Centre Val de Loire": { lat: 47.723388, lon: 1.440800 },
-            "Bourgogne Franche Comte": { lat: 47.281186, lon: 4.482647 },
-            "Nouvelle Aquitaine": { lat: 45.319608, lon: 0.343424 },
-            "Occitanie": { lat: 43.755350, lon: 2.143505 },
-            "PACA": { lat: 43.706660, lon: 5.377874 },
-            "Ile de France": { lat: 48.742842, lon: 2.384157 },
-            "Grand Est": { lat: 48.443608, lon: 6.099832 },
-            "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
-        };
-
+        // Weather API Functions
         async function getWeatherData(lat, lon) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
             const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-
+        
             const forecastResponse = await fetch(forecastUrl);
             if (!forecastResponse.ok) {
                 throw new Error('Failed to fetch forecast data');
             }
-            const forecastData = await forecastResponse.json();
-
-            const totalRain = forecastData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0);
-            const averageTemp = forecastData.list.reduce((acc, item) => acc + item.main.temp, 0) / forecastData.list.length;
-            const minTemp = Math.min(...forecastData.list.map(item => item.main.temp_min));
-            const maxTemp = Math.max(...forecastData.list.map(item => item.main.temp_max));
-            const averageHumidity = forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length;
-
-            return { totalRain, averageTemp, minTemp, maxTemp, averageHumidity };
+            
+            const data = await forecastResponse.json();
+            
+            // Extract relevant data
+            const relevantData = data.list.map(item => ({
+                temp_min: item.main.temp_min,
+                temp_max: item.main.temp_max,
+                temp: item.main.temp,
+                humidity: item.main.humidity,
+                rain: item.rain ? item.rain['3h'] || 0 : 0 // Default to 0 if no rain data
+            }));
+        
+            return relevantData;
         }
 
-        async function fetchRiskLevel(data) {
-            // Replace this URL with your actual model endpoint
-            const modelUrl = "https://theoagri.pythonanywhere.com/predict";
-            const response = await fetch(modelUrl, {
+        async function getCoordinatesFromPostalCode(postalCode) {
+            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
+            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${postalCode}&appid=${apiKey}`;
+        
+            const response = await fetch(geoUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch coordinates');
+            }
+            const data = await response.json();
+            return { lat: data.coord.lat, lon: data.coord.lon };
+        }
+
+        // Function to fetch risk level from a specific endpoint
+        async function fetchRiskLevel(modelData, endpoint) {
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(modelData)
             });
+            
             if (!response.ok) {
                 throw new Error('Failed to fetch risk level');
             }
+            
             const result = await response.json();
-            return result.risk; // Assuming the response contains a 'risk' field
+            return result; // Assuming the response contains the risk level
+        }
+
+        const regionCoordinates = [
+            "Occitanie",
+            "Centre Val de Loire",
+            "Hauts de France",
+            "Bretagne",
+            "PACA",
+            "Ile de France",
+            "Auvergne Rhone Alpes",
+            "Normandie",
+            "Pays de la Loire",
+            "Nouvelle Aquitaine",
+            "Bourgogne Franche Comte",
+            "Grand Est"
+        ];
+
+        const regionOrder = [
+            "Auvergne Rhone Alpes",
+            "Bourgogne Franche Comte",
+            "Bretagne",
+            "Centre Val de Loire",
+            "Grand Est",
+            "Hauts de France",
+            "Ile de France",
+            "Normandie",
+            "Nouvelle Aquitaine",
+            "Occitanie",
+            "PACA",
+            "Pays de la Loire"
+        ];
+
+        async function fetchRiskLevels() {
+            try {
+                const overallRiskList = await database.ref('OverallRiskList').once('value').then(snapshot => snapshot.val());
+                const riskLevelsArray = overallRiskList.split(','); // Convert the string to an array
+        
+                // Create an object to store region names and their corresponding risk levels
+                const results = {};
+                riskLevelsArray.forEach(entry => {
+                    const [regionName, riskLevel] = entry.split('='); // Split each entry into region and risk
+                    results[regionName.trim()] = riskLevel.trim(); // Store in the results object
+                });
+        
+                return results; // Return the object
+            } catch (error) {
+                console.error('Error fetching overall risk levels:', error);
+                return regionOrder.reduce((acc, region) => {
+                    acc[region] = "unknown"; // Return "unknown" for all regions if there's an error
+                    return acc;
+                }, {});
+            }
+        }
+
+        function getColor(overallRisk) {
+            if (overallRisk === "High") return 'red';
+            if (overallRisk === "Medium") return 'yellow';
+            return 'green';
+        }
+
+        async function fetchRiskLevelsForRegion(regionName) {
+            try {
+                const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const puceroncendreRisk = await database.ref(`PuceronCendre/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const acariosebronzeeRisk = await database.ref(`AcarioseBronzee/${regionName}`).once('value').then(snapshot => snapshot.val());
+                const aleurodesRisk = await database.ref(`Aleurodes/${regionName}`).once('value').then(snapshot => snapshot.val());
+        
+                // Mapping for risk levels
+                const riskMapping = {
+                    "normal": "normal - pas de facteurs de risque particuliers",
+                    "high": "élevé - situation à surveiller",
+                    "unknown": "inconnu" // Optional: handle unknown case
+                };
+        
+                // Translate risks
+                return {
+                    tutaRisk: riskMapping[tutaRisk] || tutaRisk,
+                    botrytisRisk: riskMapping[botrytisRisk] || botrytisRisk,
+                    puceroncendreRisk: riskMapping[puceroncendreRisk] || puceroncendreRisk,
+                    punaisenesidiocorisRisk: riskMapping[punaisenesidiocorisRisk] || punaisenesidiocorisRisk,
+                    acariosebronzeeRisk: riskMapping[acariosebronzeeRisk] || acariosebronzeeRisk,
+                    aleurodesRisk: riskMapping[aleurodesRisk] || aleurodesRisk
+                };
+            } catch (error) {
+                console.error(`Error fetching risk levels for ${regionName}:`, error);
+                return {
+                    tutaRisk: "inconnu",
+                    botrytisRisk: "inconnu",
+                    puceroncendreRisk: "inconnu",
+                    punaisenesidiocorisRisk: "inconnu",
+                    acariosebronzeeRisk: "inconnu",
+                    aleurodesRisk: "inconnu"
+                };
+            }
         }
 
         async function setRegionColors() {
+            const riskLevels = await fetchRiskLevels(); // Get the object of risk levels
             const regions = document.querySelectorAll('.region');
-            const colors = [];
-            const riskLevels = [];
-        
-            for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
-                try {
-                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
-        
-                    // Map the weather data to the variable names expected by the model
-                    const modelData = {
-                        tempmin_5days: weatherData.minTemp,
-                        tempmax_5days: weatherData.maxTemp,
-                        temp_5days: weatherData.averageTemp,
-                        humidity_5days: weatherData.averageHumidity,
-                        precip_5days: weatherData.totalRain
-                    };
-        
-                    const riskLevel = await fetchRiskLevel(modelData);
-                    const color = riskLevel === "high" ? 'red' : 'green'; // Change "élevé" to "high"
-                    
-                    colors.push(color);
-                    riskLevels.push(riskLevel);
-                } catch (error) {
-                    console.error(`Error fetching data for ${regionName}:`, error);
-                    colors.push('white'); // Fallback color in case of error
-                    riskLevels.push('unknown'); // Fallback risk level
-                }
-            }
-        
-            // Save colors and timestamp to Firebase
-            const now = new Date().toISOString();
-            database.ref('shuffledColors').set(colors);
-            database.ref('lastShuffle').set(now);
-            database.ref('riskLevels').set(riskLevels);
-        
-            // Apply colors to regions
-            regions.forEach((region, index) => {
-                region.setAttribute('fill', colors[index]);
-            });
-        }
-
-        async function checkAndShuffle() {
-            database.ref('lastShuffle').once('value').then(async (snapshot) => {
-                const lastShuffle = snapshot.val();
-                const lastDate = lastShuffle ? new Date(lastShuffle) : null;
-                const now = new Date();
-
-                // Check if a day has passed since the last shuffle
-                if (!lastDate || (now - lastDate) > 24 * 60 * 60 * 1000) {
-                    await setRegionColors(); // Fetch weather data and set colors
-                } else {
-                    // Load colors from database and apply them
-                    const loadedColors = await database.ref('shuffledColors').once('value').then(colorSnapshot => colorSnapshot.val());
-                    if (loadedColors) {
-                        const regions = document.querySelectorAll('.region');
-                        regions.forEach((region, index) => {
-                            region.setAttribute('fill', loadedColors[index]);
-                        });
-                    }
+            
+            // Set initial title with dates in the mapContainer
+            const nPlus5Date = formatDate(5);
+            const nPlus12Date = formatDate(12);
+            const titleElementMap = document.querySelector('.map-container h2'); // Title in mapContainer
+            titleElementMap.textContent = `Risque Tomate - ${nPlus5Date} au ${nPlus12Date}`;
+            
+            // Set initial title in info-container
+            const titleElementInfo = document.querySelector('#infoContainer h2'); // Title in infoContainer
+            titleElementInfo.textContent = "Cliquez sur une région pour la sélectionner"; // Initial title
+            
+            regions.forEach(region => {
+                const regionName = region.id.replace(/_/g, ' '); // Replace underscores with spaces for matching names
+                const riskData = riskLevels[regionName]; // Get the risk level using the region name
+                
+                if (riskData) {
+                    const color = getColor(riskData);
+                    region.setAttribute('fill', color);
                 }
                 
-                // Hide loading overlay and show the map container
-                document.getElementById('loadingOverlay').style.display = 'none';
-                // document.getElementById('mapContainer').style.display = 'block';
+                region.addEventListener('click', async () => {
+                    // Show loader
+                    document.getElementById('loadingInfo').style.display = 'flex';
+                    
+                    const { tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk } = await fetchRiskLevelsForRegion(regionName);
+                    
+                    // Hide loader
+                    document.getElementById('loadingInfo').style.display = 'none';
+                    
+                    const infoMessage = `
+                        Tuta Absoluta: ${tutaRisk}<br>
+                        Botrytis: ${botrytisRisk}<br>
+                        Puceron Cendré: ${puceroncendreRisk}<br>
+                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk}<br>
+                        Acariose Bronzée: ${acariosebronzeeRisk}<br>
+                        Aleurodes: ${aleurodesRisk}
+                    `;
+                    document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
+                    
+                    // Update the title in info-container to the selected region
+                    titleElementInfo.textContent = `${regionName}`;
+                });
             });
+            
+            document.getElementById('loadingOverlay').style.display = 'none'; // Hide loader
         }
 
-        async function signIn() {
-            const email = document.getElementById('signinEmail').value;
-            const password = document.getElementById('signinPassword').value;
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                window.location.href = 'forecastEnglish.html';
-            } catch (error) {
-                document.getElementById('message').innerText = error.message;
-            }
+        function formatDate(offset) {
+            const date = new Date();
+            date.setDate(date.getDate() + offset);
+            
+            // Get day and month
+            const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+            
+            return `${day}/${month}`; // Return in dd/mm format
         }
 
-        document.addEventListener('DOMContentLoaded', checkAndShuffle);
+        // Button selection handling
+        const buttons = document.querySelectorAll('.map-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove selected class from all buttons
+                buttons.forEach(btn => btn.classList.remove('selected'));
+                // Add selected class to the clicked button
+                button.classList.add('selected');
+            });
+        });
+
+        document.getElementById('carteButton').addEventListener('click', () => {
+            // Show the map and hide the message
+            document.getElementById('mapContainer').innerHTML = `
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loader"></div>
+                </div>
+                <div class="button-container">
+                    <h2 class="risk-title">Risque Tomates</h2>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1354 1354">
+                    <path class="region" id="Occitanie" fill="white" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
+                    <path class="region" id="Centre_Val_de_Loire" fill="white" d="M761.145225,563.920628l.000002-177.147841-129.908419-85.621458-53.144353,22.143481-8.857392,63.477976-67.906674,126.955953l103.33624,97.431312l91.526385,8.857392l64.954211-56.096815Z" />
+                    <path class="region" id="Hauts_de_France" fill="white" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
+                    <path class="region" id="Bretagne" fill="white" d="M99.793284,323.294811L235.606629,286.38901l23.619712,28.048407l115.146097,8.857392l35.429568,19.191014l2.952463,64.954208L291.703444,466.48931L105.698211,386.772782l26.572176-29.524639-32.477103-33.953332Z" />
+                    <path class="region" id="PACA" fill="white" d="M888.101177,989.075448l171.242914,50.191887L1180.395116,932.97863l14.762325-44.286961h-59.049286l-5.904928-59.04928-44.28696-38.382032-90.050147,59.04928l13.286082,38.382032h-100.383775l25.095952,26.572178-45.763202,73.811601Z" />
+                    <path class="region" id="Ile_de_France" fill="white" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
+                    <path class="region" id="Auvergne_Rhone_Alpes" fill="white" d="M908.768426,885.739206L677,794.212822l19.191016-174.195378l64.954209-56.096813l85.621456,82.668991l188.957699-26.57218l56.096815-8.857393l38.382031,121.051024-44.28696,59.04928-90.050147,59.049279l13.286082,38.382032-100.383775-2.952458Z" />   
+                    <path class="region" id="Normandie" fill="white" d="M622.379416,150.575665l26.572177,20.667248-.000001,88.573922-17.714786,41.334495-53.144354,22.14348-8.857392,63.477975-159.433058-44.286961-35.429568-19.191015-29.524641-140.242042l50.191888,2.952464l17.714784,41.334497l88.573921,8.857392l121.05103-85.621455Z" />
+                    <path class="region" id="Pays_de_la_Loire" fill="white" d="M374.372439,622.969908l62.00175-11.809856-23.61972-67.906672l88.57392-29.52464l67.906674-126.955952-159.433058-44.286962l2.952463,64.95421-121.051025,59.049279l82.668996,156.480593Z" />
+                    <path class="region" id="Nouvelle_Aquitaine" fill="white" d="M327.133014,989.075447l47.239427-366.105539l62.001742-11.809856-23.619714-67.906673l88.573919-29.52464l103.336235,97.431312l91.526389,8.857392-19.191016,174.195378-54.62058-2.952464L454.08896,1068.791975L327.133014,989.075447Z" />
+                    <path class="region" id="Bourgogne_Franche_Comte" fill="white" d="M1035.72438,620.017439l70.859138-153.528124-138.765808-8.857393L796.574793,357.248147l-35.429565,29.524639v177.14784l85.621452,82.668992l188.9577-26.572179Z" />
+                    <path class="region" id="Grand_Est" fill="white" d="M1195.157436,268.674227L861.529002,162.385521L799.527258,301.15133l-2.952465,56.096818L967.817705,457.631923l138.765808,8.857392l44.286959-14.76232l44.286964-183.052768Z" />
+                </svg>
+            `;
+
+            // Reset the infoMessage content to just the titles
+            const titles = [
+                "Tuta Absoluta:",
+                "Botrytis:",
+                "Puceron Cendré:",
+                "Punaise Nesidiocoris:",
+                "Acariose Bronzée:",
+                "Aleurodes:"
+            ];
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+            
+            setRegionColors(); // Call your existing function to set colors
+        });
+        
+        document.getElementById('monPotagerButton').addEventListener('click', () => {
+            // Update mapContainer with input fields and button
+            document.getElementById('mapContainer').innerHTML = `
+                <div>
+                    <h2>Indiquez la localisation de votre potager</h2>
+                    <label for="latitude">Latitude (ex: 43.9462):</label>
+                    <input type="text" id="latitude" placeholder="Entrez votre latitude">
+                    <br>
+                    <label for="longitude">Longitude (ex: 5.0512):</label>
+                    <input type="text" id="longitude" placeholder="Entrez votre longitude">
+                    <br>
+                    <div style="text-align: center; margin: 10px 0;">ou</div>
+                    <label for="postalCode">Code Postal:</label>
+                    <input type="text" id="postalCode" placeholder="Entrez votre code postal">
+                    <br>
+                    <button id="letsGoButton" style="margin-top: 3vh;">Calculer Risque</button>
+                    <div id="errorMessage" style="color: red;"></div>
+                </div>
+            `;
+
+            // Change the title in the info-container
+            document.querySelector('#infoContainer h2').textContent = "Risque pour votre potager";
+
+            // Reset the infoMessage content to just the titles
+            const titles = [
+                "Tuta Absoluta:",
+                "Botrytis:",
+                "Puceron Cendré:",
+                "Punaise Nesidiocoris:",
+                "Acariose Bronzée:",
+                "Aleurodes:"
+            ];
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+        
+            // Add event listener for the "Let's go!" button
+            document.getElementById('letsGoButton').addEventListener('click', async () => {
+                const latitude = document.getElementById('latitude').value;
+                const longitude = document.getElementById('longitude').value;
+                const postalCode = document.getElementById('postalCode').value;
+            
+                // Clear previous error message
+                document.getElementById('errorMessage').textContent = '';
+            
+                // Validate input
+                if ((latitude && longitude) && postalCode) {
+                    document.getElementById('errorMessage').textContent = "Please enter either latitude/longitude or postal code, not both.";
+                } else {
+                    // Determine the coordinates to use
+                    let lat = latitude;
+                    let lon = longitude;
+            
+                    // If postal code is provided, fetch weather data using it
+                    if (postalCode) {
+                        const geoData = await getCoordinatesFromPostalCode(postalCode);
+                        if (geoData) {
+                            lat = geoData.lat;
+                            lon = geoData.lon;
+                        } else {
+                            document.getElementById('errorMessage').textContent = "Invalid postal code.";
+                            return;
+                        }
+                    }
+
+                    // Show loader
+                    document.getElementById('loadingInfo').style.display = 'flex';
+            
+                    // Fetch weather data and log it
+                    try {
+                        const weatherData = await getWeatherData(lat, lon);
+                        console.log("Weather Data:", weatherData);
+            
+                        // Prepare data for the model
+                        const modelData = {
+                            tempmin_5days: Math.min(...weatherData.map(item => item.temp_min)),
+                            tempmax_5days: Math.max(...weatherData.map(item => item.temp_max)),
+                            temp_5days: weatherData.reduce((acc, item) => acc + item.temp, 0) / weatherData.length,
+                            humidity_5days: weatherData.reduce((acc, item) => acc + item.humidity, 0) / weatherData.length,
+                            precip_5days: weatherData.reduce((acc, item) => acc + item.rain, 0)
+                        };
+            
+                        // Define the endpoints for each model
+                        const endpoints = {
+                            "Tuta Absoluta": "https://theoagri.pythonanywhere.com/predict",
+                            "Botrytis": "https://theoagri.pythonanywhere.com/predict_botrytis",
+                            "Puceron Cendré": "https://theoagri.pythonanywhere.com/predict_puceroncendre",
+                            "Punaise Nesidiocoris": "https://theoagri.pythonanywhere.com/predict_punaisenesidiocoris",
+                            "Acariose Bronzée": "https://theoagri.pythonanywhere.com/predict_acariosebronzee",
+                            "Aleurodes": "https://theoagri.pythonanywhere.com/predict_aleurodes"
+                        };
+            
+                        // Prepare a message to display risk levels
+                        let riskMessage = '';
+
+                        // Define a mapping for the risk levels
+                        const riskMapping = {
+                            "high": "élevé",
+                            "normal": "normal"
+                        };
+            
+                        // Fetch risk levels for all models
+                        for (const [modelName, endpoint] of Object.entries(endpoints)) {
+                            const riskResponse = await fetchRiskLevel(modelData, endpoint);
+                            const riskLevel = riskResponse.risk; // Adjust this line based on the actual response structure
+                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel; // Use mapping, fallback to original
+                            riskMessage += `${modelName}: ${mappedRiskLevel}<br>`; // Append each risk level to the message
+                        }
+            
+                        // Display the risk levels in the infoMessage
+                        document.getElementById('infoMessage').innerHTML = riskMessage;
+            
+                    } catch (error) {
+                        console.error("Error fetching weather data:", error);
+                    } finally {
+                        // Hide loader
+                        document.getElementById('loadingInfo').style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setRegionColors();
+            document.getElementById('carteButton').click(); // Automatically click the carteButton
+        });
+        
     </script>
 </body>
 </html>
