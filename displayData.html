@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Risk Assessment Map</title>
+    <title>Risque Ravageurs Tomates</title>
+
+    <!-- 100% privacy-first analytics -->
+    <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
@@ -184,7 +188,13 @@
             Acariose Bronzée:<br>
             Aleurodes:
         </div>
-        <div class="info-footer">Les prévision agsafe.farm sont indicatives et leur exactitude n'est pas garantie. L'utilisateur reste responsable de ses décisions.</div>
+        <div class="email-container" style="margin-top: 20px;">
+            <p style="font-size: 0.9em; color: #555;">Je m'abonne pour recevoir un rappel mensuel (et rien d'autre).</p>
+            <input type="email" id="emailInput" placeholder="Entrez votre email" required>
+            <button id="submitEmailButton" class="map-button" style="margin-left: 10px;">Valider</button>
+            <div id="emailMessage" style="color: red; margin-top: 5px;"></div>
+        </div>
+        <div class="info-footer">Les prévisions agsafe.farm sont indicatives et leur exactitude n'est pas garantie. L'utilisateur reste entièrement responsable de ses décisions.</div>
     </div>
 
     <script>
@@ -573,6 +583,13 @@
             
                         // Display the risk levels in the infoMessage
                         document.getElementById('infoMessage').innerHTML = riskMessage;
+
+                        // Update the UserCount in Firebase
+                        const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+                        const userCountRef = database.ref(`UserCount/${currentDate}`);
+                        userCountRef.transaction(currentCount => {
+                            return (currentCount || 0) + 1; // Increment the count
+                        });
             
                     } catch (error) {
                         console.error("Error fetching weather data:", error);
@@ -587,6 +604,32 @@
         document.addEventListener('DOMContentLoaded', () => {
             setRegionColors();
             document.getElementById('carteButton').click(); // Automatically click the carteButton
+        });
+
+        document.getElementById('submitEmailButton').addEventListener('click', async () => {
+            const email = document.getElementById('emailInput').value;
+            const emailMessage = document.getElementById('emailMessage');
+        
+            // Clear previous message
+            emailMessage.textContent = '';
+        
+            // Validate the email format
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                emailMessage.textContent = "Veuillez entrer un email valide.";
+                return;
+            }
+        
+            try {
+                // Store the email in the Firebase database
+                const usersRef = database.ref('Utilisateurs');
+                await usersRef.push({ email: email }); // Store email
+                emailMessage.textContent = "Email enregistré avec succès!";
+                document.getElementById('emailInput').value = ''; // Clear input field
+            } catch (error) {
+                console.error("Error saving email:", error);
+                emailMessage.textContent = "Erreur lors de l'enregistrement de l'email.";
+            }
         });
         
     </script>
