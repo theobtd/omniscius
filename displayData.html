@@ -414,12 +414,12 @@
                     
                     // For fetchRiskLevelsForRegion
                     const infoMessage = `
-                        Tuta Absoluta: ${tutaRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
-                        Botrytis: ${botrytisRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
-                        Puceron Cendré: ${puceroncendreRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
-                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
-                        Acariose Bronzée: ${acariosebronzeeRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
-                        Aleurodes: ${aleurodesRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button>
+                        Tuta Absoluta: ${tutaRisk} <button class="info-button" onclick="showHelloWorld()">?</button><br>
+                        Botrytis: ${botrytisRisk} <button class="info-button" onclick="showHelloWorld()">?</button><br>
+                        Puceron Cendré: ${puceroncendreRisk} <button class="info-button" onclick="showHelloWorld()">?</button><br>
+                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk} <button class="info-button" onclick="showHelloWorld()">?</button><br>
+                        Acariose Bronzée: ${acariosebronzeeRisk} <button class="info-button" onclick="showHelloWorld()">?</button><br>
+                        Aleurodes: ${aleurodesRisk} <button class="info-button" onclick="showHelloWorld()">?</button>
                     `;
                     
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
@@ -443,7 +443,7 @@
             return `${day}/${month}`; // Return in dd/mm format
         }
 
-        function showHelloWorld(button) {
+        function showHelloWorld() {
             // Save the current infoMessage content
             savedInfoMessage = document.getElementById('infoMessage').innerHTML;
             // Replace with "Hello, World!" and a Return button
@@ -613,7 +613,7 @@
                             const riskResponse = await fetchRiskLevel(modelData, endpoint);
                             const riskLevel = riskResponse.risk;
                             const mappedRiskLevel = riskMapping[riskLevel] || riskLevel;
-                            riskMessage += `${modelName}: ${mappedRiskLevel} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>`;
+                            riskMessage += `${modelName}: ${mappedRiskLevel} <button class="info-button" onclick="showHelloWorld()">?</button><br>`;
                         }
             
                         // Display the risk levels in the infoMessage
