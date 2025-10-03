@@ -285,6 +285,15 @@
             return result; // Assuming the response contains the risk level
         }
 
+        const pestDefinitions = {
+            "Tuta Absoluta": "Tuta absoluta, aussi appelée la teigne de la tomate, est un lépidoptère ravageur originaire d'Amérique du Sud. Ses chenilles creusent des galeries dans les feuilles, tiges et fruits, causant des dégâts importants aux cultures de tomates et autres solanacées.",
+            "Botrytis": "Le Botrytis cinerea est un champignon pathogène responsable de la pourriture grise. Il attaque les plantes affaiblies, provoquant des taches brunes, un feutrage gris et la pourriture des fruits. Il se développe dans des conditions humides et mal aérées.",
+            "Puceron Cendré": "Le puceron cendré (Aphis gossypii) est un petit insecte suceur qui colonise les jeunes pousses et les faces inférieures des feuilles. Il affaiblit la plante en prélevant la sève et favorise le développement de fumagine.",
+            "Punaise Nesidiocoris": "Nesidiocoris tenuis est une punaise prédatrice utilisée en lutte biologique, mais elle peut aussi devenir un ravageur en piquant les fruits de tomate, causant des nécroses et des déformations.",
+            "Acariose Bronzée": "L'acariose bronzée est causée par l'acarien Aculops lycopersici. Elle se manifeste par un bronzage et un épaississement des feuilles, réduisant la photosynthèse et la croissance de la plante.",
+            "Aleurodes": "Les aleurodes (mouches blanches) sont de petits insectes qui se nourrissent de la sève des plantes, affaiblissant la tomate et excrétant du miellat, qui favorise la fumagine. Elles sont souvent trouvées sous les feuilles."
+        };
+
         const regionCoordinates = [
             "Occitanie",
             "Centre Val de Loire",
@@ -451,9 +460,11 @@
             savedInfoTitle = document.querySelector('#infoContainer h2').textContent;
             // Change the title to the pest name
             document.querySelector('#infoContainer h2').textContent = pestName;
-            // Replace with "Hello, World!" and a Return button
+            // Get the definition for the pest
+            const definition = pestDefinitions[pestName] || "Désolé, aucune définition disponible pour ce ravageur.";
+            // Replace with the definition and a Return button
             document.getElementById('infoMessage').innerHTML = `
-                <h3>Hello, World!</h3>
+                <p>${definition}</p>
                 <button class="map-button" onclick="returnToSavedInfo()">Return</button>
             `;
         }
