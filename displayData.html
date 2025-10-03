@@ -213,6 +213,8 @@
     </div>
 
     <script>
+        let savedInfoMessage = null;
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
@@ -410,14 +412,18 @@
                     // Hide loader
                     document.getElementById('loadingInfo').style.display = 'none';
                     
+                    // For fetchRiskLevelsForRegion
                     const infoMessage = `
-                        Tuta Absoluta: ${tutaRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
-                        Botrytis: ${botrytisRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
-                        Puceron Cendré: ${puceroncendreRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
-                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
-                        Acariose Bronzée: ${acariosebronzeeRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
-                        Aleurodes: ${aleurodesRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button>
+                        Tuta Absoluta: ${tutaRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
+                        Botrytis: ${botrytisRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
+                        Puceron Cendré: ${puceroncendreRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
+                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
+                        Acariose Bronzée: ${acariosebronzeeRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>
+                        Aleurodes: ${aleurodesRisk} <button class="info-button" onclick="showHelloWorld(this)">?</button>
                     `;
+                    
+                    // For Mon Potager
+                    riskMessage += `${modelName}: ${mappedRiskLevel} <button class="info-button" onclick="showHelloWorld(this)">?</button><br>`;
 
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
                     
@@ -438,6 +444,22 @@
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
             
             return `${day}/${month}`; // Return in dd/mm format
+        }
+
+        function showHelloWorld(button) {
+            // Save the current infoMessage content
+            savedInfoMessage = document.getElementById('infoMessage').innerHTML;
+            // Replace with "Hello, World!" and a Return button
+            document.getElementById('infoMessage').innerHTML = `
+                <h3>Hello, World!</h3>
+                <button class="map-button" onclick="returnToSavedInfo()">Return</button>
+            `;
+        }
+
+        function returnToSavedInfo() {
+            if (savedInfoMessage) {
+                document.getElementById('infoMessage').innerHTML = savedInfoMessage;
+            }
         }
 
         // Button selection handling
