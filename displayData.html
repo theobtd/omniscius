@@ -214,6 +214,7 @@
 
     <script>
         let savedInfoMessage = null;
+        let savedInfoTitle = null;
 
         // Firebase configuration
         const firebaseConfig = {
@@ -446,9 +447,13 @@
         function showHelloWorld(pestName) {
             // Save the current infoMessage content
             savedInfoMessage = document.getElementById('infoMessage').innerHTML;
-            // Replace with custom "Hello, World!" message and a Return button
+            // Save the current title
+            savedInfoTitle = document.querySelector('#infoContainer h2').textContent;
+            // Change the title to the pest name
+            document.querySelector('#infoContainer h2').textContent = pestName;
+            // Replace with "Hello, World!" and a Return button
             document.getElementById('infoMessage').innerHTML = `
-                <h3>Hello, World - ${pestName}</h3>
+                <h3>Hello, World!</h3>
                 <button class="map-button" onclick="returnToSavedInfo()">Return</button>
             `;
         }
@@ -456,6 +461,9 @@
         function returnToSavedInfo() {
             if (savedInfoMessage) {
                 document.getElementById('infoMessage').innerHTML = savedInfoMessage;
+            }
+            if (savedInfoTitle) {
+                document.querySelector('#infoContainer h2').textContent = savedInfoTitle;
             }
         }
 
