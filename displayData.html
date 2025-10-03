@@ -120,6 +120,21 @@
             color: #555; /* Change color to a lighter shade */
             margin-top: 20px; /* Add some spacing from the infoMessage */
         }
+
+        .info-button {
+            background-color: #3f5787;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
         
         /* Media queries for responsive design */
         @media (max-width: 768px) { /* Adjust this value for mobile breakpoints */
@@ -396,13 +411,14 @@
                     document.getElementById('loadingInfo').style.display = 'none';
                     
                     const infoMessage = `
-                        Tuta Absoluta: ${tutaRisk}<br>
-                        Botrytis: ${botrytisRisk}<br>
-                        Puceron Cendré: ${puceroncendreRisk}<br>
-                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk}<br>
-                        Acariose Bronzée: ${acariosebronzeeRisk}<br>
-                        Aleurodes: ${aleurodesRisk}
+                        Tuta Absoluta: ${tutaRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
+                        Botrytis: ${botrytisRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
+                        Puceron Cendré: ${puceroncendreRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
+                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
+                        Acariose Bronzée: ${acariosebronzeeRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>
+                        Aleurodes: ${aleurodesRisk} <button class="info-button" onclick="console.log('Working!!!')">?</button>
                     `;
+
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
                     
                     // Update the title in info-container to the selected region
@@ -576,9 +592,9 @@
                         // Fetch risk levels for all models
                         for (const [modelName, endpoint] of Object.entries(endpoints)) {
                             const riskResponse = await fetchRiskLevel(modelData, endpoint);
-                            const riskLevel = riskResponse.risk; // Adjust this line based on the actual response structure
-                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel; // Use mapping, fallback to original
-                            riskMessage += `${modelName}: ${mappedRiskLevel}<br>`; // Append each risk level to the message
+                            const riskLevel = riskResponse.risk;
+                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel;
+                            riskMessage += `${modelName}: ${mappedRiskLevel} <button class="info-button" onclick="console.log('Working!!!')">?</button><br>`;
                         }
             
                         // Display the risk levels in the infoMessage
