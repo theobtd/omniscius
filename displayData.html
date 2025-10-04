@@ -468,12 +468,28 @@
           // Change the title to the pest name
           document.querySelector('#infoContainer h2').textContent = pestName;
           // Get the definition for the pest
-          const definition = pestDefinitions[pestName]?.description || "Désolé, aucune définition disponible pour ce ravageur.";
-          // Replace with the definition and a Return button
-          document.getElementById('infoMessage').innerHTML = `
-            <p>${definition}</p>
+          const pestInfo = pestDefinitions[pestName];
+          if (!pestInfo) {
+            document.getElementById('infoMessage').innerHTML = `
+              <p>Désolé, aucune définition disponible pour ce ravageur.</p>
+              <button class="map-button" onclick="returnToSavedInfo()">Return</button>
+            `;
+            return;
+          }
+          // Display all fields: description, symptoms, prevention, treatment
+          const infoHTML = `
+            <h3>Description</h3>
+            <p>${pestInfo.description || "Aucune description disponible."}</p>
+            <h3>Symptômes</h3>
+            <p>${pestInfo.symptoms || "Aucun symptôme disponible."}</p>
+            <h3>Prévention</h3>
+            <p>${pestInfo.prevention || "Aucune méthode de prévention disponible."}</p>
+            <h3>Traitement</h3>
+            <p>${pestInfo.treatment || "Aucun traitement disponible."}</p>
             <button class="map-button" onclick="returnToSavedInfo()">Return</button>
           `;
+          // Replace with the full info and a Return button
+          document.getElementById('infoMessage').innerHTML = infoHTML;
         }
 
         function returnToSavedInfo() {
