@@ -215,6 +215,7 @@
     <script>
         let savedInfoMessage = null;
         let savedInfoTitle = null;
+        let pestDefinitions = {};
 
         // Firebase configuration
         const firebaseConfig = {
@@ -232,9 +233,18 @@
         const database = firebase.database();
 
         fetch('pestDefinitions.json')
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then(data => {
-            // Use data as your pestDefinitions object
+            pestDefinitions = data; // Assign the fetched data to the global variable
+            console.log("Pest definitions loaded:", pestDefinitions);
+          })
+          .catch(error => {
+            console.error('Error loading pest definitions:', error);
           });
 
         // Weather API Functions
@@ -290,15 +300,6 @@
             const result = await response.json();
             return result; // Assuming the response contains the risk level
         }
-
-        const pestDefinitions = {
-            "Tuta Absoluta": "Tuta absoluta, aussi appelée la teigne de la tomate, est un lépidoptère ravageur originaire d'Amérique du Sud. Ses chenilles creusent des galeries dans les feuilles, tiges et fruits, causant des dégâts importants aux cultures de tomates et autres solanacées.",
-            "Botrytis": "Le Botrytis cinerea est un champignon pathogène responsable de la pourriture grise. Il attaque les plantes affaiblies, provoquant des taches brunes, un feutrage gris et la pourriture des fruits. Il se développe dans des conditions humides et mal aérées.",
-            "Puceron Cendré": "Le puceron cendré (Aphis gossypii) est un petit insecte suceur qui colonise les jeunes pousses et les faces inférieures des feuilles. Il affaiblit la plante en prélevant la sève et favorise le développement de fumagine.",
-            "Punaise Nesidiocoris": "Nesidiocoris tenuis est une punaise prédatrice utilisée en lutte biologique, mais elle peut aussi devenir un ravageur en piquant les fruits de tomate, causant des nécroses et des déformations.",
-            "Acariose Bronzée": "L'acariose bronzée est causée par l'acarien Aculops lycopersici. Elle se manifeste par un bronzage et un épaississement des feuilles, réduisant la photosynthèse et la croissance de la plante.",
-            "Aleurodes": "Les aleurodes (mouches blanches) sont de petits insectes qui se nourrissent de la sève des plantes, affaiblissant la tomate et excrétant du miellat, qui favorise la fumagine. Elles sont souvent trouvées sous les feuilles."
-        };
 
         const regionCoordinates = [
             "Occitanie",
