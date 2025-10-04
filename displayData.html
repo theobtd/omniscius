@@ -231,6 +231,12 @@
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        fetch('pestDefinitions.json')
+          .then(response => response.json())
+          .then(data => {
+            // Use data as your pestDefinitions object
+          });
+
         // Weather API Functions
         async function getWeatherData(lat, lon) {
             const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
@@ -454,19 +460,19 @@
         }
 
         function showHelloWorld(pestName) {
-            // Save the current infoMessage content
-            savedInfoMessage = document.getElementById('infoMessage').innerHTML;
-            // Save the current title
-            savedInfoTitle = document.querySelector('#infoContainer h2').textContent;
-            // Change the title to the pest name
-            document.querySelector('#infoContainer h2').textContent = pestName;
-            // Get the definition for the pest
-            const definition = pestDefinitions[pestName] || "Désolé, aucune définition disponible pour ce ravageur.";
-            // Replace with the definition and a Return button
-            document.getElementById('infoMessage').innerHTML = `
-                <p>${definition}</p>
-                <button class="map-button" onclick="returnToSavedInfo()">Return</button>
-            `;
+          // Save the current infoMessage content
+          savedInfoMessage = document.getElementById('infoMessage').innerHTML;
+          // Save the current title
+          savedInfoTitle = document.querySelector('#infoContainer h2').textContent;
+          // Change the title to the pest name
+          document.querySelector('#infoContainer h2').textContent = pestName;
+          // Get the definition for the pest
+          const definition = pestDefinitions[pestName]?.description || "Désolé, aucune définition disponible pour ce ravageur.";
+          // Replace with the definition and a Return button
+          document.getElementById('infoMessage').innerHTML = `
+            <p>${definition}</p>
+            <button class="map-button" onclick="returnToSavedInfo()">Return</button>
+          `;
         }
 
         function returnToSavedInfo() {
