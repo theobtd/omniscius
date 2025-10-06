@@ -466,7 +466,10 @@
           // Save the current title
           savedInfoTitle = document.querySelector('#infoContainer h2').textContent;
           // Change the title to the pest name
-          document.querySelector('#infoContainer h2').textContent = pestName;
+          document.querySelector('#infoContainer h2').innerHTML = `
+              ${pestName}
+              <button class="map-button" onclick="returnToSavedInfo()" style="margin-left: 10px; font-size: 0.8em; padding: 5px 10px;">Retour</button>
+          `;
           // Get the definition for the pest
           const pestInfo = pestDefinitions[pestName];
           if (!pestInfo) {
