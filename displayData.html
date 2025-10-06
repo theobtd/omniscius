@@ -472,7 +472,7 @@
           if (!pestInfo) {
             document.getElementById('infoMessage').innerHTML = `
               <p>Désolé, aucune définition disponible pour ce ravageur.</p>
-              <button class="map-button" onclick="returnToSavedInfo()">Return</button>
+              <button class="map-button" onclick="returnToSavedInfo()">Retour</button>
             `;
             return;
           }
@@ -486,7 +486,7 @@
             <p>${pestInfo.prevention || "Aucune méthode de prévention disponible."}</p>
             <h3>Traitement</h3>
             <p>${pestInfo.treatment || "Aucun traitement disponible."}</p>
-            <button class="map-button" onclick="returnToSavedInfo()">Return</button>
+            <button class="map-button" onclick="returnToSavedInfo()">Retour</button>
           `;
           // Replace with the full info and a Return button
           document.getElementById('infoMessage').innerHTML = infoHTML;
