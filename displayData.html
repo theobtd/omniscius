@@ -566,6 +566,10 @@
                     <label for="postalCode">Code Postal:</label>
                     <input type="text" id="postalCode" placeholder="Entrez votre code postal">
                     <br>
+                    <button id="getLocationButton" style="margin-top: 10px;">Utiliser ma position actuelle</button>
+                    <button id="letsGoButton" style="margin-top: 3vh;">Calculer Risque</button>
+                    <div id="errorMessage" style="color: red;"></div>
+                    <br>
                     <button id="letsGoButton" style="margin-top: 3vh;">Calculer Risque</button>
                     <div id="errorMessage" style="color: red;"></div>
                 </div>
@@ -706,6 +710,42 @@
             } catch (error) {
                 console.error("Error saving email:", error);
                 emailMessage.textContent = "Erreur lors de l'enregistrement de l'email.";
+            }
+        });
+
+        document.getElementById('getLocationButton').addEventListener('click', () => {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = ''; // Clear previous error messages
+        
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Success: Fill the latitude and longitude fields
+                        document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                        document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+                    },
+                    (error) => {
+                        // Handle errors (e.g., user denied permission)
+                        let errorText = "Impossible de récupérer votre position: ";
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorText += "Permission refusée.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorText += "Position indisponible.";
+                                break;
+                            case error.TIMEOUT:
+                                errorText += "La requête a expiré.";
+                                break;
+                            default:
+                                errorText += "Erreur inconnue.";
+                        }
+                        errorMessage.textContent = errorText;
+                    }
+                );
+            } else {
+                // Browser doesn't support geolocation
+                errorMessage.textContent = "La géolocalisation n'est pas supportée par votre navigateur.";
             }
         });
         
