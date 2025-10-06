@@ -120,6 +120,21 @@
             color: #555; /* Change color to a lighter shade */
             margin-top: 20px; /* Add some spacing from the infoMessage */
         }
+
+        .info-button {
+            background-color: #3f5787;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
         
         /* Media queries for responsive design */
         @media (max-width: 768px) { /* Adjust this value for mobile breakpoints */
@@ -181,12 +196,12 @@
             <div id="loadingInfo" class="loading-overlay" style="display: none;">
                 <div class="loader"></div>
             </div>
-            Tuta Absoluta:<br>
-            Botrytis:<br>
-            Puceron Cendré:<br>
-            Punaise Nesidiocoris:<br>
-            Acariose Bronzée:<br>
-            Aleurodes:
+            Mineuse de la Tomate (<i>Tuta Absoluta</i>) <button class="info-button" onclick="showHelloWorld('Tuta Absoluta')">?</button>:<br>
+            Pourriture Grise (<i>Botrytis</i>) <button class="info-button" onclick="showHelloWorld('Botrytis')">?</button>:<br>
+            Puceron Cendré <button class="info-button" onclick="showHelloWorld('Puceron Cendré')">?</button>:<br>
+            Punaise Nesidiocoris <button class="info-button" onclick="showHelloWorld('Punaise Nesidiocoris')">?</button>:<br>
+            Acariose Bronzée (<i>Aculops lycopersici </i>) <button class="info-button" onclick="showHelloWorld('Acariose Bronzée')">?</button>:<br>
+            Aleurodes <button class="info-button" onclick="showHelloWorld('Aleurodes')">?</button>:
         </div>
         <div class="email-container" style="margin-top: 20px;">
             <p style="font-size: 0.9em; color: #555;">Je m'abonne pour recevoir un rappel mensuel (et rien d'autre).</p>
@@ -198,6 +213,10 @@
     </div>
 
     <script>
+        let savedInfoMessage = null;
+        let savedInfoTitle = null;
+        let pestDefinitions = {};
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD_7hMxk4IPshKVrAGFC4OpqNj9uFFQp5Y",
@@ -212,6 +231,21 @@
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        fetch('pestDefinitions.json')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            pestDefinitions = data; // Assign the fetched data to the global variable
+            console.log("Pest definitions loaded:", pestDefinitions);
+          })
+          .catch(error => {
+            console.error('Error loading pest definitions:', error);
+          });
 
         // Weather API Functions
         async function getWeatherData(lat, lon) {
@@ -395,14 +429,16 @@
                     // Hide loader
                     document.getElementById('loadingInfo').style.display = 'none';
                     
+                    // For fetchRiskLevelsForRegion
                     const infoMessage = `
-                        Tuta Absoluta: ${tutaRisk}<br>
-                        Botrytis: ${botrytisRisk}<br>
-                        Puceron Cendré: ${puceroncendreRisk}<br>
-                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk}<br>
-                        Acariose Bronzée: ${acariosebronzeeRisk}<br>
-                        Aleurodes: ${aleurodesRisk}
+                        Mineuse de la Tomate (<i>Tuta Absoluta</i>) <button class="info-button" onclick="showHelloWorld('Tuta Absoluta')">?</button>: ${tutaRisk}<br>
+                        Pourriture Grise (<i>Botrytis</i>) <button class="info-button" onclick="showHelloWorld('Botrytis')">?</button>: ${botrytisRisk}<br>
+                        Puceron Cendré <button class="info-button" onclick="showHelloWorld('Puceron Cendré')">?</button>: ${puceroncendreRisk}<br>
+                        Punaise Nesidiocoris <button class="info-button" onclick="showHelloWorld('Punaise Nesidiocoris')">?</button>: ${punaisenesidiocorisRisk}<br>
+                        Acariose Bronzée (<i>Aculops lycopersici </i>) <button class="info-button" onclick="showHelloWorld('Acariose Bronzée')">?</button>: ${acariosebronzeeRisk}<br>
+                        Aleurodes <button class="info-button" onclick="showHelloWorld('Aleurodes')">?</button>: ${aleurodesRisk}
                     `;
+                    
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
                     
                     // Update the title in info-container to the selected region
@@ -422,6 +458,64 @@
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
             
             return `${day}/${month}`; // Return in dd/mm format
+        }
+
+        function showHelloWorld(pestName) {
+          // Save the current infoMessage content
+          savedInfoMessage = document.getElementById('infoMessage').innerHTML;
+          // Save the current title
+          savedInfoTitle = document.querySelector('#infoContainer h2').textContent;
+          // Change the title to the pest name
+          document.querySelector('#infoContainer h2').innerHTML = `
+              ${pestName}
+              <button class="map-button" onclick="returnToSavedInfo()" style="margin-left: 10px; font-size: 0.8em; padding: 5px 10px;">Retour</button>
+          `;
+          // Get the definition for the pest
+          const pestInfo = pestDefinitions[pestName];
+          if (!pestInfo) {
+            document.getElementById('infoMessage').innerHTML = `
+              <p>Désolé, aucune définition disponible pour ce ravageur.</p>
+              <button class="map-button" onclick="returnToSavedInfo()">Retour</button>
+            `;
+            return;
+          }
+          // Map pest names to image URLs
+          const pestImageUrls = {
+              "Tuta Absoluta": "https://raw.githubusercontent.com/theobtd/omniscius/main/TutaAbsoluta.jpg",
+              "Botrytis": "https://raw.githubusercontent.com/theobtd/omniscius/main/Botrytis.gif",
+              "Puceron Cendré": "https://raw.githubusercontent.com/theobtd/omniscius/main/PuceronCendre.JPG",
+              "Punaise Nesidiocoris": "https://raw.githubusercontent.com/theobtd/omniscius/main/PunaiseNesidiocoris.jpeg",
+              "Acariose Bronzée": "https://raw.githubusercontent.com/theobtd/omniscius/main/AcarioseBronzee.jpeg",
+              "Aleurodes": "https://raw.githubusercontent.com/theobtd/omniscius/main/Aleurodes.jpeg"
+          };
+          // Get the image URL for the current pest
+          const imageUrl = pestImageUrls[pestName] || "";
+          // Add image tag if URL exists
+          const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${pestName}" style="max-width: 100%; height: auto; margin: 10px 0;">` : "";
+          // Display all fields: description, image, symptoms, prevention, treatment
+          const infoHTML = `
+            <h3>Description</h3>
+            <p>${pestInfo.description || "Aucune description disponible."}</p>
+            ${imageTag}
+            <h3>Symptômes</h3>
+            <p>${pestInfo.symptoms || "Aucun symptôme disponible."}</p>
+            <h3>Prévention</h3>
+            <p>${pestInfo.prevention || "Aucune méthode de prévention disponible."}</p>
+            <h3>Traitement</h3>
+            <p>${pestInfo.treatment || "Aucun traitement disponible."}</p>
+            <button class="map-button" onclick="returnToSavedInfo()">Retour</button>
+          `;
+          // Replace with the full info and a Return button
+          document.getElementById('infoMessage').innerHTML = infoHTML;
+        }
+
+        function returnToSavedInfo() {
+            if (savedInfoMessage) {
+                document.getElementById('infoMessage').innerHTML = savedInfoMessage;
+            }
+            if (savedInfoTitle) {
+                document.querySelector('#infoContainer h2').textContent = savedInfoTitle;
+            }
         }
 
         // Button selection handling
@@ -462,14 +556,14 @@
 
             // Reset the infoMessage content to just the titles
             const titles = [
-                "Tuta Absoluta:",
-                "Botrytis:",
-                "Puceron Cendré:",
-                "Punaise Nesidiocoris:",
-                "Acariose Bronzée:",
-                "Aleurodes:"
+                "Mineuse de la Tomate (<i>Tuta Absoluta</i>) <button class=\"info-button\" onclick=\"showHelloWorld('Tuta Absoluta')\">?</button>:",
+                "Pourriture Grise (<i>Botrytis</i>) <button class=\"info-button\" onclick=\"showHelloWorld('Botrytis')\">?</button>:",
+                "Puceron Cendré <button class=\"info-button\" onclick=\"showHelloWorld('Puceron Cendré')\">?</button>:",
+                "Punaise Nesidiocoris <button class=\"info-button\" onclick=\"showHelloWorld('Punaise Nesidiocoris')\">?</button>:",
+                "Acariose Bronzée (<i>Aculops lycopersici</i>) <button class=\"info-button\" onclick=\"showHelloWorld('Acariose Bronzée')\">?</button>:",
+                "Aleurodes <button class=\"info-button\" onclick=\"showHelloWorld('Aleurodes')\">?</button>:"
             ];
-            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>';
             
             setRegionColors(); // Call your existing function to set colors
         });
@@ -485,6 +579,8 @@
                     <label for="longitude">Longitude (ex: 5.0512):</label>
                     <input type="text" id="longitude" placeholder="Entrez votre longitude">
                     <br>
+                    <button id="getLocationButton" style="margin-top: 10px;">Me géolocaliser</button>
+                    <br>
                     <div style="text-align: center; margin: 10px 0;">ou</div>
                     <label for="postalCode">Code Postal:</label>
                     <input type="text" id="postalCode" placeholder="Entrez votre code postal">
@@ -499,14 +595,50 @@
 
             // Reset the infoMessage content to just the titles
             const titles = [
-                "Tuta Absoluta:",
-                "Botrytis:",
-                "Puceron Cendré:",
-                "Punaise Nesidiocoris:",
-                "Acariose Bronzée:",
-                "Aleurodes:"
+                "Mineuse de la Tomate (<i>Tuta Absoluta</i>) <button class=\"info-button\" onclick=\"showHelloWorld('Tuta Absoluta')\">?</button>:",
+                "Pourriture Grise (<i>Botrytis</i>) <button class=\"info-button\" onclick=\"showHelloWorld('Botrytis')\">?</button>:",
+                "Puceron Cendré <button class=\"info-button\" onclick=\"showHelloWorld('Puceron Cendré')\">?</button>:",
+                "Punaise Nesidiocoris <button class=\"info-button\" onclick=\"showHelloWorld('Punaise Nesidiocoris')\">?</button>:",
+                "Acariose Bronzée (<i>Aculops lycopersici</i>) <button class=\"info-button\" onclick=\"showHelloWorld('Acariose Bronzée')\">?</button>:",
+                "Aleurodes <button class=\"info-button\" onclick=\"showHelloWorld('Aleurodes')\">?</button>:"
             ];
-            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>';
+
+            document.getElementById('getLocationButton').addEventListener('click', () => {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = ''; // Clear previous error messages
+            
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // Success: Fill the latitude and longitude fields
+                            document.getElementById('latitude').value = position.coords.latitude.toFixed(6);
+                            document.getElementById('longitude').value = position.coords.longitude.toFixed(6);
+                        },
+                        (error) => {
+                            // Handle errors (e.g., user denied permission)
+                            let errorText = "Impossible de récupérer votre position: ";
+                            switch (error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorText += "Permission refusée.";
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorText += "Position indisponible.";
+                                    break;
+                                case error.TIMEOUT:
+                                    errorText += "La requête a expiré.";
+                                    break;
+                                default:
+                                    errorText += "Erreur inconnue.";
+                            }
+                            errorMessage.textContent = errorText;
+                        }
+                    );
+                } else {
+                    // Browser doesn't support geolocation
+                    errorMessage.textContent = "La géolocalisation n'est pas supportée par votre navigateur.";
+                }
+            });
         
             // Add event listener for the "Let's go!" button
             document.getElementById('letsGoButton').addEventListener('click', async () => {
@@ -576,9 +708,9 @@
                         // Fetch risk levels for all models
                         for (const [modelName, endpoint] of Object.entries(endpoints)) {
                             const riskResponse = await fetchRiskLevel(modelData, endpoint);
-                            const riskLevel = riskResponse.risk; // Adjust this line based on the actual response structure
-                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel; // Use mapping, fallback to original
-                            riskMessage += `${modelName}: ${mappedRiskLevel}<br>`; // Append each risk level to the message
+                            const riskLevel = riskResponse.risk;
+                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel;
+                            riskMessage += `${modelName} <button class="info-button" onclick="showHelloWorld('${modelName}')">?</button>: ${mappedRiskLevel}<br>`;
                         }
             
                         // Display the risk levels in the infoMessage
