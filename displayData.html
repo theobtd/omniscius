@@ -196,12 +196,12 @@
             <div id="loadingInfo" class="loading-overlay" style="display: none;">
                 <div class="loader"></div>
             </div>
-            Tuta Absoluta:<br>
-            Botrytis:<br>
-            Puceron Cendré:<br>
-            Punaise Nesidiocoris:<br>
-            Acariose Bronzée:<br>
-            Aleurodes:
+            Tuta Absoluta <button class="info-button" onclick="showHelloWorld('Tuta Absoluta')">?</button>:<br>
+            Botrytis <button class="info-button" onclick="showHelloWorld('Botrytis')">?</button>:<br>
+            Puceron Cendré <button class="info-button" onclick="showHelloWorld('Puceron Cendré')">?</button>:<br>
+            Punaise Nesidiocoris <button class="info-button" onclick="showHelloWorld('Punaise Nesidiocoris')">?</button>:<br>
+            Acariose Bronzée <button class="info-button" onclick="showHelloWorld('Acariose Bronzée')">?</button>:<br>
+            Aleurodes <button class="info-button" onclick="showHelloWorld('Aleurodes')">?</button>:
         </div>
         <div class="email-container" style="margin-top: 20px;">
             <p style="font-size: 0.9em; color: #555;">Je m'abonne pour recevoir un rappel mensuel (et rien d'autre).</p>
@@ -431,12 +431,12 @@
                     
                     // For fetchRiskLevelsForRegion
                     const infoMessage = `
-                        Tuta Absoluta: ${tutaRisk} <button class="info-button" onclick="showHelloWorld('Tuta Absoluta')">?</button><br>
-                        Botrytis: ${botrytisRisk} <button class="info-button" onclick="showHelloWorld('Botrytis')">?</button><br>
-                        Puceron Cendré: ${puceroncendreRisk} <button class="info-button" onclick="showHelloWorld('Puceron Cendré')">?</button><br>
-                        Punaise Nesidiocoris: ${punaisenesidiocorisRisk} <button class="info-button" onclick="showHelloWorld('Punaise Nesidiocoris')">?</button><br>
-                        Acariose Bronzée: ${acariosebronzeeRisk} <button class="info-button" onclick="showHelloWorld('Acariose Bronzée')">?</button><br>
-                        Aleurodes: ${aleurodesRisk} <button class="info-button" onclick="showHelloWorld('Aleurodes')">?</button>
+                        Tuta Absoluta <button class="info-button" onclick="showHelloWorld('Tuta Absoluta')">?</button>: ${tutaRisk}<br>
+                        Botrytis <button class="info-button" onclick="showHelloWorld('Botrytis')">?</button>: ${botrytisRisk}<br>
+                        Puceron Cendré <button class="info-button" onclick="showHelloWorld('Puceron Cendré')">?</button>: ${puceroncendreRisk}<br>
+                        Punaise Nesidiocoris <button class="info-button" onclick="showHelloWorld('Punaise Nesidiocoris')">?</button>: ${punaisenesidiocorisRisk}<br>
+                        Acariose Bronzée <button class="info-button" onclick="showHelloWorld('Acariose Bronzée')">?</button>: ${acariosebronzeeRisk}<br>
+                        Aleurodes <button class="info-button" onclick="showHelloWorld('Aleurodes')">?</button>: ${aleurodesRisk}
                     `;
                     
                     document.getElementById('infoMessage').innerHTML = infoMessage; // Update info div
@@ -539,14 +539,14 @@
 
             // Reset the infoMessage content to just the titles
             const titles = [
-                "Tuta Absoluta:",
-                "Botrytis:",
-                "Puceron Cendré:",
-                "Punaise Nesidiocoris:",
-                "Acariose Bronzée:",
-                "Aleurodes:"
+                "Tuta Absoluta <button class=\"info-button\" onclick=\"showHelloWorld('Tuta Absoluta')\">?</button>:",
+                "Botrytis <button class=\"info-button\" onclick=\"showHelloWorld('Botrytis')\">?</button>:",
+                "Puceron Cendré <button class=\"info-button\" onclick=\"showHelloWorld('Puceron Cendré')\">?</button>:",
+                "Punaise Nesidiocoris <button class=\"info-button\" onclick=\"showHelloWorld('Punaise Nesidiocoris')\">?</button>:",
+                "Acariose Bronzée <button class=\"info-button\" onclick=\"showHelloWorld('Acariose Bronzée')\">?</button>:",
+                "Aleurodes <button class=\"info-button\" onclick=\"showHelloWorld('Aleurodes')\">?</button>:"
             ];
-            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>';
             
             setRegionColors(); // Call your existing function to set colors
         });
@@ -578,14 +578,14 @@
 
             // Reset the infoMessage content to just the titles
             const titles = [
-                "Tuta Absoluta:",
-                "Botrytis:",
-                "Puceron Cendré:",
-                "Punaise Nesidiocoris:",
-                "Acariose Bronzée:",
-                "Aleurodes:"
+                "Tuta Absoluta <button class=\"info-button\" onclick=\"showHelloWorld('Tuta Absoluta')\">?</button>:",
+                "Botrytis <button class=\"info-button\" onclick=\"showHelloWorld('Botrytis')\">?</button>:",
+                "Puceron Cendré <button class=\"info-button\" onclick=\"showHelloWorld('Puceron Cendré')\">?</button>:",
+                "Punaise Nesidiocoris <button class=\"info-button\" onclick=\"showHelloWorld('Punaise Nesidiocoris')\">?</button>:",
+                "Acariose Bronzée <button class=\"info-button\" onclick=\"showHelloWorld('Acariose Bronzée')\">?</button>:",
+                "Aleurodes <button class=\"info-button\" onclick=\"showHelloWorld('Aleurodes')\">?</button>:"
             ];
-            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>'; // Keep titles and reset values
+            document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>';
 
             document.getElementById('getLocationButton').addEventListener('click', () => {
                 const errorMessage = document.getElementById('errorMessage');
@@ -693,7 +693,7 @@
                             const riskResponse = await fetchRiskLevel(modelData, endpoint);
                             const riskLevel = riskResponse.risk;
                             const mappedRiskLevel = riskMapping[riskLevel] || riskLevel;
-                            riskMessage += `${modelName}: ${mappedRiskLevel} <button class="info-button" onclick="showHelloWorld('${modelName}')">?</button><br>`;
+                            riskMessage += `${modelName} <button class="info-button" onclick="showHelloWorld('${modelName}')">?</button>: ${mappedRiskLevel}<br>`;
                         }
             
                         // Display the risk levels in the infoMessage
