@@ -476,18 +476,21 @@
             `;
             return;
           }
+          // Get the image filename for the pest
+          const imageFilename = pestImages[pestName];
+            
           // Display all fields: description, symptoms, prevention, treatment
           const infoHTML = `
+            ${imageFilename ? `<img src="${imageFilename}" alt="${pestName}" style="max-width: 100%; height: auto; margin-bottom: 10px;">` : ''}
             <h3>Description</h3>
             <p>${pestInfo.description || "Aucune description disponible."}</p>
-            <img src="${pestInfo.image}" alt="${pestName}" style="max-width: 100%; height: auto; margin-bottom: 10px;">
             <h3>Symptômes</h3>
             <p>${pestInfo.symptoms || "Aucun symptôme disponible."}</p>
             <h3>Prévention</h3>
             <p>${pestInfo.prevention || "Aucune méthode de prévention disponible."}</p>
             <h3>Traitement</h3>
             <p>${pestInfo.treatment || "Aucun traitement disponible."}</p>
-            <button class="map-button" onclick="returnToSavedInfo()">Retour</button>
+            <button class="map-button" onclick="returnToSavedInfo()">Return</button>
           `;
           // Replace with the full info and a Return button
           document.getElementById('infoMessage').innerHTML = infoHTML;
@@ -548,6 +551,15 @@
                 "Aleurodes <button class=\"info-button\" onclick=\"showHelloWorld('Aleurodes')\">?</button>:"
             ];
             document.getElementById('infoMessage').innerHTML = titles.join('<br>') + '<br>';
+
+            const pestImages = {
+              "Tuta Absoluta": "TutaAbsoluta.jpg",
+              "Botrytis": "Botrytis.jpg",
+              "Puceron Cendré": "PuceronCendre.jpg",
+              "Punaise Nesidiocoris": "PunaiseNesidiocoris.jpg",
+              "Acariose Bronzée": "AcarioseBronzee.jpg",
+              "Aleurodes": "Aleurodes.jpg"
+            };
             
             setRegionColors(); // Call your existing function to set colors
         });
