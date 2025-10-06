@@ -476,10 +476,24 @@
             `;
             return;
           }
-          // Display all fields: description, symptoms, prevention, treatment
+          // Map pest names to image URLs
+          const pestImageUrls = {
+              "Tuta Absoluta": "https://raw.githubusercontent.com/theobtd/omniscius/main/TutaAbsoluta.jpg",
+              "Botrytis": "https://raw.githubusercontent.com/theobtd/omniscius/main/Botrytis.gif",
+              "Puceron Cendré": "https://raw.githubusercontent.com/theobtd/omniscius/main/PuceronCendre.JPG",
+              "Punaise Nesidiocoris": "https://raw.githubusercontent.com/theobtd/omniscius/main/PunaiseNesidiocoris.jpeg",
+              "Acariose Bronzée": "https://raw.githubusercontent.com/theobtd/omniscius/main/AcarioseBronzee.jpeg",
+              "Aleurodes": "https://raw.githubusercontent.com/theobtd/omniscius/main/Aleurodes.jpeg"
+          };
+          // Get the image URL for the current pest
+          const imageUrl = pestImageUrls[pestName] || "";
+          // Add image tag if URL exists
+          const imageTag = imageUrl ? `<img src="${imageUrl}" alt="${pestName}" style="max-width: 100%; height: auto; margin: 10px 0;">` : "";
+          // Display all fields: description, image, symptoms, prevention, treatment
           const infoHTML = `
             <h3>Description</h3>
             <p>${pestInfo.description || "Aucune description disponible."}</p>
+            ${imageTag}
             <h3>Symptômes</h3>
             <p>${pestInfo.symptoms || "Aucun symptôme disponible."}</p>
             <h3>Prévention</h3>
