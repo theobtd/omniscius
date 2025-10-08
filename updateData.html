@@ -82,14 +82,6 @@
             "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
         };
 
-        // NEW: Call Vercel function (SECURE)
-        async function getWeatherData(lat, lon) {
-          const vercelUrl = "https://omniscius.vercel.app/api/weather";
-          const response = await fetch(`${vercelUrl}?lat=${lat}&lon=${lon}&regionName=${encodeURIComponent(regionName)}`);
-          if (!response.ok) throw new Error("Failed to fetch weather data");
-          return await response.json();
-        }
-
         async function fetchRiskLevel(data, endpoint) {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -111,17 +103,22 @@
           messageDiv.innerText = "Fetching weather data...";
         
           try {
-            // Loop through regions and call Vercel endpoint for each
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
-              const response = await fetch(`/api/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&regionName=${encodeURIComponent(regionName)}`);
-              if (!response.ok) throw new Error(`Failed for ${regionName}`);
+              const vercelUrl = "https://omniscius.vercel.app/api/weather";
+              const response = await fetch(
+                `${vercelUrl}?lat=${coordinates.lat}&lon=${coordinates.lon}&regionName=${encodeURIComponent(regionName)}`
+              );
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed for ${regionName}: ${errorData.error || response.statusText}`);
+              }
               const data = await response.json();
-              results[regionName] = data.data; // Data is already saved to Firebase by Vercel
+              results[regionName] = data.data;
             }
             messageDiv.innerText = "Weather data fetched and saved successfully!";
           } catch (error) {
             console.error("Error in fetchWeather:", error);
-            messageDiv.innerText = "Failed to fetch weather data. See console for details.";
+            messageDiv.innerText = `Failed to fetch weather data: ${error.message}`;
           }
         }
 
