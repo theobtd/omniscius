@@ -105,29 +105,23 @@
         }
 
         async function fetchWeather() {
-            const results = {};
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Fetching weather data...";
+        
+          try {
+            // Loop through regions and call Vercel endpoint for each
             for (const [regionName, coordinates] of Object.entries(regionCoordinates)) {
-                try {
-                    const weatherData = await getWeatherData(coordinates.lat, coordinates.lon);
-                    results[regionName] = {
-                        tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
-                        tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
-                        temp_5days: weatherData.list.reduce((acc, item) => acc + item.main.temp, 0) / weatherData.list.length,
-                        humidity_5days: weatherData.list.reduce((acc, item) => acc + item.main.humidity, 0) / weatherData.list.length,
-                        precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
-                    };
-                } catch (error) {
-                    console.error(`Error fetching data for ${regionName}:`, error);
-                    results[regionName] = null; // Handle error
-                }
+              const response = await fetch(`/api/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&regionName=${encodeURIComponent(regionName)}`);
+              if (!response.ok) throw new Error(`Failed for ${regionName}`);
+              const data = await response.json();
+              results[regionName] = data.data; // Data is already saved to Firebase by Vercel
             }
-
-            // Store results in Firebase
-            for (const [regionName, data] of Object.entries(results)) {
-                database.ref(`WeatherData/${regionName}`).set(data);
-            }
-
-            document.getElementById('message').innerText = "Weather data fetched and saved successfully!";
+            messageDiv.innerText = "Weather data fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchWeather:", error);
+            messageDiv.innerText = "Failed to fetch weather data. See console for details.";
+          }
         }
 
         async function fetchAndStoreRisk() {
