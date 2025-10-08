@@ -123,213 +123,333 @@
         }
 
         async function fetchAndStoreRisk() {
-            const results = {};
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating risk levels...";
+        
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
-                if (!weatherData) {
-                    console.error(`No weather data available for ${regionName}`);
-                    results[regionName] = "unknown"; // Handle missing data
-                    continue;
+              const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+              if (!weatherData) {
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
+                continue;
+              }
+        
+              const modelData = {
+                tempmin_5days: weatherData.tempmin_5days,
+                tempmax_5days: weatherData.tempmax_5days,
+                temp_5days: weatherData.temp_5days,
+                humidity_5days: weatherData.humidity_5days,
+                precip_5days: weatherData.precip_5days
+              };
+        
+              try {
+                const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict");
+                results[regionName] = riskLevel;
+        
+                // Update risk level via Vercel function
+                const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    riskType: "TutaAbsoluta",
+                    regionName: regionName,
+                    riskLevel: riskLevel
+                  }),
+                });
+        
+                if (!updateResponse.ok) {
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
-
-                const modelData = {
-                    tempmin_5days: weatherData.tempmin_5days,
-                    tempmax_5days: weatherData.tempmax_5days,
-                    temp_5days: weatherData.temp_5days,
-                    humidity_5days: weatherData.humidity_5days,
-                    precip_5days: weatherData.precip_5days
-                };
-
-                try {
-                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict");
-                    results[regionName] = riskLevel;
-                } catch (error) {
-                    console.error(`Error fetching risk for ${regionName}:`, error);
-                    results[regionName] = "unknown"; // Fallback risk level
-                }
+              } catch (error) {
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
+              }
             }
-
-            // Store results in Firebase
-            for (const [regionName, risk] of Object.entries(results)) {
-                database.ref(`TutaAbsoluta/${regionName}`).set(risk);
-            }
-
-            document.getElementById('message').innerText = "Risk levels for Tuta Absoluta fetched and saved successfully!";
+        
+            messageDiv.innerText = "Risk levels for Tuta Absoluta fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchAndStoreRisk:", error);
+            messageDiv.innerText = `Failed to fetch risk levels: ${error.message}`;
+          }
         }
 
         async function fetchAndStoreBotrytis() {
-            const results = {};
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating risk levels...";
+        
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
-                if (!weatherData) {
-                    console.error(`No weather data available for ${regionName}`);
-                    results[regionName] = "unknown"; // Handle missing data
-                    continue;
+              const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+              if (!weatherData) {
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
+                continue;
+              }
+        
+              const modelData = {
+                tempmin_5days: weatherData.tempmin_5days,
+                tempmax_5days: weatherData.tempmax_5days,
+                temp_5days: weatherData.temp_5days,
+                humidity_5days: weatherData.humidity_5days,
+                precip_5days: weatherData.precip_5days
+              };
+        
+              try {
+                const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_botrytis");
+                results[regionName] = riskLevel;
+        
+                // Update risk level via Vercel function
+                const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    riskType: "Botrytis",
+                    regionName: regionName,
+                    riskLevel: riskLevel
+                  }),
+                });
+        
+                if (!updateResponse.ok) {
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
-
-                const modelData = {
-                    tempmin_5days: weatherData.tempmin_5days,
-                    tempmax_5days: weatherData.tempmax_5days,
-                    temp_5days: weatherData.temp_5days,
-                    humidity_5days: weatherData.humidity_5days,
-                    precip_5days: weatherData.precip_5days
-                };
-
-                try {
-                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_botrytis");
-                    results[regionName] = riskLevel;
-                } catch (error) {
-                    console.error(`Error fetching risk for ${regionName}:`, error);
-                    results[regionName] = "unknown"; // Fallback risk level
-                }
+              } catch (error) {
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
+              }
             }
-
-            // Store results in Firebase
-            for (const [regionName, risk] of Object.entries(results)) {
-                database.ref(`Botrytis/${regionName}`).set(risk);
-            }
-
-            document.getElementById('message').innerText = "Risk levels for Botrytis fetched and saved successfully!";
+        
+            messageDiv.innerText = "Risk levels for Botrytis fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchAndStoreBotrytis:", error);
+            messageDiv.innerText = `Failed to fetch risk levels: ${error.message}`;
+          }
         }
 
-        async function fetchAndStorePuceroncendre() {
-            const results = {};
+        async function fetchAndStorePuceronCendre() {
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating risk levels...";
+        
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
-                if (!weatherData) {
-                    console.error(`No weather data available for ${regionName}`);
-                    results[regionName] = "unknown"; // Handle missing data
-                    continue;
+              const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+              if (!weatherData) {
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
+                continue;
+              }
+        
+              const modelData = {
+                tempmin_5days: weatherData.tempmin_5days,
+                tempmax_5days: weatherData.tempmax_5days,
+                temp_5days: weatherData.temp_5days,
+                humidity_5days: weatherData.humidity_5days,
+                precip_5days: weatherData.precip_5days
+              };
+        
+              try {
+                const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_puceroncendre");
+                results[regionName] = riskLevel;
+        
+                // Update risk level via Vercel function
+                const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    riskType: "PuceronCendre",
+                    regionName: regionName,
+                    riskLevel: riskLevel
+                  }),
+                });
+        
+                if (!updateResponse.ok) {
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
-
-                const modelData = {
-                    tempmin_5days: weatherData.tempmin_5days,
-                    tempmax_5days: weatherData.tempmax_5days,
-                    temp_5days: weatherData.temp_5days,
-                    humidity_5days: weatherData.humidity_5days,
-                    precip_5days: weatherData.precip_5days
-                };
-
-                try {
-                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_puceroncendre");
-                    results[regionName] = riskLevel;
-                } catch (error) {
-                    console.error(`Error fetching risk for ${regionName}:`, error);
-                    results[regionName] = "unknown"; // Fallback risk level
-                }
+              } catch (error) {
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
+              }
             }
-
-            // Store results in Firebase
-            for (const [regionName, risk] of Object.entries(results)) {
-                database.ref(`PuceronCendre/${regionName}`).set(risk);
-            }
-
-            document.getElementById('message').innerText = "Risk levels for Puceron Cendré fetched and saved successfully!";
+        
+            messageDiv.innerText = "Risk levels for PuceronCendre fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchAndStorePuceronCendre:", error);
+            messageDiv.innerText = `Failed to fetch risk levels: ${error.message}`;
+          }
         }
 
-        async function fetchAndStorePunaisenesidiocoris() {
-            const results = {};
+        async function fetchAndStorePunaiseNesidiocoris() {
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating risk levels...";
+        
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
-                if (!weatherData) {
-                    console.error(`No weather data available for ${regionName}`);
-                    results[regionName] = "unknown"; // Handle missing data
-                    continue;
+              const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+              if (!weatherData) {
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
+                continue;
+              }
+        
+              const modelData = {
+                tempmin_5days: weatherData.tempmin_5days,
+                tempmax_5days: weatherData.tempmax_5days,
+                temp_5days: weatherData.temp_5days,
+                humidity_5days: weatherData.humidity_5days,
+                precip_5days: weatherData.precip_5days
+              };
+        
+              try {
+                const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_punaisenesidiocoris");
+                results[regionName] = riskLevel;
+        
+                // Update risk level via Vercel function
+                const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    riskType: "PunaiseNesidiocoris",
+                    regionName: regionName,
+                    riskLevel: riskLevel
+                  }),
+                });
+        
+                if (!updateResponse.ok) {
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
-
-                const modelData = {
-                    tempmin_5days: weatherData.tempmin_5days,
-                    tempmax_5days: weatherData.tempmax_5days,
-                    temp_5days: weatherData.temp_5days,
-                    humidity_5days: weatherData.humidity_5days,
-                    precip_5days: weatherData.precip_5days
-                };
-
-                try {
-                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_punaisenesidiocoris");
-                    results[regionName] = riskLevel;
-                } catch (error) {
-                    console.error(`Error fetching risk for ${regionName}:`, error);
-                    results[regionName] = "unknown"; // Fallback risk level
-                }
+              } catch (error) {
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
+              }
             }
-
-            // Store results in Firebase
-            for (const [regionName, risk] of Object.entries(results)) {
-                database.ref(`PunaiseNesidiocoris/${regionName}`).set(risk);
-            }
-
-            document.getElementById('message').innerText = "Risk levels for Punaise Nesidiocoris fetched and saved successfully!";
+        
+            messageDiv.innerText = "Risk levels for Punaise Nesidiocoris fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchAndStorePunaiseNesidiocoris:", error);
+            messageDiv.innerText = `Failed to fetch risk levels: ${error.message}`;
+          }
         }
 
-        async function fetchAndStoreAcariosebronzee() {
-            const results = {};
+        async function fetchAndStoreAcarioseBronzee() {
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating risk levels...";
+        
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
-                if (!weatherData) {
-                    console.error(`No weather data available for ${regionName}`);
-                    results[regionName] = "unknown"; // Handle missing data
-                    continue;
+              const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+              if (!weatherData) {
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
+                continue;
+              }
+        
+              const modelData = {
+                tempmin_5days: weatherData.tempmin_5days,
+                tempmax_5days: weatherData.tempmax_5days,
+                temp_5days: weatherData.temp_5days,
+                humidity_5days: weatherData.humidity_5days,
+                precip_5days: weatherData.precip_5days
+              };
+        
+              try {
+                const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_acariosebronzee");
+                results[regionName] = riskLevel;
+        
+                // Update risk level via Vercel function
+                const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    riskType: "AcarioseBronzee",
+                    regionName: regionName,
+                    riskLevel: riskLevel
+                  }),
+                });
+        
+                if (!updateResponse.ok) {
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
-
-                const modelData = {
-                    tempmin_5days: weatherData.tempmin_5days,
-                    tempmax_5days: weatherData.tempmax_5days,
-                    temp_5days: weatherData.temp_5days,
-                    humidity_5days: weatherData.humidity_5days,
-                    precip_5days: weatherData.precip_5days
-                };
-
-                try {
-                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_acariosebronzee");
-                    results[regionName] = riskLevel;
-                } catch (error) {
-                    console.error(`Error fetching risk for ${regionName}:`, error);
-                    results[regionName] = "unknown"; // Fallback risk level
-                }
+              } catch (error) {
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
+              }
             }
-
-            // Store results in Firebase
-            for (const [regionName, risk] of Object.entries(results)) {
-                database.ref(`AcarioseBronzee/${regionName}`).set(risk);
-            }
-
-            document.getElementById('message').innerText = "Risk levels for Acariose Bronzée fetched and saved successfully!";
+        
+            messageDiv.innerText = "Risk levels for Acariose Bronzee fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchAndStoreAcarioseBronzee:", error);
+            messageDiv.innerText = `Failed to fetch risk levels: ${error.message}`;
+          }
         }
 
         async function fetchAndStoreAleurodes() {
-            const results = {};
+          const results = {};
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating risk levels...";
+        
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
-                if (!weatherData) {
-                    console.error(`No weather data available for ${regionName}`);
-                    results[regionName] = "unknown"; // Handle missing data
-                    continue;
+              const weatherData = await database.ref(`WeatherData/${regionName}`).once('value').then(snapshot => snapshot.val());
+              if (!weatherData) {
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
+                continue;
+              }
+        
+              const modelData = {
+                tempmin_5days: weatherData.tempmin_5days,
+                tempmax_5days: weatherData.tempmax_5days,
+                temp_5days: weatherData.temp_5days,
+                humidity_5days: weatherData.humidity_5days,
+                precip_5days: weatherData.precip_5days
+              };
+        
+              try {
+                const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_aleurodes");
+                results[regionName] = riskLevel;
+        
+                // Update risk level via Vercel function
+                const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    riskType: "Aleurodes",
+                    regionName: regionName,
+                    riskLevel: riskLevel
+                  }),
+                });
+        
+                if (!updateResponse.ok) {
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
-
-                const modelData = {
-                    tempmin_5days: weatherData.tempmin_5days,
-                    tempmax_5days: weatherData.tempmax_5days,
-                    temp_5days: weatherData.temp_5days,
-                    humidity_5days: weatherData.humidity_5days,
-                    precip_5days: weatherData.precip_5days
-                };
-
-                try {
-                    const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_aleurodes");
-                    results[regionName] = riskLevel;
-                } catch (error) {
-                    console.error(`Error fetching risk for ${regionName}:`, error);
-                    results[regionName] = "unknown"; // Fallback risk level
-                }
+              } catch (error) {
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
+              }
             }
-
-            // Store results in Firebase
-            for (const [regionName, risk] of Object.entries(results)) {
-                database.ref(`Aleurodes/${regionName}`).set(risk);
-            }
-
-            document.getElementById('message').innerText = "Risk levels for Aleurodes fetched and saved successfully!";
+        
+            messageDiv.innerText = "Risk levels for Aleurodes fetched and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchAndStoreAleurodes:", error);
+            messageDiv.innerText = `Failed to fetch risk levels: ${error.message}`;
+          }
         }
 
         async function fetchOverallRisk() {
