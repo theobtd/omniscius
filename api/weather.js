@@ -17,8 +17,8 @@ if (!getApps().length) {
 const database = getDatabase(app);
 
 export default async function handler(req, res) {
-  // Enable CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  // Enable CORS for your domain
+  res.setHeader("Access-Control-Allow-Origin", "https://santepotager.fr");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
