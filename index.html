@@ -696,12 +696,17 @@
                         // Display the risk levels in the infoMessage
                         document.getElementById('infoMessage').innerHTML = riskMessage;
 
-                        // Update the UserCount in Firebase
-                        const currentDate = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
-                        const userCountRef = database.ref(`UserCount/${currentDate}`);
-                        userCountRef.transaction(currentCount => {
-                            return (currentCount || 0) + 1; // Increment the count
+                        // Update the UserCount via Vercel function (instead of direct Firebase write)
+                        const incrementResponse = await fetch("https://omniscius.vercel.app/api/incrementUserCount", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
                         });
+
+                        if (!incrementResponse.ok) {
+                          console.error("Failed to increment user count");
+                        }
             
                     } catch (error) {
                         console.error("Error fetching weather data:", error);
