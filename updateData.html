@@ -82,15 +82,11 @@
             "Auvergne Rhone Alpes": { lat: 45.643569, lon: 4.319003 }
         };
 
+        // NEW: Call Vercel function (SECURE)
         async function getWeatherData(lat, lon) {
-            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-
-            const forecastResponse = await fetch(forecastUrl);
-            if (!forecastResponse.ok) {
-                throw new Error('Failed to fetch forecast data');
-            }
-            return await forecastResponse.json();
+          const response = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
+          if (!response.ok) throw new Error("Failed to fetch weather data");
+          return await response.json();
         }
 
         async function fetchRiskLevel(data, endpoint) {
