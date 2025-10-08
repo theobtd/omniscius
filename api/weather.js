@@ -1,17 +1,17 @@
 // api/weather.js
-import { initializeApp, cert } from "firebase-admin/app";
+import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import { getDatabase } from "firebase-admin/database";
 
 // Initialize Firebase Admin (only once)
 let app;
-if (!initializeApp.getApps().length) {
+if (!getApps().length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIAL);
   app = initializeApp({
     credential: cert(serviceAccount),
     databaseURL: process.env.FIREBASE_DATABASE_URL,
   });
 } else {
-  app = initializeApp.getApps()[0]; // Use existing app
+  app = getApp(); // Use existing app
 }
 
 const database = getDatabase(app);
