@@ -453,35 +453,56 @@
         }
 
         async function fetchOverallRisk() {
-            const overallRiskArray = [];
+          const overallRiskArray = [];
+          const messageDiv = document.getElementById('message');
+          messageDiv.innerText = "Calculating overall risk levels...";
         
+          try {
             for (const regionName of Object.keys(regionCoordinates)) {
-                const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
-                const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
-                const puceroncendreRisk = await database.ref(`PuceronCendre/${regionName}`).once('value').then(snapshot => snapshot.val());
-                const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
-                const acariosebronzeeRisk = await database.ref(`AcarioseBronzee/${regionName}`).once('value').then(snapshot => snapshot.val());
-                const aleurodesRisk = await database.ref(`Aleurodes/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const tutaRisk = await database.ref(`TutaAbsoluta/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const botrytisRisk = await database.ref(`Botrytis/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const puceroncendreRisk = await database.ref(`PuceronCendre/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const acariosebronzeeRisk = await database.ref(`AcarioseBronzee/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const aleurodesRisk = await database.ref(`Aleurodes/${regionName}`).once('value').then(snapshot => snapshot.val());
         
-                const riskLevels = [tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk];
-                const highRiskCount = riskLevels.filter(risk => risk === "high").length;
+              const riskLevels = [tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk];
+              const highRiskCount = riskLevels.filter(risk => risk === "high").length;
         
-                let overallRisk;
-                if (highRiskCount >= 4) {
-                    overallRisk = "High";
-                } else if (highRiskCount === 3) {
-                    overallRisk = "Medium";
-                } else {
-                    overallRisk = "Low";
-                }
+              let overallRisk;
+              if (highRiskCount >= 4) {
+                overallRisk = "High";
+              } else if (highRiskCount === 3) {
+                overallRisk = "Medium";
+              } else {
+                overallRisk = "Low";
+              }
         
-                overallRiskArray.push(`${regionName}=${overallRisk}`);
+              overallRiskArray.push(`${regionName}=${overallRisk}`);
             }
         
             const overallRiskString = overallRiskArray.join(',');
-            database.ref(`OverallRiskList`).set(overallRiskString);
         
-            document.getElementById('message').innerText = "Overall risk levels calculated and saved successfully!";
+            // Update OverallRiskList via Vercel function
+            const updateResponse = await fetch("https://omniscius.vercel.app/api/updateOverallRiskList", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                overallRiskString: overallRiskString
+              }),
+            });
+        
+            if (!updateResponse.ok) {
+              throw new Error("Failed to update overall risk list");
+            }
+        
+            messageDiv.innerText = "Overall risk levels calculated and saved successfully!";
+          } catch (error) {
+            console.error("Error in fetchOverallRisk:", error);
+            messageDiv.innerText = `Failed to calculate overall risk levels: ${error.message}`;
+          }
         }
 
         document.getElementById('fetchWeatherBtn').addEventListener('click', fetchWeather);
