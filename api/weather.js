@@ -1,19 +1,34 @@
+// api/weather.js
 import { initializeApp, cert } from "firebase-admin/app";
 import { getDatabase } from "firebase-admin/database";
 
 // Initialize Firebase Admin (only once)
-if (!initializeApp.length) {
+let app;
+if (!initializeApp.getApps().length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIAL);
-  initializeApp({
+  app = initializeApp({
     credential: cert(serviceAccount),
     databaseURL: process.env.FIREBASE_DATABASE_URL,
   });
+} else {
+  app = initializeApp.getApps()[0]; // Use existing app
 }
 
-const database = getDatabase();
+const database = getDatabase(app);
 
 export default async function handler(req, res) {
-  const { lat, lon, regionName } = req.query; // Add regionName to identify the region
+  // Enable CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // Extract query params
+  const { lat, lon, regionName } = req.query;
 
   // Validate inputs
   if (!lat || !lon || !regionName) {
@@ -29,7 +44,7 @@ export default async function handler(req, res) {
     if (!response.ok) throw new Error("Failed to fetch weather data");
     const weatherData = await response.json();
 
-    // Process weather data (same logic as your frontend)
+    // Process weather data
     const processedData = {
       tempmin_5days: Math.min(...weatherData.list.map(item => item.main.temp_min)),
       tempmax_5days: Math.max(...weatherData.list.map(item => item.main.temp_max)),
@@ -38,8 +53,8 @@ export default async function handler(req, res) {
       precip_5days: weatherData.list.reduce((acc, item) => acc + (item.rain ? item.rain['3h'] || 0 : 0), 0)
     };
 
-    // Save to Firebase using Admin SDK (bypasses rules)
-    await database.ref(`WeatherData/${regionName}`).set(processedData);
+    // Save to Firebase
+    await database.ref(`WeatherData/${decodeURIComponent(regionName)}`).set(processedData);
 
     // Return success
     res.status(200).json({ success: true, data: processedData });
