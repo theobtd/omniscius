@@ -247,40 +247,20 @@
             console.error('Error loading pest definitions:', error);
           });
 
-        // Weather API Functions
+        // NEW: Call Vercel function (SECURE) to retrieve weather data
         async function getWeatherData(lat, lon) {
-            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-        
-            const forecastResponse = await fetch(forecastUrl);
-            if (!forecastResponse.ok) {
-                throw new Error('Failed to fetch forecast data');
-            }
-            
-            const data = await forecastResponse.json();
-            
-            // Extract relevant data
-            const relevantData = data.list.map(item => ({
-                temp_min: item.main.temp_min,
-                temp_max: item.main.temp_max,
-                temp: item.main.temp,
-                humidity: item.main.humidity,
-                rain: item.rain ? item.rain['3h'] || 0 : 0 // Default to 0 if no rain data
-            }));
-        
-            return relevantData;
+          const vercelUrl = "https://omniscius.vercel.app/api/weather";
+          const response = await fetch(`${vercelUrl}?lat=${lat}&lon=${lon}&regionName=custom`);
+          if (!response.ok) throw new Error("Failed to fetch weather data");
+          const data = await response.json();
+          return data.data;
         }
 
         async function getCoordinatesFromPostalCode(postalCode) {
-            const apiKey = "0d29cda32c62a77dc63c47f21f8dcbdf"; // Your OpenWeatherMap API key
-            const geoUrl = `https://api.openweathermap.org/data/2.5/weather?q=${postalCode}&appid=${apiKey}`;
-        
-            const response = await fetch(geoUrl);
-            if (!response.ok) {
-                throw new Error('Failed to fetch coordinates');
-            }
-            const data = await response.json();
-            return { lat: data.coord.lat, lon: data.coord.lon };
+          const vercelUrl = "https://omniscius.vercel.app/api/geocode";
+          const response = await fetch(`${vercelUrl}?postalCode=${postalCode}`);
+          if (!response.ok) throw new Error("Failed to fetch coordinates");
+          return await response.json();
         }
 
         // Function to fetch risk level from a specific endpoint
@@ -679,11 +659,11 @@
             
                         // Prepare data for the model
                         const modelData = {
-                            tempmin_5days: Math.min(...weatherData.map(item => item.temp_min)),
-                            tempmax_5days: Math.max(...weatherData.map(item => item.temp_max)),
-                            temp_5days: weatherData.reduce((acc, item) => acc + item.temp, 0) / weatherData.length,
-                            humidity_5days: weatherData.reduce((acc, item) => acc + item.humidity, 0) / weatherData.length,
-                            precip_5days: weatherData.reduce((acc, item) => acc + item.rain, 0)
+                          tempmin_5days: weatherData.tempmin_5days,
+                          tempmax_5days: weatherData.tempmax_5days,
+                          temp_5days: weatherData.temp_5days,
+                          humidity_5days: weatherData.humidity_5days,
+                          precip_5days: weatherData.precip_5days
                         };
             
                         // Define the endpoints for each model
