@@ -649,7 +649,7 @@
             
                 // Validate input
                 if ((latitude && longitude) && postalCode) {
-                    document.getElementById('errorMessage').textContent = "Please enter either latitude/longitude or postal code, not both.";
+                    document.getElementById('errorMessage').textContent = "Veuillez entrer soit vos coordinnées GPS, soit votre code postal - pas les deux";
                 } else {
                     // Determine the coordinates to use
                     let lat = latitude;
