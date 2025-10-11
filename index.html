@@ -665,7 +665,13 @@
                 // Validate input
                 if ((latitude && longitude) && postalCode) {
                     document.getElementById('errorMessage').textContent = "Veuillez entrer soit vos coordinnées GPS, soit votre code postal - pas les deux";
-                } else {
+                    return; // Exit early if validation fails
+                }
+            
+                // Show loader immediately
+                document.getElementById('loadingInfo').style.display = 'flex';
+            
+                try {
                     // Determine the coordinates to use
                     let lat = latitude;
                     let lon = longitude;
@@ -673,80 +679,72 @@
                     // If postal code is provided, fetch weather data using it
                     if (postalCode) {
                         const geoData = await getCoordinatesFromPostalCode(postalCode);
-                        if (geoData) {
-                            lat = geoData.lat;
-                            lon = geoData.lon;
-                        } else {
-                            document.getElementById('errorMessage').textContent = "Invalid postal code.";
+                        if (!geoData) {
+                            document.getElementById('errorMessage').textContent = "Code postal invalide.";
                             return;
                         }
+                        lat = geoData.lat;
+                        lon = geoData.lon;
                     }
-
-                    // Show loader
-                    document.getElementById('loadingInfo').style.display = 'flex';
             
                     // Fetch weather data and log it
-                    try {
-                        const weatherData = await getWeatherData(lat, lon);
-                        console.log("Weather Data:", weatherData);
+                    const weatherData = await getWeatherData(lat, lon);
+                    console.log("Weather Data:", weatherData);
             
-                        // Prepare data for the model
-                        const modelData = {
-                          tempmin_5days: weatherData.tempmin_5days,
-                          tempmax_5days: weatherData.tempmax_5days,
-                          temp_5days: weatherData.temp_5days,
-                          humidity_5days: weatherData.humidity_5days,
-                          precip_5days: weatherData.precip_5days
-                        };
+                    // Prepare data for the model
+                    const modelData = {
+                        tempmin_5days: weatherData.tempmin_5days,
+                        tempmax_5days: weatherData.tempmax_5days,
+                        temp_5days: weatherData.temp_5days,
+                        humidity_5days: weatherData.humidity_5days,
+                        precip_5days: weatherData.precip_5days
+                    };
             
-                        // Define the endpoints for each model
-                        const endpoints = {
-                            "Tuta Absoluta": "https://theoagri.pythonanywhere.com/predict",
-                            "Botrytis": "https://theoagri.pythonanywhere.com/predict_botrytis",
-                            "Puceron Cendré": "https://theoagri.pythonanywhere.com/predict_puceroncendre",
-                            "Punaise Nesidiocoris": "https://theoagri.pythonanywhere.com/predict_punaisenesidiocoris",
-                            "Acariose Bronzée": "https://theoagri.pythonanywhere.com/predict_acariosebronzee",
-                            "Aleurodes": "https://theoagri.pythonanywhere.com/predict_aleurodes"
-                        };
+                    // Define the endpoints for each model
+                    const endpoints = {
+                        "Tuta Absoluta": "https://theoagri.pythonanywhere.com/predict",
+                        "Botrytis": "https://theoagri.pythonanywhere.com/predict_botrytis",
+                        "Puceron Cendré": "https://theoagri.pythonanywhere.com/predict_puceroncendre",
+                        "Punaise Nesidiocoris": "https://theoagri.pythonanywhere.com/predict_punaisenesidiocoris",
+                        "Acariose Bronzée": "https://theoagri.pythonanywhere.com/predict_acariosebronzee",
+                        "Aleurodes": "https://theoagri.pythonanywhere.com/predict_aleurodes"
+                    };
             
-                        // Prepare a message to display risk levels
-                        let riskMessage = '';
-
-                        // Define a mapping for the risk levels
-                        const riskMapping = {
-                            "high": "élevé",
-                            "normal": "normal"
-                        };
+                    // Prepare a message to display risk levels
+                    let riskMessage = '';
+                    // Define a mapping for the risk levels
+                    const riskMapping = {
+                        "high": "élevé",
+                        "normal": "normal"
+                    };
             
-                        // Fetch risk levels for all models
-                        for (const [modelName, endpoint] of Object.entries(endpoints)) {
-                            const riskResponse = await fetchRiskLevel(modelData, endpoint);
-                            const riskLevel = riskResponse.risk;
-                            const mappedRiskLevel = riskMapping[riskLevel] || riskLevel;
-                            riskMessage += `${modelName} <button class="info-button" onclick="showHelloWorld('${modelName}')">?</button>: ${mappedRiskLevel}<br>`;
-                        }
-            
-                        // Display the risk levels in the infoMessage
-                        document.getElementById('infoMessage').innerHTML = riskMessage;
-
-                        // Update the UserCount via Vercel function (instead of direct Firebase write)
-                        const incrementResponse = await fetch("https://omniscius.vercel.app/api/incrementUserCount", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                        });
-
-                        if (!incrementResponse.ok) {
-                          console.error("Failed to increment user count");
-                        }
-            
-                    } catch (error) {
-                        console.error("Error fetching weather data:", error);
-                    } finally {
-                        // Hide loader
-                        document.getElementById('loadingInfo').style.display = 'none';
+                    // Fetch risk levels for all models
+                    for (const [modelName, endpoint] of Object.entries(endpoints)) {
+                        const riskResponse = await fetchRiskLevel(modelData, endpoint);
+                        const riskLevel = riskResponse.risk;
+                        const mappedRiskLevel = riskMapping[riskLevel] || riskLevel;
+                        riskMessage += `${modelName} <button class="info-button" onclick="showHelloWorld('${modelName}')">?</button>: ${mappedRiskLevel}<br>`;
                     }
+            
+                    // Display the risk levels in the infoMessage
+                    document.getElementById('infoMessage').innerHTML = riskMessage;
+                    // Update the UserCount via Vercel function (instead of direct Firebase write)
+                    const incrementResponse = await fetch("https://omniscius.vercel.app/api/incrementUserCount", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    if (!incrementResponse.ok) {
+                        console.error("Failed to increment user count");
+                    }
+            
+                } catch (error) {
+                    console.error("Error fetching weather data:", error);
+                    document.getElementById('errorMessage').textContent = "Erreur lors de la récupération des données.";
+                } finally {
+                    // Hide loader
+                    document.getElementById('loadingInfo').style.display = 'none';
                 }
             });
         });
