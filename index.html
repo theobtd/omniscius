@@ -135,7 +135,21 @@
             align-items: center;
             justify-content: center;
         }
-        
+
+        .contact-footer {
+            position: fixed;
+            bottom: 3px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #555;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            border-top: 1px solid #ddd;
+            z-index: 1000;
+        }
+
         /* Media queries for responsive design */
         @media (max-width: 768px) { /* Adjust this value for mobile breakpoints */
             #mapContainer,
@@ -210,6 +224,10 @@
             <div id="emailMessage" style="color: red; margin-top: 5px;"></div>
         </div>
         <div class="info-footer">Les prévisions santepotager.fr sont indicatives et leur exactitude n'est pas garantie. L'utilisateur reste entièrement responsable de ses décisions.</div>
+    </div>
+
+    <div class="contact-footer">
+        Vous souhaitez vous désabonner, nous poser des questions, ou partager votre expérience sur l'application ? Contactez-nous par email à <a href="mailto:info.santepotager@gmail.com">info.santepotager@gmail.com</a>
     </div>
 
     <script>
