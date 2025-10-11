@@ -137,17 +137,32 @@
         }
 
         .contact-footer {
-            position: fixed;
-            bottom: 3px;
-            left: 0;
-            right: 0;
             text-align: center;
             font-size: 0.9em;
             color: #555;
             background-color: transparent;
             padding: 8px;
             border-top: 1px solid #ddd;
-            z-index: 1000;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* For larger screens (desktop/tablet) */
+        @media (min-width: 769px) {
+            .contact-footer {
+                position: fixed;
+                bottom: 3px;
+                left: 0;
+                z-index: 1000;
+            }
+        }
+        
+        /* For smaller screens (mobile) */
+        @media (max-width: 768px) {
+            .contact-footer {
+                position: relative;
+                margin-top: 20px; /* Add some space above the footer */
+            }
         }
 
         /* Media queries for responsive design */
