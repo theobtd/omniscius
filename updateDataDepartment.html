@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <title>Interactive French Regions Map</title>
     <style>
         body {
@@ -74,6 +75,9 @@
         <input type="text" id="title-input" placeholder="Enter a new title">
         <button id="update-title-btn">Update Title</button>
     </div>
+    
+    <button id="download-btn">Download Map as Image</button>
+    
     <p id="instructions">Click on a region to cycle its color (green → #dde33d → #e8463a).</p>
     <div id="map-container">
         <h1 id="map-title">French Regions Map</h1>
@@ -94,45 +98,58 @@
         </svg>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const regions = document.querySelectorAll('.region');
-            const colorCycle = {
-                '#3fd185': '#dde33d',
-                '#dde33d': '#e8463a',
-                '#e8463a': '#3fd185'
-            };
-            regions.forEach(region => {
-                region.addEventListener('click', function() {
-                    let currentColor = this.getAttribute('fill');
-                    let nextColor = colorCycle[currentColor];
-                    this.setAttribute('fill', nextColor);
-                });
+    document.addEventListener('DOMContentLoaded', function() {
+        const regions = document.querySelectorAll('.region');
+        const colorCycle = {
+            '#3fd185': '#dde33d',
+            '#dde33d': '#e8463a',
+            '#e8463a': '#3fd185'
+        };
+        regions.forEach(region => {
+            region.addEventListener('click', function() {
+                let currentColor = this.getAttribute('fill');
+                let nextColor = colorCycle[currentColor];
+                this.setAttribute('fill', nextColor);
             });
-
-            // Dynamic title functionality
-            const titleInput = document.getElementById('title-input');
-            const updateTitleBtn = document.getElementById('update-title-btn');
-            const mapTitle = document.getElementById('map-title');
-
-            updateTitleBtn.addEventListener('click', function() {
+        });
+        // Dynamic title functionality
+        const titleInput = document.getElementById('title-input');
+        const updateTitleBtn = document.getElementById('update-title-btn');
+        const mapTitle = document.getElementById('map-title');
+        updateTitleBtn.addEventListener('click', function() {
+            const newTitle = titleInput.value.trim();
+            if (newTitle) {
+                mapTitle.textContent = newTitle;
+                titleInput.value = '';
+            }
+        });
+        // Allow pressing Enter to update the title
+        titleInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
                 const newTitle = titleInput.value.trim();
                 if (newTitle) {
                     mapTitle.textContent = newTitle;
                     titleInput.value = '';
                 }
-            });
-
-            // Allow pressing Enter to update the title
-            titleInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const newTitle = titleInput.value.trim();
-                    if (newTitle) {
-                        mapTitle.textContent = newTitle;
-                        titleInput.value = '';
-                    }
-                }
-            });
+            }
         });
+    });
+
+    // Download button script
+    document.getElementById('download-btn').addEventListener('click', function() {
+        const mapContainer = document.getElementById('map-container');
+        html2canvas(mapContainer, {
+            scale: 1,
+            logging: false,
+            useCORS: true,
+            allowTaint: true
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'french-regions-map.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    });
     </script>
 </body>
 </html>
