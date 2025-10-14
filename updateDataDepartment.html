@@ -47,9 +47,9 @@
             background-color: white;
             margin-top: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
+            justify-content: center; /* Center horizontally */
+            align-items: center;     /* Center vertically */
+            padding: 0; /* Remove padding to avoid offset */
         }
         #map-title {
             color: #333;
@@ -57,8 +57,10 @@
             text-align: center;
         }
         #france-map {
-            width: 90%;
-            height: 90%;
+            width: 100%;
+            height: 100%;
+            display: block;
+            margin: auto;
         }
         .region {
             cursor: pointer;
