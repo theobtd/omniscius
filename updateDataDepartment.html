@@ -103,17 +103,17 @@
           messageDiv.innerText = "Fetching weather data...";
         
           try {
-            for (const [departmentName, coordinates] of Object.entries(departmentCoordinates)) {
+            for (const [regionName, coordinates] of Object.entries(departmentCoordinates)) {
               const vercelUrl = "https://omniscius.vercel.app/api/weather";
               const response = await fetch(
-                `${vercelUrl}?lat=${coordinates.lat}&lon=${coordinates.lon}&departmentName=${encodeURIComponent(departmentName)}`
+                `${vercelUrl}?lat=${coordinates.lat}&lon=${coordinates.lon}&regionName=${encodeURIComponent(regionName)}`
               );
               if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`Failed for ${departmentName}: ${errorData.error || response.statusText}`);
+                throw new Error(`Failed for ${regionName}: ${errorData.error || response.statusText}`);
               }
               const data = await response.json();
-              results[departmentName] = data.data;
+              results[regionName] = data.data;
             }
             messageDiv.innerText = "Weather data fetched and saved successfully!";
           } catch (error) {
@@ -128,11 +128,11 @@
           messageDiv.innerText = "Calculating risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
               if (!WeatherData_Departments) {
-                console.error(`No weather data available for ${departmentName}`);
-                results[departmentName] = "unknown";
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
                 continue;
               }
         
@@ -146,7 +146,7 @@
         
               try {
                 const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict");
-                results[departmentName] = riskLevel;
+                results[regionName] = riskLevel;
         
                 // Update risk level via Vercel function
                 const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
@@ -156,17 +156,17 @@
                   },
                   body: JSON.stringify({
                     riskType: "TutaAbsoluta_Departments",
-                    departmentName: departmentName,
+                    regionName: regionName,
                     riskLevel: riskLevel
                   }),
                 });
         
                 if (!updateResponse.ok) {
-                  console.error(`Failed to update risk level for ${departmentName}`);
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
               } catch (error) {
-                console.error(`Error fetching risk for ${departmentName}:`, error);
-                results[departmentName] = "unknown";
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
               }
             }
         
@@ -183,11 +183,11 @@
           messageDiv.innerText = "Calculating risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
               if (!WeatherData_Departments) {
-                console.error(`No weather data available for ${departmentName}`);
-                results[departmentName] = "unknown";
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
                 continue;
               }
         
@@ -201,7 +201,7 @@
         
               try {
                 const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_botrytis");
-                results[departmentName] = riskLevel;
+                results[regionName] = riskLevel;
         
                 // Update risk level via Vercel function
                 const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
@@ -211,17 +211,17 @@
                   },
                   body: JSON.stringify({
                     riskType: "Botrytis_Departments",
-                    departmentName: departmentName,
+                    regionName: regionName,
                     riskLevel: riskLevel
                   }),
                 });
         
                 if (!updateResponse.ok) {
-                  console.error(`Failed to update risk level for ${departmentName}`);
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
               } catch (error) {
-                console.error(`Error fetching risk for ${departmentName}:`, error);
-                results[departmentName] = "unknown";
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
               }
             }
         
@@ -238,11 +238,11 @@
           messageDiv.innerText = "Calculating risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
               if (!WeatherData_Departments) {
-                console.error(`No weather data available for ${departmentName}`);
-                results[departmentName] = "unknown";
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
                 continue;
               }
         
@@ -256,7 +256,7 @@
         
               try {
                 const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_puceroncendre");
-                results[departmentName] = riskLevel;
+                results[regionName] = riskLevel;
         
                 // Update risk level via Vercel function
                 const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
@@ -266,17 +266,17 @@
                   },
                   body: JSON.stringify({
                     riskType: "PuceronCendre_Departments",
-                    departmentName: departmentName,
+                    regionName: regionName,
                     riskLevel: riskLevel
                   }),
                 });
         
                 if (!updateResponse.ok) {
-                  console.error(`Failed to update risk level for ${departmentName}`);
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
               } catch (error) {
-                console.error(`Error fetching risk for ${departmentName}:`, error);
-                results[departmentName] = "unknown";
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
               }
             }
         
@@ -293,11 +293,11 @@
           messageDiv.innerText = "Calculating risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
               if (!WeatherData_Departments) {
-                console.error(`No weather data available for ${departmentName}`);
-                results[departmentName] = "unknown";
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
                 continue;
               }
         
@@ -311,7 +311,7 @@
         
               try {
                 const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_punaisenesidiocoris");
-                results[departmentName] = riskLevel;
+                results[regionName] = riskLevel;
         
                 // Update risk level via Vercel function
                 const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
@@ -321,17 +321,17 @@
                   },
                   body: JSON.stringify({
                     riskType: "PunaiseNesidiocoris_Departments",
-                    departmentName: departmentName,
+                    regionName: regionName,
                     riskLevel: riskLevel
                   }),
                 });
         
                 if (!updateResponse.ok) {
-                  console.error(`Failed to update risk level for ${departmentName}`);
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
               } catch (error) {
-                console.error(`Error fetching risk for ${departmentName}:`, error);
-                results[departmentName] = "unknown";
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
               }
             }
         
@@ -348,11 +348,11 @@
           messageDiv.innerText = "Calculating risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
               if (!WeatherData_Departments) {
-                console.error(`No weather data available for ${departmentName}`);
-                results[departmentName] = "unknown";
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
                 continue;
               }
         
@@ -366,7 +366,7 @@
         
               try {
                 const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_acariosebronzee");
-                results[departmentName] = riskLevel;
+                results[regionName] = riskLevel;
         
                 // Update risk level via Vercel function
                 const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
@@ -376,17 +376,17 @@
                   },
                   body: JSON.stringify({
                     riskType: "AcarioseBronzee_Departments",
-                    departmentName: departmentName,
+                    regionName: regionName,
                     riskLevel: riskLevel
                   }),
                 });
         
                 if (!updateResponse.ok) {
-                  console.error(`Failed to update risk level for ${departmentName}`);
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
               } catch (error) {
-                console.error(`Error fetching risk for ${departmentName}:`, error);
-                results[departmentName] = "unknown";
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
               }
             }
         
@@ -403,11 +403,11 @@
           messageDiv.innerText = "Calculating risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const WeatherData_Departments = await database.ref(`WeatherData_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
               if (!WeatherData_Departments) {
-                console.error(`No weather data available for ${departmentName}`);
-                results[departmentName] = "unknown";
+                console.error(`No weather data available for ${regionName}`);
+                results[regionName] = "unknown";
                 continue;
               }
         
@@ -421,7 +421,7 @@
         
               try {
                 const riskLevel = await fetchRiskLevel(modelData, "https://theoagri.pythonanywhere.com/predict_aleurodes");
-                results[departmentName] = riskLevel;
+                results[regionName] = riskLevel;
         
                 // Update risk level via Vercel function
                 const updateResponse = await fetch("https://omniscius.vercel.app/api/updateRiskLevels", {
@@ -431,17 +431,17 @@
                   },
                   body: JSON.stringify({
                     riskType: "Aleurodes_Departments",
-                    departmentName: departmentName,
+                    regionName: regionName,
                     riskLevel: riskLevel
                   }),
                 });
         
                 if (!updateResponse.ok) {
-                  console.error(`Failed to update risk level for ${departmentName}`);
+                  console.error(`Failed to update risk level for ${regionName}`);
                 }
               } catch (error) {
-                console.error(`Error fetching risk for ${departmentName}:`, error);
-                results[departmentName] = "unknown";
+                console.error(`Error fetching risk for ${regionName}:`, error);
+                results[regionName] = "unknown";
               }
             }
         
@@ -458,13 +458,13 @@
           messageDiv.innerText = "Calculating overall risk levels...";
         
           try {
-            for (const departmentName of Object.keys(departmentCoordinates)) {
-              const tutaRisk = await database.ref(`TutaAbsoluta_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
-              const botrytisRisk = await database.ref(`Botrytis_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
-              const puceroncendreRisk = await database.ref(`PuceronCendre_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
-              const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
-              const acariosebronzeeRisk = await database.ref(`AcarioseBronzee_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
-              const aleurodesRisk = await database.ref(`Aleurodes_Departments/${departmentName}`).once('value').then(snapshot => snapshot.val());
+            for (const regionName of Object.keys(departmentCoordinates)) {
+              const tutaRisk = await database.ref(`TutaAbsoluta_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const botrytisRisk = await database.ref(`Botrytis_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const puceroncendreRisk = await database.ref(`PuceronCendre_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const punaisenesidiocorisRisk = await database.ref(`PunaiseNesidiocoris_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const acariosebronzeeRisk = await database.ref(`AcarioseBronzee_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
+              const aleurodesRisk = await database.ref(`Aleurodes_Departments/${regionName}`).once('value').then(snapshot => snapshot.val());
         
               const riskLevels = [tutaRisk, botrytisRisk, puceroncendreRisk, punaisenesidiocorisRisk, acariosebronzeeRisk, aleurodesRisk];
               const highRiskCount = riskLevels.filter(risk => risk === "high").length;
@@ -478,7 +478,7 @@
                 overallRisk = "Low";
               }
         
-              overallRiskArray.push(`${departmentName}=${overallRisk}`);
+              overallRiskArray.push(`${regionName}=${overallRisk}`);
             }
         
             const overallRiskString = overallRiskArray.join(',');
