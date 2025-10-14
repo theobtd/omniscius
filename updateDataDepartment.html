@@ -43,7 +43,7 @@
 </head>
 <body>
     <h1>French Regions Map</h1>
-    <p id="instructions">Click on a region to cycle its color (green → yellow → red).</p>
+    <p id="instructions">Click on a region to cycle its color (green → yellow → #e8463a).</p>
     <div id="map-container">
         <svg id="france-map" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
             <!-- All regions start with fill="green" and stroke="#000" (black) -->
@@ -66,8 +66,8 @@
             const regions = document.querySelectorAll('.region');
             const colorCycle = {
                 '#96e38a': 'yellow',
-                'yellow': 'red',
-                'red': '#96e38a'
+                'yellow': '#e8463a',
+                '#e8463a': '#96e38a'
             };
             regions.forEach(region => {
                 region.addEventListener('click', function() {
