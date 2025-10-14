@@ -16,6 +16,32 @@
         }
         h1 {
             color: #333;
+            margin-bottom: 10px;
+        }
+        #title-input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #title-input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 300px;
+        }
+        #update-title-btn {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #update-title-btn:hover {
+            background-color: #2980b9;
         }
         #map-container {
             width: 800px;
@@ -42,15 +68,19 @@
     </style>
 </head>
 <body>
-    <h1>French Regions Map</h1>
+    <div id="title-input-container">
+        <input type="text" id="title-input" placeholder="Enter a new title">
+        <button id="update-title-btn">Update Title</button>
+    </div>
+    <h1 id="map-title">French Regions Map</h1>
     <p id="instructions">Click on a region to cycle its color (green → #dde33d → #e8463a).</p>
     <div id="map-container">
         <svg id="france-map" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
-            <!-- All regions start with fill="green" and stroke="#000" (black) -->
-            <path class="region" id="Occitanie" fill= "#3fd185" stroke="#000" stroke-width="1" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
-            <path class="region" id="Centre_Val_de_Loire" fill= "#3fd185" stroke="#000" stroke-width="1" d="M761.145225,563.920628l.000002-177.147841-129.908419-85.621458-53.144353,22.143481-8.857392,63.477976-67.906674,126.955953l103.33624,97.431312l91.526385,8.857392l64.954211-56.096815Z" />
-            <path class="region" id="Hauts_de_France" fill= "#3fd185" stroke="#000" stroke-width="1" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
-            <path class="region" id="Bretagne" fill= "#3fd185" stroke="#000" stroke-width="1" d="M99.793284,323.294811L235.606629,286.38901l23.619712,28.048407l115.146097,8.857392l35.429568,19.191014l2.952463,64.954208L291.703444,466.48931L105.698211,386.772782l26.572176-29.524639-32.477103-33.953332Z" />
+            <!-- All regions start with fill="#3fd185" and stroke="#000" (black) -->
+            <path class="region" id="Occitanie" fill="#3fd185" stroke="#000" stroke-width="1" d="M778.860009,1121.936328l2.952464-82.668992l106.288704-50.191888l45.763197-73.811601-25.095948-26.572178-231.768428-94.478842h-54.620579L454.088965,1068.791975l324.771044,53.144353Z" />
+            <path class="region" id="Centre_Val_de_Loire" fill="#3fd185" stroke="#000" stroke-width="1" d="M761.145225,563.920628l.000002-177.147841-129.908419-85.621458-53.144353,22.143481-8.857392,63.477976-67.906674,126.955953l103.33624,97.431312l91.526385,8.857392l64.954211-56.096815Z" />
+            <path class="region" id="Hauts_de_France" fill="#3fd185" stroke="#000" stroke-width="1" d="M715.382032,23.619712L861.529006,162.38552L799.527257,301.151329L761.145226,271.62669L648.951598,259.816834l-.000001-88.57392-26.572177-20.667248L648.951592,44.286959l66.43044-20.667247Z" />
+            <path class="region" id="Bretagne" fill="#3fd185" stroke="#000" stroke-width="1" d="M99.793284,323.294811L235.606629,286.38901l23.619712,28.048407l115.146097,8.857392l35.429568,19.191014l2.952463,64.954208L291.703444,466.48931L105.698211,386.772782l26.572176-29.524639-32.477103-33.953332Z" />
             <path class="region" id="PACA" fill="#3fd185" stroke="#000" stroke-width="1" d="M888.101177,989.075448l171.242914,50.191887L1180.395116,932.97863l14.762325-44.286961h-59.049286l-5.904928-59.04928-44.28696-38.382032-90.050147,59.04928l13.286082,38.382032h-100.383775l25.095952,26.572178-45.763202,73.811601Z" />
             <path class="region" id="Ile_de_France" fill="#3fd185" stroke="#000" stroke-width="1" d="M648.951592,259.816834L761.145225,271.62669l38.382031,29.52464-2.952464,56.096817-35.429568,29.524639-129.908417-85.621457q23.619714-38.38203,17.714785-41.334495Z" />
             <path class="region" id="Auvergne_Rhone_Alpes" fill="#3fd185" stroke="#000" stroke-width="1" d="M908.768426,885.739206L677,794.212822l19.191016-174.195378l64.954209-56.096813l85.621456,82.668991l188.957699-26.57218l56.096815-8.857393l38.382031,121.051024-44.28696,59.04928-90.050147,59.049279l13.286082,38.382032-100.383775-2.952458Z" />
@@ -75,6 +105,30 @@
                     let nextColor = colorCycle[currentColor];
                     this.setAttribute('fill', nextColor);
                 });
+            });
+
+            // Dynamic title functionality
+            const titleInput = document.getElementById('title-input');
+            const updateTitleBtn = document.getElementById('update-title-btn');
+            const mapTitle = document.getElementById('map-title');
+
+            updateTitleBtn.addEventListener('click', function() {
+                const newTitle = titleInput.value.trim();
+                if (newTitle) {
+                    mapTitle.textContent = newTitle;
+                    titleInput.value = '';
+                }
+            });
+
+            // Allow pressing Enter to update the title
+            titleInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const newTitle = titleInput.value.trim();
+                    if (newTitle) {
+                        mapTitle.textContent = newTitle;
+                        titleInput.value = '';
+                    }
+                }
             });
         });
     </script>
